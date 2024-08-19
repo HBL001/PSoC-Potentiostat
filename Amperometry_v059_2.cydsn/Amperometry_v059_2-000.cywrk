@@ -8,8 +8,6 @@
 <files />
 <projects>
 <v>.\Amperometry_v059_2.cyprj</v>
-<v>.\usb_test.cydsn\usb_test.cyprj</v>
-<v>..\Amperometry_v059_Serial.cydsn\Amperometry_v059_Serial.cyprj</v>
 </projects>
 <workspace_id v="374f99f4-a1da-4ba3-bd7b-dcf919f13da5" />
 <WriteAppVersionLastSavedWith v="4.4.0.80" />
