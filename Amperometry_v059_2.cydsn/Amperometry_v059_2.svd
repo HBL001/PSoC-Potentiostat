@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <device schemaVersion="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="CMSIS-SVD_Schema_1_0.xsd">
-  <name>CY8C5888LTI_LP097</name>
+  <name>CY8C5868AXI_LP035</name>
   <version>0.1</version>
   <description>CY8C58LP</description>
   <addressUnitBits>8</addressUnitBits>
@@ -3170,7 +3170,7 @@
         <register>
           <name>OPAMP__TR0</name>
           <description>Analog Output Buffer Trim Register 0</description>
-          <addressOffset>0x40004622</addressOffset>
+          <addressOffset>0x40004626</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -3188,7 +3188,7 @@
         <register>
           <name>OPAMP__TR1</name>
           <description>Analog Output Buffer Trim Register 1</description>
-          <addressOffset>0x40004623</addressOffset>
+          <addressOffset>0x40004627</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -3206,7 +3206,7 @@
         <register>
           <name>OPAMP__CR</name>
           <description>Analog Output Buffer Configuration Register</description>
-          <addressOffset>0x4000585A</addressOffset>
+          <addressOffset>0x4000585E</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -3246,7 +3246,7 @@
         <register>
           <name>OPAMP__MX</name>
           <description>Analog Buffer Input Selection Register</description>
-          <addressOffset>0x40005B42</addressOffset>
+          <addressOffset>0x40005B46</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -3375,7 +3375,7 @@
         <register>
           <name>OPAMP__SW</name>
           <description>Analog Buffer Routing Switch Register</description>
-          <addressOffset>0x40005B43</addressOffset>
+          <addressOffset>0x40005B47</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
