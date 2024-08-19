@@ -148,7 +148,7 @@ void helper_HardwareSetup(void) {
     AMux_TIA_resistor_bypass_Init();
     DAC_Start();  // DAC has to be started after the AMux_V_source because it will set it based what DAC source is selected
     
-    // iniatalize the analog muxes connections 
+    // initialise the analog muxes connections 
     AMux_electrode_Select(three_electrode_config_ch);  // start with 3 electrode configuration
     AMux_TIA_input_Select(AMux_TIA_working_electrode_ch);  // Connect the working electrode
     AMux_TIA_resistor_bypass_Select(0);  // Start with no extra TIA resistor

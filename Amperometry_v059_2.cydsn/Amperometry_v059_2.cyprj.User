@@ -44,6 +44,9 @@
 <dep name=".\Generated_Source\PSoC5\DVDAC_VDAC8.h" />
 <dep name=".\Generated_Source\PSoC5\EEPROM.h" />
 <dep name=".\Generated_Source\PSoC5\IDAC_calibrate.h" />
+<dep name=".\Generated_Source\PSoC5\LCD.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort_aliases.h" />
 <dep name=".\Generated_Source\PSoC5\Opamp_Aux.h" />
 <dep name=".\Generated_Source\PSoC5\PWM_isr.h" />
 <dep name=".\Generated_Source\PSoC5\Pin_DVDAC_cap.h" />
@@ -116,6 +119,9 @@
 <file name=".\Generated_Source\PSoC5\DVDAC_VDAC8.h" />
 <file name=".\Generated_Source\PSoC5\EEPROM.h" />
 <file name=".\Generated_Source\PSoC5\IDAC_calibrate.h" />
+<file name=".\Generated_Source\PSoC5\LCD.h" />
+<file name=".\Generated_Source\PSoC5\LCD_LCDPort.h" />
+<file name=".\Generated_Source\PSoC5\LCD_LCDPort_aliases.h" />
 <file name=".\Generated_Source\PSoC5\Opamp_Aux.h" />
 <file name=".\Generated_Source\PSoC5\PWM_isr.h" />
 <file name=".\Generated_Source\PSoC5\Pin_DVDAC_cap.h" />
@@ -470,6 +476,39 @@
 <dep name=".\Generated_Source\PSoC5\IDAC_calibrate_PM.c" />
 </file>
 <file name=".\Generated_Source\PSoC5\IDAC_calibrate_PM.c" />
+<file name=".\CortexM3\ARM_GCC_541\Debug\LCD.o">
+<dep name=".\Generated_Source\PSoC5\CyFlash.h" />
+<dep name=".\Generated_Source\PSoC5\CyLib.h" />
+<dep name=".\Generated_Source\PSoC5\CySpc.h" />
+<dep name=".\Generated_Source\PSoC5\LCD.h" />
+<dep name=".\Generated_Source\PSoC5\cyPm.h" />
+<dep name=".\Generated_Source\PSoC5\cydevice.h" />
+<dep name=".\Generated_Source\PSoC5\cydevice_trm.h" />
+<dep name=".\Generated_Source\PSoC5\cyfitter.h" />
+<dep name=".\Generated_Source\PSoC5\cytypes.h" />
+<dep name=".\Generated_Source\PSoC5\LCD.c" />
+</file>
+<file name=".\Generated_Source\PSoC5\LCD.c" />
+<file name=".\CortexM3\ARM_GCC_541\Debug\LCD_LCDPort.o">
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort_aliases.h" />
+<dep name=".\Generated_Source\PSoC5\cydevice.h" />
+<dep name=".\Generated_Source\PSoC5\cydevice_trm.h" />
+<dep name=".\Generated_Source\PSoC5\cyfitter.h" />
+<dep name=".\Generated_Source\PSoC5\cypins.h" />
+<dep name=".\Generated_Source\PSoC5\cytypes.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort.c" />
+</file>
+<file name=".\Generated_Source\PSoC5\LCD_LCDPort.c" />
+<file name=".\CortexM3\ARM_GCC_541\Debug\LCD_PM.o">
+<dep name=".\Generated_Source\PSoC5\LCD.h" />
+<dep name=".\Generated_Source\PSoC5\cydevice.h" />
+<dep name=".\Generated_Source\PSoC5\cydevice_trm.h" />
+<dep name=".\Generated_Source\PSoC5\cyfitter.h" />
+<dep name=".\Generated_Source\PSoC5\cytypes.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_PM.c" />
+</file>
+<file name=".\Generated_Source\PSoC5\LCD_PM.c" />
 <file name=".\CortexM3\ARM_GCC_541\Debug\Opamp_Aux.o">
 <dep name=".\Generated_Source\PSoC5\CyFlash.h" />
 <dep name=".\Generated_Source\PSoC5\CyLib.h" />
@@ -1058,6 +1097,9 @@
 <dep name=".\Generated_Source\PSoC5\DVDAC_VDAC8.h" />
 <dep name=".\Generated_Source\PSoC5\EEPROM.h" />
 <dep name=".\Generated_Source\PSoC5\IDAC_calibrate.h" />
+<dep name=".\Generated_Source\PSoC5\LCD.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort_aliases.h" />
 <dep name=".\Generated_Source\PSoC5\Opamp_Aux.h" />
 <dep name=".\Generated_Source\PSoC5\PWM_isr.h" />
 <dep name=".\Generated_Source\PSoC5\Pin_DVDAC_cap.h" />
@@ -1134,6 +1176,9 @@
 <dep name=".\Generated_Source\PSoC5\DVDAC_VDAC8.h" />
 <dep name=".\Generated_Source\PSoC5\EEPROM.h" />
 <dep name=".\Generated_Source\PSoC5\IDAC_calibrate.h" />
+<dep name=".\Generated_Source\PSoC5\LCD.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort_aliases.h" />
 <dep name=".\Generated_Source\PSoC5\Opamp_Aux.h" />
 <dep name=".\Generated_Source\PSoC5\PWM_isr.h" />
 <dep name=".\Generated_Source\PSoC5\Pin_DVDAC_cap.h" />
@@ -1209,6 +1254,9 @@
 <dep name=".\Generated_Source\PSoC5\DVDAC_VDAC8.h" />
 <dep name=".\Generated_Source\PSoC5\EEPROM.h" />
 <dep name=".\Generated_Source\PSoC5\IDAC_calibrate.h" />
+<dep name=".\Generated_Source\PSoC5\LCD.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort_aliases.h" />
 <dep name=".\Generated_Source\PSoC5\Opamp_Aux.h" />
 <dep name=".\Generated_Source\PSoC5\PWM_isr.h" />
 <dep name=".\Generated_Source\PSoC5\Pin_DVDAC_cap.h" />
@@ -1286,6 +1334,9 @@
 <dep name=".\Generated_Source\PSoC5\DVDAC_VDAC8.h" />
 <dep name=".\Generated_Source\PSoC5\EEPROM.h" />
 <dep name=".\Generated_Source\PSoC5\IDAC_calibrate.h" />
+<dep name=".\Generated_Source\PSoC5\LCD.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort_aliases.h" />
 <dep name=".\Generated_Source\PSoC5\Opamp_Aux.h" />
 <dep name=".\Generated_Source\PSoC5\PWM_isr.h" />
 <dep name=".\Generated_Source\PSoC5\Pin_DVDAC_cap.h" />
@@ -1366,6 +1417,9 @@
 <dep name=".\Generated_Source\PSoC5\DVDAC_VDAC8.h" />
 <dep name=".\Generated_Source\PSoC5\EEPROM.h" />
 <dep name=".\Generated_Source\PSoC5\IDAC_calibrate.h" />
+<dep name=".\Generated_Source\PSoC5\LCD.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort_aliases.h" />
 <dep name=".\Generated_Source\PSoC5\Opamp_Aux.h" />
 <dep name=".\Generated_Source\PSoC5\PWM_isr.h" />
 <dep name=".\Generated_Source\PSoC5\Pin_DVDAC_cap.h" />
@@ -1439,6 +1493,9 @@
 <dep name=".\Generated_Source\PSoC5\DVDAC_VDAC8.h" />
 <dep name=".\Generated_Source\PSoC5\EEPROM.h" />
 <dep name=".\Generated_Source\PSoC5\IDAC_calibrate.h" />
+<dep name=".\Generated_Source\PSoC5\LCD.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort.h" />
+<dep name=".\Generated_Source\PSoC5\LCD_LCDPort_aliases.h" />
 <dep name=".\Generated_Source\PSoC5\Opamp_Aux.h" />
 <dep name=".\Generated_Source\PSoC5\PWM_isr.h" />
 <dep name=".\Generated_Source\PSoC5\Pin_DVDAC_cap.h" />
@@ -1585,6 +1642,9 @@
 <dep name=".\CortexM3\ARM_GCC_541\Debug\USBUART_msc.o" />
 <dep name=".\CortexM3\ARM_GCC_541\Debug\USBUART_Dm.o" />
 <dep name=".\CortexM3\ARM_GCC_541\Debug\USBUART_Dp.o" />
+<dep name=".\CortexM3\ARM_GCC_541\Debug\LCD.o" />
+<dep name=".\CortexM3\ARM_GCC_541\Debug\LCD_PM.o" />
+<dep name=".\CortexM3\ARM_GCC_541\Debug\LCD_LCDPort.o" />
 <dep name=".\CortexM3\ARM_GCC_541\Debug\Amperometry_v059_2.a" />
 <dep name="${CyRoot}\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CortexM3\ARM_GCC_541\Debug\CyComponentLibrary.a" />
 </file>
@@ -1672,6 +1732,9 @@
 <name_val_pair name="Generated_Source\PSoC5\USBUART_Dm.c" v="-mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=${OutputDir}/${CompileFile}.lst -g -D DEBUG -Wall -ffunction-sections -ffat-lto-objects -O0 -std=gnu99" />
 <name_val_pair name="Generated_Source\PSoC5\USBUART_Dp.c" v="-mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=${OutputDir}/${CompileFile}.lst -g -D DEBUG -Wall -ffunction-sections -ffat-lto-objects -O0 -std=gnu99" />
 <name_val_pair name="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\CortexM3\ARM_GCC_541\Debug\Amperometry_v059_2.hex" v="-mcpu=cortex-m3 -mthumb -l m -L Generated_Source\PSoC5 -Wl,-Map,${OutputDir}/${ProjectShortName}.map -T Generated_Source\PSoC5\cm3gcc.ld -specs=nano.specs -Wl,--gc-sections -g -ffunction-sections -O0 -ffat-lto-objects" />
+<name_val_pair name="Generated_Source\PSoC5\LCD.c" v="-mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=${OutputDir}/${CompileFile}.lst -g -D DEBUG -Wall -ffunction-sections -ffat-lto-objects -O0 -std=gnu99" />
+<name_val_pair name="Generated_Source\PSoC5\LCD_PM.c" v="-mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=${OutputDir}/${CompileFile}.lst -g -D DEBUG -Wall -ffunction-sections -ffat-lto-objects -O0 -std=gnu99" />
+<name_val_pair name="Generated_Source\PSoC5\LCD_LCDPort.c" v="-mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=${OutputDir}/${CompileFile}.lst -g -D DEBUG -Wall -ffunction-sections -ffat-lto-objects -O0 -std=gnu99" />
 </name>
 </genericCmdLineData>
 <codeGenCmdLineTag v="-.appdatapath &quot;C:\Users\User\AppData\Local\Cypress Semiconductor\PSoC Creator\4.4&quot; -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -.fdsreffile=referenced_files.txt -p &quot;C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\Amperometry_v059_2.cyprj&quot; -d CY8C5868AXI-LP035 -s &quot;C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\Generated_Source\PSoC5&quot; -- -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE" />
@@ -2083,6 +2146,26 @@
 <v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\OpAmp_v1_90</v>
 <v>${CyRoot}\psoc\content\CyPrimitives\cyprimitives.cylib\cy_psoc3_abuf_v1_0\cy_psoc3_abuf_v1_0.cyprimitive</v>
 <v>${CyRoot}\psoc\content\CyPrimitives\cyprimitives.cylib\cy_psoc3_abuf_v1_0\cy_psoc3_abuf_v1_0.cysym</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\CharLCD_v2_20.cysch</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\CharLCD_v2_20.cysym</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\CharLCD_v2_20.pdf</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\CharLCD_v2_20.cystate</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\version.cypatch</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\API\BarGraph.c</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\API\CharLCD.c</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\API\CharLCD.h</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\API\CharLCD_PM.c</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\API\CustChars.c</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\Custom\cyapicustomizer.cs</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\Custom\cycharlcdcontrol.cs</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\Custom\cycharlcdcontrol.designer.cs</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\Custom\cycustomcharacter.cs</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\Custom\cycustomcharacter.designer.cs</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\Custom\cycustomizer.cs</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\Custom\Resources.Designer.cs</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\Custom\cycharlcdcontrol.resx</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\Custom\cycustomcharacter.resx</v>
+<v>${CyRoot}\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\CharLCD_v2_20\Custom\Resources.resx</v>
 <v>.\Amperometry_v059_2.cydwr</v>
 <v>..\..\..\..\Documents\PSoC Creator\4.4\Downloads ( 4.4).cylib\cy_boot_v6_10\PSoC5\API\cm3gcc.ld</v>
 <v>..\..\..\..\Documents\PSoC Creator\4.4\Downloads ( 4.4).cylib\cy_boot_v6_10\PSoC5\API\Cm3RealView.scat</v>
@@ -2299,6 +2382,12 @@
 <v>Generated_Source\PSoC5\USBUART_Dp_aliases.h</v>
 <v>Generated_Source\PSoC5\USBUART_Dp.c</v>
 <v>Generated_Source\PSoC5\USBUART_Dp.h</v>
+<v>Generated_Source\PSoC5\LCD.c</v>
+<v>Generated_Source\PSoC5\LCD.h</v>
+<v>Generated_Source\PSoC5\LCD_PM.c</v>
+<v>Generated_Source\PSoC5\LCD_LCDPort_aliases.h</v>
+<v>Generated_Source\PSoC5\LCD_LCDPort.c</v>
+<v>Generated_Source\PSoC5\LCD_LCDPort.h</v>
 </gen_list>
 <warp_dep>
 <v>C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\warp\lib\ieee\work\stdlogic.vif</v>
@@ -2308,7 +2397,7 @@
 <v>C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\warp\lib\common\stdlogic\rtlpkg.vif</v>
 <v>C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\warp\lib\common\stdlogic\cy_psoc3.vif</v>
 </warp_dep>
-<deps_time v="133685402408524594" />
+<deps_time v="133685624543769847" />
 <top_block v="TopDesign" />
 <last_generation v="124" />
 <pdl_path v="" />
@@ -2318,12 +2407,12 @@
 <dataGuid v="769d31ea-68b1-4f0c-b90a-7c10a43ee563">
 <CyGuid_769d31ea-68b1-4f0c-b90a-7c10a43ee563 type_name="CyDesigner.Common.ProjMgmt.Model.CyLinkCustomData" version="1">
 <link_deps_times>
-<name_val_pair name="c9323d49-d323-40b8-9b59-cc008d68a989@Debug@CortexM3" v="133685402605722847" />
+<name_val_pair name="c9323d49-d323-40b8-9b59-cc008d68a989@Debug@CortexM3" v="133685624855777278" />
 </link_deps_times>
 </CyGuid_769d31ea-68b1-4f0c-b90a-7c10a43ee563>
 </dataGuid>
 <dataGuid v="237c8ed1-e161-4c9d-af97-582eda6d6952">
-<CyGuid_d442b0b8-dd66-4eee-b5be-1cb213792b31 type_name="CyDesigner.Device.FitterPSoC.Common.DesignWideResources.DeviceEditor.CyCustomAnalogDevData" version="1" ZoomToPage="True" ZoomScale="0.425616622" ScrollX="-284" ScrollY="2">
+<CyGuid_d442b0b8-dd66-4eee-b5be-1cb213792b31 type_name="CyDesigner.Device.FitterPSoC.Common.DesignWideResources.DeviceEditor.CyCustomAnalogDevData" version="1" ZoomToPage="True" ZoomScale="0.5519837" ScrollX="-215" ScrollY="2">
 <ComponentStates>
 <CyGuid_50eb6c77-9735-4e57-8808-b714f60fbc0d type_name="CyDesigner.Device.FitterPSoC.Common.DesignWideResources.DeviceEditor.CyItemState" version="1" Name="Net_1470" Color="-9580801" />
 <CyGuid_50eb6c77-9735-4e57-8808-b714f60fbc0d type_name="CyDesigner.Device.FitterPSoC.Common.DesignWideResources.DeviceEditor.CyItemState" version="1" Name="AmuxNet::AMux_TIA_input" Color="-8213505" />
@@ -2351,6 +2440,96 @@
 <CyGuid_50eb6c77-9735-4e57-8808-b714f60fbc0d type_name="CyDesigner.Device.FitterPSoC.Common.DesignWideResources.DeviceEditor.CyItemState" version="1" Name="\VDAC_source:Net_77\" Color="-16723095" />
 </ComponentStates>
 </CyGuid_d442b0b8-dd66-4eee-b5be-1cb213792b31>
+</dataGuid>
+<dataGuid v="718b6b01-68ba-4a17-b632-d38dc61ebb3b">
+<CyGuid_718b6b01-68ba-4a17-b632-d38dc61ebb3b type_name="CyDesigner.Gde.Schematic.Symbolcatalog.CyComponentCatalogControl+CyCompCatalogData" version="1" tab="Cypress">
+<tree_states_tab_names>
+<v>Community</v>
+<v>Cypress</v>
+<v>Default</v>
+<v>Off-Chip</v>
+</tree_states_tab_names>
+<tree_states>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>Community Component Catalog</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>Community Component Catalog</v>
+<v>Community Component Catalog\Analog</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Cypress Component Catalog\Digital">
+<ExpandedNodeIds>
+<v>Cypress Component Catalog</v>
+<v>Cypress Component Catalog\Communications</v>
+<v>Cypress Component Catalog\Communications\USB</v>
+<v>Cypress Component Catalog\Digital</v>
+<v>Cypress Component Catalog\Display</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>Cypress Component Catalog\Communications\I2C</v>
+<v>Cypress Component Catalog\Communications\I2S</v>
+<v>Cypress Component Catalog\Communications\MDIO Interface</v>
+<v>Cypress Component Catalog\Communications\SMBus/PMBus Slave</v>
+<v>Cypress Component Catalog\Communications\Software Transmit UART [v1.50]</v>
+<v>Cypress Component Catalog\Communications\SPDIF Transmitter [v1.20]</v>
+<v>Cypress Component Catalog\Communications\SPI</v>
+<v>Cypress Component Catalog\Communications\UART [v2.50]</v>
+<v>Cypress Component Catalog\Communications\USB</v>
+<v>Cypress Component Catalog\Communications\USB\USBFS [v3.20]</v>
+<v>Cypress Component Catalog\Communications\USB\USBMIDI [v3.20]</v>
+<v>Cypress Component Catalog\Communications\USB\USBUART (CDC Interface) [v3.20]</v>
+<v>Cypress Component Catalog\Digital</v>
+<v>Cypress Component Catalog\Digital\Functions</v>
+<v>Cypress Component Catalog\Digital\Logic</v>
+<v>Cypress Component Catalog\Digital\Registers</v>
+<v>Cypress Component Catalog\Digital\Utility</v>
+<v>Cypress Component Catalog\Display</v>
+<v>Cypress Component Catalog\Display\4 Digit 7-Segment LED Driver [v1.10]</v>
+<v>Cypress Component Catalog\Display\Character LCD [v2.20]</v>
+<v>Cypress Component Catalog\Display\Character LCD with I2C interface [v1.20]</v>
+<v>Cypress Component Catalog\Display\Graphic LCD 8-bit Parallel Interface Macro [v1.80]</v>
+<v>Cypress Component Catalog\Display\Graphic LCD 16-bit Parallel Interface Macro [v1.80]</v>
+<v>Cypress Component Catalog\Display\Graphic LCD Controller [v1.80]</v>
+<v>Cypress Component Catalog\Display\Graphic LCD Controller Macro [v1.80]</v>
+<v>Cypress Component Catalog\Display\Graphic LCD Parallel Interface [v1.80]</v>
+<v>Cypress Component Catalog\Display\LED Segment and Matrix Driver [v1.10]</v>
+<v>Cypress Component Catalog\Display\ResistiveTouch [v2.0]</v>
+<v>Cypress Component Catalog\Display\Segment LCD - Static [v2.30]</v>
+<v>Cypress Component Catalog\Display\Segment LCD [v3.40]</v>
+<v>Cypress Component Catalog\Filters</v>
+<v>Cypress Component Catalog\Ports and Pins</v>
+<v>Cypress Component Catalog\Power Supervision</v>
+<v>Cypress Component Catalog\System</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>Default Component Catalog</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>Default Component Catalog</v>
+<v>Default Component Catalog\Components</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>Off-Chip Component Catalog</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>Off-Chip Component Catalog</v>
+<v>Off-Chip Component Catalog\Active</v>
+<v>Off-Chip Component Catalog\Diodes</v>
+<v>Off-Chip Component Catalog\Electro-Mechanical</v>
+<v>Off-Chip Component Catalog\Passive</v>
+<v>Off-Chip Component Catalog\Power</v>
+<v>Off-Chip Component Catalog\Sensors</v>
+<v>Off-Chip Component Catalog\Transistors</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+</tree_states>
+</CyGuid_718b6b01-68ba-4a17-b632-d38dc61ebb3b>
 </dataGuid>
 </userData>
 </CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997>

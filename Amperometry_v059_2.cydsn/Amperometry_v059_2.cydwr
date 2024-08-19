@@ -513,6 +513,7 @@
       <Data key="94d712ac-e3bf-426c-8558-504b9163aef8" value="TIA_resistor2" />
       <Data key="267a9610-7026-4eef-8e2b-05956b389d72" value="LED4" />
       <Data key="830c1cf8-6447-45c1-a307-1609af586bb0" value="Working_Electrode" />
+      <Data key="6330fff2-85d1-49a8-813c-de35d0821432/ed092b9b-d398-4703-be89-cebf998501f6" value="LCD_LCDPort" />
       <Data key="08074fec-0ff6-4280-af2e-a5ee00a9981a" value="TIA_resistor1" />
       <Data key="3460172e-29e7-4539-a586-f8c21160916f" value="LED3" />
       <Data key="52280344-61c6-4e49-afe9-d6922d6c8479" value="Test_pin" />
@@ -3679,6 +3680,29 @@
     <Group key="830c1cf8-6447-45c1-a307-1609af586bb0">
       <Group key="0">
         <Data key="Port Format" value="0,0" />
+      </Group>
+    </Group>
+    <Group key="6330fff2-85d1-49a8-813c-de35d0821432/ed092b9b-d398-4703-be89-cebf998501f6">
+      <Group key="0">
+        <Data key="Port Format" value="2,0" />
+      </Group>
+      <Group key="1">
+        <Data key="Port Format" value="2,1" />
+      </Group>
+      <Group key="2">
+        <Data key="Port Format" value="2,2" />
+      </Group>
+      <Group key="3">
+        <Data key="Port Format" value="2,3" />
+      </Group>
+      <Group key="4">
+        <Data key="Port Format" value="2,4" />
+      </Group>
+      <Group key="5">
+        <Data key="Port Format" value="2,5" />
+      </Group>
+      <Group key="6">
+        <Data key="Port Format" value="2,6" />
       </Group>
     </Group>
     <Group key="08074fec-0ff6-4280-af2e-a5ee00a9981a">

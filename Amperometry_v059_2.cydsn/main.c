@@ -91,23 +91,49 @@ CY_ISR(adcAmpInterrupt){
 int main() {
     /* Initialize all the hardware and interrupts */
     CyGlobalIntEnable; 
-//    LCD_Start();
-//    LCD_ClearDisplay();
-//    LCD_PrintString("DPV1");
+
+    LCD_Start();
+    LCD_ClearDisplay();
+    LCD_PrintString("Initialisation");
     
     USBUART_Start(0, USBUART_5V_OPERATION);
+    LCD_ClearDisplay();
+    LCD_PrintString("USB Started");
+    
     helper_HardwareSetup();
+    LCD_ClearDisplay();
+    LCD_PrintString("Potentiostat");
+    
     ADC_SigDel_SelectConfiguration(2, DO_NOT_RESTART_ADC);
+    LCD_ClearDisplay();
+    LCD_PrintString("ADC Configured");
+    
     while(!USBUART_GetConfiguration());  
+    
+    LCD_ClearDisplay();
+    LCD_PrintString("USB Configured");
     
     isr_dac_StartEx(dacInterrupt);
     isr_dac_Disable();  // disable interrupt until a voltage signal needs to be given
+    
+    LCD_ClearDisplay();
+    LCD_PrintString("dacInterrupt");
+    
+    
     isr_adc_StartEx(adcInterrupt);
     isr_adc_Disable();
+    LCD_ClearDisplay();
+    LCD_PrintString("adcInterrupt");
+    
+    
     
     USBUART_CDC_Init();
+    
+    LCD_ClearDisplay();
+    LCD_PrintString("USB CDCinit");
+        
     isr_adcAmp_StartEx(adcAmpInterrupt);
-    isr_adcAmp_Disable();
+    isr_adcAmp_Disable();   
     
     //CyWdtStart(CYWDT_1024_TICKS, CYWDT_LPMODE_NOCHANGE);
     
@@ -121,9 +147,10 @@ int main() {
         }
         
         if (Input_Flag == true) {
-//                LCD_ClearDisplay();
-//                sprintf(LCD_str, "%.*s", 16, OUT_Data_Buffer);
-//                LCD_PrintString(LCD_str);
+                LCD_ClearDisplay();
+                sprintf(LCD_str, "%.*s", 16, OUT_Data_Buffer);
+                LCD_PrintString(LCD_str);
+                
             switch (OUT_Data_Buffer[0]) { 
                 
             case EXPORT_STREAMING_DATA: ; // 'F' User wants to export streaming data         
@@ -144,7 +171,7 @@ int main() {
                     USB_Export_Data((uint8*)"Error Exporting", 16);
                 }
                 break;
-            case EXPORT_LUT: ; // 'l' expport Look up table
+            case EXPORT_LUT: ; // 'l' export Look up table
                 user_export_lut(OUT_Data_Buffer);
                 break;
             case EXPORT_LUT_LENGTH: ; // 'g' export lut_length variable
