@@ -108,7 +108,7 @@ int main() {
     LCD_ClearDisplay();
     LCD_PrintString("ADC Configured");
     
-    while(!USBUART_GetConfiguration());  
+    while(USBUART_GetConfiguration()==0){};  
     
     LCD_ClearDisplay();
     LCD_PrintString("USB Configured");
@@ -139,9 +139,15 @@ int main() {
     
     //helper_Writebyte_EEPROM(0, VDAC_ADDRESS);
     
+    
+    
+    
     for(;;) {
         //CyWdtClear();
-
+        
+     //   USB_Export_Data((uint8*)"Data Exporting", 14);
+     //   CyDelay(1000);     
+        
         if (Input_Flag == false) {  // make sure any input has already been dealt with
             Input_Flag = USB_CheckInput(OUT_Data_Buffer);  // check if there is a response from the computer
         }
