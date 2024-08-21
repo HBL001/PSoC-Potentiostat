@@ -61,14 +61,14 @@ void helper_set_voltage_source(uint8_t voltage_source) {
     
     if (selected_voltage_source == VDAC_IS_DVDAC) {
         VDAC_source_Stop();  // incase the other DAC is on, turn it off
-        //LCD_Position(1,0);
-        //LCD_PrintString("DVDAC AMux");
+        LCD_Position(1,0);
+        LCD_PrintString("DVDAC AMux");
         
     }
     else {
         DVDAC_Stop();  // incase the other DAC is on, turn it off
-        //LCD_Position(1,0);
-        //LCD_PrintString("VDAC AMux");
+        LCD_Position(1,0);
+        LCD_PrintString("VDAC AMux");
     }
     DAC_Start();
     DAC_Sleep();

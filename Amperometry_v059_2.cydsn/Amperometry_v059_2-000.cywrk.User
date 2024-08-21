@@ -13,7 +13,7 @@
 <v>Output</v>
 </TreeKeys>
 <TreeStates>
-<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Amperometry_v059_2-000\Amperometry_v059_2\Amperometry_v059_2.cydwr\Pins">
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Amperometry_v059_2-000\Amperometry_v059_2\Source Files\lut_protocols.c">
 <ExpandedNodeIds>
 <v>Amperometry_v059_2-000</v>
 <v>Amperometry_v059_2-000\Amperometry_v059_2</v>
@@ -319,14 +319,10 @@
 <OpenDocs>
 <name v=".\main.c" />
 <name v=".\TopDesign\TopDesign.cysch" />
-<name v=".\Amperometry_v059_2.cydwr" />
 <name v=".\user_selections.c" />
-<name v=".\lut_protocols.c" />
-<name v=".\usb_protocols.c" />
-<name v=".\calibrate.h" />
-<name v=".\DAC.h" />
-<name v=".\DAC.c" />
-<name v=".\globals.h" />
+<name v=".\Amperometry_v059_2.cydwr" />
+<name v=".\helper_functions.h" />
+<name v=".\helper_functions.c" />
 </OpenDocs>
 <OpenDocsLayout><![CDATA[<?xml version="1.0"?><!--
 
@@ -334,7 +330,7 @@
   Copyright (c) 2001-2016 Actipro Software LLC.  All rights reserved.
   http://www.actiprosoftware.com
 
---><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1173, 534" SelectedTabbedMdiWindow="f353f0b6-e5bf-4245-b1c6-48f4c47ad1a5"><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\main.c" Guid="fe3d6e4b-0abc-4864-a3ea-093b5ea62cdd" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\TopDesign\TopDesign.cysch" Guid="f353f0b6-e5bf-4245-b1c6-48f4c47ad1a5" /><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="532ab3f3-3830-48f6-b205-4a79a0d09e53" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\Amperometry_v059_2.cydwr" Guid="91f3dc3a-ed01-4085-8102-71531b26b217" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\user_selections.c" Guid="8686b22d-efc2-4d0d-8e1e-2eced3ddb01c" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\lut_protocols.c" Guid="379b1fb4-e706-4265-b83e-07eb8c2353a2" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\usb_protocols.c" Guid="e32460bb-9539-40c2-9802-b29f78a52627" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\calibrate.h" Guid="5a39d01a-72c7-448d-968d-280781fceefe" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\DAC.h" Guid="3c038325-f8a0-4b8e-83d2-f29c5d56f9fe" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\DAC.c" Guid="6b55ce3b-d99d-4709-9f5a-579548e80668" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\globals.h" Guid="58a569e4-5172-4874-b8ae-35a49ee1e194" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1388, 850" SelectedTabbedMdiWindow="8686b22d-efc2-4d0d-8e1e-2eced3ddb01c"><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\main.c" Guid="fe3d6e4b-0abc-4864-a3ea-093b5ea62cdd" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\TopDesign\TopDesign.cysch" Guid="f353f0b6-e5bf-4245-b1c6-48f4c47ad1a5" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\user_selections.c" Guid="8686b22d-efc2-4d0d-8e1e-2eced3ddb01c" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\Amperometry_v059_2.cydwr" Guid="e8efbeb1-99ae-46d8-ab59-5a1bda9c90fc" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\helper_functions.h" Guid="e9804538-b443-4401-8b0c-b964505736c3" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Amperometry_v059_2.cydsn\helper_functions.c" Guid="8185581d-db6e-432f-9ee9-04c451818b02" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
 <config v="" />
 <AutoUpdate v="true" />
 </CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>
