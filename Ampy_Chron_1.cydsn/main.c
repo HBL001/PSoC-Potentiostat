@@ -1,50 +1,39 @@
 /*********************************************************************************
 * File Name: main.c
-* Version 0.4
+* Version 1
 *
 * Description:
-*  Main program to use PSoC 5LP as an electrochemcial device
 *
 **********************************************************************************
- * Copyright Naresuan University, Phitsanulok Thailand
+* Some parts Copyright Highland Biosciences Ltd., Scotland
+* Some parts Copyright Naresuan University, Phitsanulok Thailand
 * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
-
+*
+* Refactored Aug 8, 2024
 
 PSoC-Potentiostat Commands
 The following are the inputs commands the device will take, all inputs are inputted as ASCII strings.
 
-'I' - Identifies the device, will respond with "USB Test - v04" through the USB
-
+'I' - Identifies the device, will respond with "USB Test " through the USB
 "L|X" - Set electrode configuration to 2 or 3 electrodes. X is the number of electrodes, only 2 or 3 works
-
 "S|XXXX|YYYY|ZZZZZ|AB" - Make a look up table for a cyclic voltammetry experiment. XXXX is the uint16 with the starting number to put in the DAC for the experiment. YYYY is the uint16 with the ending number to put in the dac for the experiment. ZZZZZ is the uint16 to put in the period of the PWM timer to set the sampling rate. A is a char of 'L' or 'C' to make a linear sweep ('L') or a cyclic voltammetry ('C') look up table. B is a char of 'Z' or 'S' to start the waveform at 0 Volts ('Z') or at the value entered in the XXXX field.
-
 'R' - Start a cyclic voltammerty experiment with the last look up table that was inputted. To get the data get the ADC Array 0.
-
 "EX" - Export an ADC array. There are 4 arrays, cyclic voltammetry experiments are stored in the 0 array, the other arrays are used for streaming applications.
-
 "M|XXXX|YYYY" - Run an amperometry experiment. You need to start to read the data the device will start streaming when given this command. XXXX is an uint16 number to set the DAC value to so the electrodes are at the approriate voltage. YYYY is an uint16 of how many data points to collect in each ADC buffer before exporting the data
-
-"FX" - Exprot an ADC array for streamming data where X is the number of the ADC array to get from 0-3.
-
-"A|U|X|Y|Z|W" - Set up the TIA and ADC. U is the ADC configuration to use where config 1 uses a Vref of +-2.048 V and config 2 uses +-1.024 V. X is the TIA resistor value index, a string between 0-7 that sets the TIA resistor value {0-20k, 1-30k, 2-40k, 3-80k, 4-120k, 5-250k, 6-500k, 7-1000k}. Y is the adc buffer gain setting {1, 2, 4, 8}. Z is 'T' or 'F' for if an external resistor is to be used and the AMux_working_electrode should be set according. W is 0 or 1 for which user resistor should be selected by the AMux_working_electrode.
-
+"FX" - Export an ADC array for streamming data where X is the number of the ADC array to get from 0-3.
+"A|U|X|Y|Z|W" - Set up the TIA and ADC. U is the ADC configuration to use where config 1 uses a Vref of +-2.048 V and config 2 uses +-1.024 V.
+X is the TIA resistor value index, 
+a string between 0-7 that sets the TIA resistor value {0-20k, 1-30k, 2-40k, 3-80k, 4-120k, 5-250k, 6-500k, 7-1000k}. 
+Y is the adc buffer gain setting {1, 2, 4, 8}. Z is 'T' or 'F' for if an external resistor is to be used and the AMux_working_electrode should be set according. 
+W is 0 or 1 for which user resistor should be selected by the AMux_working_electrode.
 'B' - Calibrate the ADC and TIA signal chain.
-
 "VXY" - Check or set the voltage source. X is 'R' to read the voltage source or 'S' to set the voltage source. When setting the voltage source Y should be '2' for the 12-bit dithering VDAC, all other numbers will default to the 8-bit VDAC. When reading the voltage source, the device will return the string "VZ" where Z is the voltage source choice selected before.
-
 "S|XXXXX" - set the period value of the PWM used as a timer that starts the isrs to change the DAC and read the ADC. XXXXX is a uint16 that is put into the PWM that set the timing with a sample rate of 240 kHz / XXXXX
-
 "C|XXXXX" - set the compare value of the PWM used as a timer that sets when the DAC changes compared to when the ADC measures.
-
 'X' - Reset the device. Disable all isrs and put the hardware to sleep.
-
 "D|XXXX" - Set the voltage control DAC. XXXX is the value to put in the DAC, which ever one is active.
-
 'H' - Wake up all the hardware.
-
 's' - Short the TIA so the working electrode can sink more current.
-
 'd' - Stop shorting the TIA
 
 
@@ -66,13 +55,6 @@ The following are the inputs commands the device will take, all inputs are input
 
 // #define Work_electrode_resistance 1400  // ohms, estimate of resistance from SC block to the working electrode pin
 
-// hack to send small messages
-//union small_data_usb_union {
-//    uint8 usb[64];
-//    int16 data[32];
-//};
-//union small_data_usb_union amp_union;
-
 /* make buffers for the USB ENDPOINTS */
 uint8_t IN_Data_Buffer[MAX_NUM_BYTES];
 uint8_t OUT_Data_Buffer[MAX_NUM_BYTES];
@@ -82,9 +64,7 @@ char usb_str[64];  // buffer for string to send to the usb
 
 uint8_t Input_Flag = false;  // if there is an input, set this flag to process it
 uint8_t AMux_channel_select = 0;  // Let the user choose to use the two electrode configuration (set to 0) or a three
-// electrode configuration (set to 1) by choosing the correct AMux channel
-
-uint8_t adc_recording_channel = 0;
+uint8_t adc_recording_channel = 0;// electrode configuration (set to 1) by choosing the correct AMux channel
 uint16_t lut_length = 3000;  // how long the look up table is,initialize large so when starting isr the ending doesn't get triggered
 //uint16_t lut_hold = 0;  // for debugging
 uint8_t adc_hold;  // value to hold what adc buffer was just filled
@@ -118,7 +98,6 @@ CY_ISR(adcAmpInterrupt){
     lut_index++;  
     if (lut_index >= buffer_size_data_pts) {
         ADC_array[adc_recording_channel].data[lut_index] = 0xC000; 
-        // counter += 1;  // for debug
         lut_index = 0;
         adc_hold = adc_recording_channel;
         adc_recording_channel = (adc_recording_channel + 1) % ADC_CHANNELS;
@@ -178,12 +157,9 @@ int main() {
     
     //helper_Writebyte_EEPROM(0, VDAC_ADDRESS);
       
+    
     for(;;) {
-        //CyWdtClear();
-        
-     //   USB_Export_Data((uint8*)"Data Exporting", 14);
-     //   CyDelay(1000);     
-        
+       
         if (Input_Flag == false) {  // make sure any input has already been dealt with
             Input_Flag = USB_CheckInput(OUT_Data_Buffer);  // check if there is a response from the computer
         }
