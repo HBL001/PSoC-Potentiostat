@@ -104,8 +104,8 @@ void user_voltage_source_funcs(uint8_t data_buffer[]) {
     }
     else if (data_buffer[1] == 'S') {  // User wants to set the voltage source
         helper_set_voltage_source(data_buffer[2]-'0');
-        DAC_Start();
-        DAC_Sleep();
+        dac_start();
+        dac_sleep();
     }
 }
 
@@ -182,8 +182,6 @@ void user_reset_device(void) {
     isr_adc_Disable();
     isr_adcAmp_Disable();
     helper_HardwareSleep();
-    
-    lut_index = 0;  
 }
 
 /******************************************************************************
@@ -206,8 +204,7 @@ void user_identify(void) {
     isr_adcAmp_Disable();
     isr_adc_Disable();
     isr_dac_Disable();
-    USB_Export_Data((uint8_t*)"Naresuan Potentiostat", 21);
-    // TODO:  Put in a software reset incase something goes wrong the program can reattach
+    USB_Export_Data((uint8_t*)"PSTAT ", 7);
 }
 
 /******************************************************************************
@@ -275,102 +272,6 @@ uint16_t user_chrono_lut_maker(uint8_t data_buffer[]) {
     PWM_isr_Sleep();
     return 4000; // the look up table length will be 4000
 }
-
-
-
-
-
-/******************************************************************************
-* Function Name: user_dpv_lut_maker
-*******************************************************************************
-*
-* Summary:
-*  Make a look up table that will run a differential pulse experiment.  Hackish now
-* 
-* Parameters:
-*  uint8 data_buffer[]: array of chars used to make the look up table
-*  input is G|XXXX|YYYY|UUU|VVV|ZZZZZ|AB: 
-*  XXXX  - uint16_t the number to put in the DAC for the baseline voltage 
-*  YYYY  - uint16_t the dac value to stop at
-*  UUU   - uint16_t the increase in the dac value for the pulse
-*  VVV   - uint16_t the pulse increment of the DPV protocol
-*  ZZZZZ - uint16_t to put in the period of the PWM timer to set the sampling rate
-*  A - char of 'L' or 'C' to make a linear sweep ('L') or a cyclic voltammetry ('C')
-*      look up table
-*  B - char of 'Z' or 'S' to start the waveform at 0 Volts ('Z') or at the value 
-*      entered in the XXXX field
-*  
-* Global variables:
-*  uint16_t lut_value: value gotten from the look up table that is to be applied to the DAC
-*  uint16_t waveform_lut[]:  look up table of the waveform to apply to the DAC
-*  
-* Return:
-*  index - how far in the look up table that has been filled
-*
-*******************************************************************************/
-// TODO: move the hardware parts out
-//uint16_t user_dpv_lut_maker(uint8_t data_buffer[]) {
-//    PWM_isr_Wakeup();
-//    uint16_t start = LUT_Convert2Dec(&data_buffer[INDEX_START_VALUE], 4);
-//    uint16_t end = LUT_Convert2Dec(&data_buffer[INDEX_END_VALUE], 4);
-//    uint16_t pulse_height = LUT_Convert2Dec(&data_buffer[INDEX_SWV_PULSE_HEIGHT], 4);
-//    uint16_t pulse_inc = LUT_Convert2Dec(&data_buffer[INDEX_SWV_INC], 4);
-//
-//    uint8_t sweep_type = data_buffer[INDEX_SWV_SWEEP_TYPE];
-//    uint8_t start_volt_type = data_buffer[INDEX_SWV_START_VOLT_TYPE];
-//    //LCD_ClearDisplay();
-//
-//    //sprintf(LCD_str, "%d|%d|%d|%d", start, end, pulse_height, pulse_inc);
-//    //sprintf(LCD_str, "%.*s", 16, data_buffer);
-//    //LCD_PrintString(LCD_str);
-//    uint16_t timer_period = LUT_Convert2Dec(&data_buffer[INDEX_SWV_TIMER_VALUE], 5);
-////
-//    PWM_isr_WritePeriod(timer_period);
-//    uint16_t lut_length = 0;
-//    if (sweep_type == 'L') {
-//        lut_length = LUT_make_swv_line(start, end, pulse_height, pulse_inc, 0);
-//        waveform_lut[lut_length] = waveform_lut[lut_length-1];  // dac is changed once before end so double last voltage
-//        lut_length += 1;
-//    }
-//    else if (start_volt_type == 'Z') {  // Make a Cyclic voltammetry look up table that starts at 0 volts
-//        lut_length = LUT_MakeCVStartZero_SWV(start, end, pulse_height, pulse_inc);
-//    }
-//    else if (start_volt_type == 'S') {  // Make a Cyclic voltammetry look up table that starts at the first dac value
-//        lut_length = LUT_MakeTriangle_Wave_SWV(start, end, pulse_height, pulse_inc);
-//    }
-//    lut_value = waveform_lut[0];  // setup the dac so when it starts it will be at the correct voltage
-//
-//    PWM_isr_Sleep();
-//    return lut_length; // the look up table length will be 4000
-//}
-
-
-/******************************************************************************
-* Function Name: user_lookup_table_maker
-*******************************************************************************
-*
-* Summary:
-*  Make a look up table that will a cyclic voltammetry or linear sweep experiment
-* 
-* Parameters:
-*  uint8 data_buffer[]: array of chars used to make the look up table
-*  input is S|XXXX|YYYY|ZZZZZ|AB: 
-*  XXXX - uint16_t with the starting number to put in the DAC for the experiment
-*  YYYY - uint16_t with the ending number to put in the dac for the experiment
-*  ZZZZZ - uint16_t to put in the period of the PWM timer to set the sampling rate
-*  A - char of 'L' or 'C' to make a linear sweep ('L') or a cyclic voltammetry ('C')
-*      look up table
-*  B - char of 'Z' or 'S' to start the waveform at 0 Volts ('Z') or at the value 
-*      entered in the XXXX field
-*  
-* Global variables:
-*  uint16_t lut_value: value to get from the look up table and apply to the DAC
-*  uint16_t waveform_lut[]:  look up table of the waveform to apply to the DAC
-*  
-* Return:
-*  uint16_t lut_length - how many look up table elements there are
-*
-*******************************************************************************/
 
 uint16_t user_lookup_table_maker(uint8_t data_buffer[]) {
     printf("make look up table\n");

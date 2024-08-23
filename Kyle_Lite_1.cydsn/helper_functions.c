@@ -40,43 +40,6 @@ uint8_t helper_check_voltage_source(void) {
 }
 
 /******************************************************************************
-* Function Name: helper_set_voltage_source
-*******************************************************************************
-*
-* Summary:
-*  Set the voltage source.  Connects the analog mux to the correct channel and 
-*  stops the other voltage source if it was on and starts and puts to sleep the DAC
-*
-* Parameters:
-*  uint8 voltage_source: which voltage source has been selected
-*
-* Global variables:
-*  selected_voltage_source:  which DAC is to be used
-*
-*******************************************************************************/
-
-void helper_set_voltage_source(uint8_t voltage_source) {
-    selected_voltage_source = voltage_source;
-    helper_Writebyte_EEPROM(voltage_source, VDAC_ADDRESS);
-    
-    if (selected_voltage_source == VDAC_IS_DVDAC) {
-        VDAC_source_Stop();  // incase the other DAC is on, turn it off
-        LCD_Position(1,0);
-        LCD_PrintString("DVDAC AMux");
-        
-    }
-    else {
-        DVDAC_Stop();  // incase the other DAC is on, turn it off
-        LCD_Position(1,0);
-        LCD_PrintString("VDAC AMux");
-    }
-    DAC_Start();
-    DAC_Sleep();
-}
-
-
-
-/******************************************************************************
 * Function Name: helper_Writebyte_EEPROM
 *******************************************************************************
 *
@@ -130,28 +93,29 @@ uint8_t helper_Readbyte_EEPROM(uint16_t address) {
 *******************************************************************************
 *
 * Summary:
-*    Setup all the hardware needed for an experiment.  This will start all the hardware
-*    and then put them to sleep so they can be awoke for an experiment.  Connect all the 
-*    defualt analog muxes
+*   Setup all the hardware needed for an experiment.  
+*   Connect all the default analog muxes
 *
 *******************************************************************************/
 
-
-void helper_HardwareSetup(void) {
+void helper_HardwareSetup(uint8_t AMux_channel_select) {
     helper_HardwareStart();
     helper_HardwareSleep();
 
     AMux_electrode_Init();
     AMux_TIA_input_Init();
     AMux_TIA_resistor_bypass_Init();
+    
     AMux_V_source_Init();
+    
+    
     AMux_TIA_resistor_bypass_Init();
-    DAC_Start();  // DAC has to be started after the AMux_V_source because it will set it based what DAC source is selected
+    dac_start();  // DAC has to be started after the AMux_V_source because it will set it based what DAC source is selected
     
     // initialise the analog muxes connections 
-    AMux_electrode_Select(three_electrode_config_ch);  // start with 3 electrode configuration
-    AMux_TIA_input_Select(AMux_TIA_working_electrode_ch);  // Connect the working electrode
-    AMux_TIA_resistor_bypass_Select(0);  // Start with no extra TIA resistor
+    AMux_electrode_Select(AMux_channel_select);             // start with 3 electrode configuration
+    AMux_TIA_input_Select(AMux_TIA_working_electrode_ch);   // Connect the working electrode
+    AMux_TIA_resistor_bypass_Select(0);                     // Start with no extra TIA resistor
 
 }
 
@@ -185,9 +149,9 @@ void helper_HardwareWakeup(void){  // wakeup all the components that have to be 
     ADC_SigDel_Wakeup();
     TIA_Wakeup();
     VDAC_TIA_Wakeup();
-    DAC_Wakeup();
+    dac_wakeup();
     CyDelay(1);
-    DAC_SetValue(lut_value);
+    dac_setvalue(lut_value);
     CyDelay(10);
     Opamp_Aux_Wakeup();
     

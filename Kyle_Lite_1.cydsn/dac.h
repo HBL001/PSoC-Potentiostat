@@ -17,12 +17,10 @@
 #include "cytypes.h"
 #include "helper_functions.h"
 #include "globals.h"
-
 /**************************************
 *        AMuX API Constants
 **************************************/
-    
-#define DVDAC_channel 1
+
 #define VDAC_channel 0
     
     
@@ -38,10 +36,10 @@ extern uint16_t dac_ground_value;
 *        Function Prototypes
 ***************************************/ 
     
-void DAC_Start(void);
-void DAC_Sleep(void);
-void DAC_Wakeup(void);
-void DAC_SetValue(uint16_t value);
+void dac_start(void);
+void dac_sleep(void);
+void dac_wakeup(void);
+void dac_setvalue(uint16_t value);
     
 #endif
 /* [] END OF FILE */

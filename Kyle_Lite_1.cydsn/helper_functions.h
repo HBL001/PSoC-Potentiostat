@@ -16,7 +16,7 @@
 #include "cytypes.h"
 #include "stdio.h"  // gets rid of the type errors
 #include "globals.h"
-#include "DAC.h"
+#include "dac.h"
     
 /***************************************
 *        Variables
@@ -35,7 +35,7 @@ void helper_set_voltage_source(uint8_t selected_voltage_source);
 uint8_t helper_Writebyte_EEPROM(uint8_t data, uint16_t address);
 uint8_t helper_Readbyte_EEPROM(uint16_t address);
 
-void helper_HardwareSetup(void);
+void helper_HardwareSetup(uint8_t AMux_channel_select);
 void helper_HardwareStart(void);
 void helper_HardwareSleep(void);
 void helper_HardwareWakeup(void);

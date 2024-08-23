@@ -41,6 +41,11 @@
 #define STOP_SHORTING_TIA               'd'
 #define DPV_LUT                         'G'
     
+// Electrode definitions
+#define TWO_ELECTRODE_CONFIG            0
+#define THREE_ELECTRODE_CONFIG          1 
+
+    
 // index of start of different parts of input string
 #define INDEX_START_VALUE               2
 #define INDEX_END_VALUE                 7
@@ -74,8 +79,9 @@
 #define VIRTUAL_GROUND              2048  // TODO: make variable
 
 // Define the AMux channels
-#define two_electrode_config_ch     0
-#define three_electrode_config_ch   1 
+
+    
+  
 #define AMux_V_VDAC_source_ch       0
 #define AMux_V_DVDAC_source_ch      1
 #define AMux_TIA_working_electrode_ch 1
@@ -94,21 +100,21 @@
     
     
 /**************************************
-*        AMuX API Constants
+*        ECHO TO USB SERIAL
 **************************************/
     
-//#define DVDAC_channel 1
-//#define VDAC_channel 0
+#define ECHO_USB_OFF    0
+#define ECHO_USB_ON     1
     
     
 /**************************************
 *        Global Variables
 **************************************/   
-    
-    
-
+     
 double voltage;
+uint16_t dacIn;
 double current;
+uint8_t echo;
     
 uint16_t dac_ground_value;  // value to load in the DAC
     
