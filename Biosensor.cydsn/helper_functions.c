@@ -23,11 +23,6 @@
 * Parameters:
 *
 * Return:
-*  VDAC_NOT_SET [0] - if no voltage source has been selected yet
-*  VDAC_IS_VDAC [1] - user indicated no external capacitor is installed, 
-*                     so 8-bit VDAC should be used
-*  VDAC_IS_DVDAC [2] - user has indicated and external capacitor is installed
-*                      so the dithering VDAC (DVDAC) should be set
 *
 * Global variables:
 *  OUT_ENDPOINT:  number that is the endpoint coming out of the computer
@@ -108,9 +103,8 @@ void helper_HardwareSetup(uint8_t AMux_channel_select) {
     
     AMux_V_source_Init();
     
-    
     AMux_TIA_resistor_bypass_Init();
-    dac_start();  // DAC has to be started after the AMux_V_source because it will set it based what DAC source is selected
+    dac_Start();  // DAC has to be started after the AMux_V_source because it will set it based what DAC source is selected
     
     // initialise the analog muxes connections 
     AMux_electrode_Select(AMux_channel_select);             // start with 3 electrode configuration
@@ -149,12 +143,9 @@ void helper_HardwareWakeup(void){  // wakeup all the components that have to be 
     ADC_SigDel_Wakeup();
     TIA_Wakeup();
     VDAC_TIA_Wakeup();
-    dac_wakeup();
+    dac_Wakeup();
     CyDelay(1);
-    dac_setvalue(lut_value);
-    CyDelay(10);
     Opamp_Aux_Wakeup();
-    
     PWM_isr_Wakeup();
     
 }
@@ -170,7 +161,7 @@ void helper_HardwareWakeup(void){  // wakeup all the components that have to be 
 
 void helper_HardwareSleep(void){  // put to sleep all the components that have to be on for a reading
     ADC_SigDel_Sleep();
-    DAC_Sleep();
+    dac_Sleep();
     TIA_Sleep();
     VDAC_TIA_Sleep();
     Opamp_Aux_Sleep();

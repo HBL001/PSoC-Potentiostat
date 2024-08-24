@@ -1,13 +1,12 @@
 /*********************************************************************************
 * File Name: DAC.h
 *
-* Description:
-*  This file contains the function prototypes and constants used for
-*  the custom DAC, an 8-bit VDAC or DVDAC selectable by the user
+* Description: simple handler for the 8-BIT
 *
 **********************************************************************************
- * Copyright Naresuan University, Phitsanulok Thailand
- * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
+* Copyright Highland Biosciences Ltd.
+* Copyright Naresuan University, Phitsanulok Thailand
+* Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
 *********************************************************************************/
 
 #if !defined(DAC_H)
@@ -17,29 +16,27 @@
 #include "cytypes.h"
 #include "helper_functions.h"
 #include "globals.h"
+    
 /**************************************
 *        AMuX API Constants
 **************************************/
-
 #define VDAC_channel 0
     
     
 /***************************************
 *        Variables
 ***************************************/     
-    
 uint8_t selected_voltage_source;
 extern uint16_t dac_ground_value;
     
     
 /***************************************
 *        Function Prototypes
-***************************************/ 
-    
-void dac_start(void);
-void dac_sleep(void);
-void dac_wakeup(void);
-void dac_setvalue(uint16_t value);
+***************************************/  
+void dac_Start(void);
+void dac_Sleep(void);
+void dac_Wakeup(void);
+void dac_Setvalue(uint16_t value);
     
 #endif
 /* [] END OF FILE */

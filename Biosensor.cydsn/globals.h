@@ -19,83 +19,53 @@
 *        USB INPUT OPTIONS
 **************************************/ 
     
-#define EXPORT_LUT_LENGTH               'g'
-#define EXPORT_LUT                      'l'
-#define EXPORT_STREAMING_DATA           'F'
-#define EXPORT_ADC_ARRAY                'E'
 #define CALIBRATE_TIA_ADC               'B'
 #define SET_PWM_TIMER_COMPARE           'C'
 #define SET_PWM_TIMER_PERIOD            'T'
 #define SET_TIA_ADC                     'A'
 #define CHECK_VOLTAGE_SOURCE            'V'
-#define START_CYCLIC_VOLTAMMETRY        'R'
 #define RESET_DEVICE                    'X'
 #define DEVICE_IDENTIFY                 'I'
 #define CHANGE_NUMBER_ELECTRODES        'L'
-#define CHRONOAMPEROMETRY_HACK          'Q'
-#define MAKE_LOOK_UP_TABLE              'S'
 #define SET_DAC_VALUE                   'D'
 #define START_HARDWARE                  'H'
 #define REPORT_DATA                     'M'
 #define SHORT_TIA                       's'
 #define STOP_SHORTING_TIA               'd'
-#define DPV_LUT                         'G'
     
 // Electrode definitions
 #define TWO_ELECTRODE_CONFIG            0
 #define THREE_ELECTRODE_CONFIG          1 
-
     
-// index of start of different parts of input string
-#define INDEX_START_VALUE               2
-#define INDEX_END_VALUE                 7
-#define INDEX_TIMER_VALUE               12
-#define INDEX_SWEEP_TYPE                18
-#define INDEX_START_VOLT_TYPE           19
-// Square wave voltammertry options
-#define INDEX_SWV_INC                   12
-#define INDEX_SWV_PULSE_HEIGHT          17
-#define INDEX_SWV_TIMER_VALUE           23
-#define INDEX_SWV_SWEEP_TYPE            28
-#define INDEX_SWV_START_VOLT_TYPE       29
-
-
-/**************************************
-*           ADC Constants
-**************************************/  
-    
-// define how big to make the arrays for the lut for dac and how big
-// to make the adc data array     
-#define MAX_LUT_SIZE 5000
-#define ADC_CHANNELS 4
- 
-    
+      
 /**************************************
 *           API Constants
 **************************************/
 #define true                        1
 #define false                       0
     
-#define VIRTUAL_GROUND              2048  // TODO: make variable
-
-// Define the AMux channels
-
+/**************************************
+*           ADC Constants
+**************************************/    
     
-  
-#define AMux_V_VDAC_source_ch       0
-#define AMux_V_DVDAC_source_ch      1
+#define DO_NOT_RESTART_ADC              0  
+#define VIRTUAL_GROUND              2048  // TODO: make variable
+#define NUMBER_BITS 12
+#define VOLTAGE_RANGE 2048
+#define MAX_BIT_VALUE (1 << NUMBER_BITS)
+#define NUM_BITS_TWOS_COMP 16
+#define TWOS_ROLLOVER (1 << (NUM_BITS_TWOS_COMP - 1))
+#define TWOS_SUBTRACT (1 << NUM_BITS_TWOS_COMP)
+    
+    
+// Define the AMux channels
 #define AMux_TIA_working_electrode_ch 1
 
 /**************************************
 *        EEPROM API Constants
 **************************************/
-
-#define VDAC_NOT_SET 0
-#define VDAC_IS_VDAC 1
-#define VDAC_IS_DVDAC 2
-    
-#define VDAC_ADDRESS 0
-    
+   
+#define VDAC_ADDRESS 0   
 #define EEPROM_READ_TEMPERATURE_CORRECT        0
     
     
@@ -110,9 +80,13 @@
 /**************************************
 *        Global Variables
 **************************************/   
-     
+
+static const int calibrate_TIA_resistor_list[] = {20, 30, 40, 80, 120, 250, 500, 1000};
+static uint8_t TIA_resistor_value_index;    
+static uint16_t ADC_value;
+
 double voltage;
-uint16_t dacIn;
+static uint16_t dacIn;
 double current;
 uint8_t echo;
     

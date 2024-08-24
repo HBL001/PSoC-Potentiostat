@@ -13,13 +13,13 @@
 #include "math.h"
 #include <stdio.h>
 #include "stdlib.h"
+#include "globals.h"
 
 #include "calibrate.h"
 #include "usb_protocols.h"
 
 //extern char LCD_str[];  // for debug
-const uint16_t calibrate_TIA_resistor_list[] = {20, 30, 40, 80, 120, 250, 500, 1000}; 
-uint16_t static ADC_value;
+
 
 /***************************************
 * Forward function references

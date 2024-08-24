@@ -32,6 +32,7 @@ union calibrate_data_usb_union {
     int16_t data[2*Number_calibration_points];  // 2 * data points because 1 for the IDAC value and the other for the ADC result
 };
 union calibrate_data_usb_union calibrate_array;  // allocate space to put adc measurements
+
 /* This union will save the calibration results and the IDAC values used in the format of
 calibrate_data_usb_union = [highest IDAC value, 2nd highest IDAC value, 0 IDAC input, 2nd lowest IDAC value, 
 lowest IDAC value, ADC reading for highest IDAC value, ADC reading for 2ndhighest IDAC value,
@@ -42,7 +43,6 @@ ADC reading 0 IDAC input, ADC reading for 2nd lowest IDAC value, ADC reading for
 * Global variables identifier 
 ***************************************/
 
-uint8_t TIA_resistor_value_index;
 uint8_t ADC_buffer_index;
 extern float32 uA_per_adc_count;
 extern float32 R_analog_route;
