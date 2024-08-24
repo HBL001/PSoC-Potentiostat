@@ -2,7 +2,7 @@
 * File Name: main.c
 * Version 1
 *
-* Description: Kyle Lite is a simplified version of Naresuan Potentiostat 
+* Description: Updated version for chronoamperometric testing
 *
 **********************************************************************************
 * Some parts Copyright Highland Biosciences Ltd., Scotland
@@ -22,7 +22,6 @@
 *       Y is the adc buffer gain setting {1, 2, 4, 8}. Z is 'T' or 'F' for if an external resistor is to be used and the AMux_working_electrode should be set according. 
 *       W is 0 or 1 for which user resistor should be selected by the AMux_working_electrode.
 * 'B' - Calibrate the ADC and TIA signal chain.
-* "VXY" - Check or set the voltage source. X is 'R' to read the voltage source or 'S' to set the voltage source. When setting the voltage source Y should be '2' for the 12-bit dithering VDAC, all other numbers will default to the 8-bit VDAC. When reading the voltage source, the device will return the string "VZ" where Z is the voltage source choice selected before.
 * "S|XXXXX" - set the period value of the PWM used as a timer that starts the isrs to change the DAC and read the ADC. XXXXX is a uint16 that is put into the PWM that set the timing with a sample rate of 240 kHz / XXXXX
 * "C|XXXXX" - set the compare value of the PWM used as a timer that sets when the DAC changes compared to when the ADC measures.
 * 'X' - Reset the device. Disable all isrs and put the hardware to sleep.

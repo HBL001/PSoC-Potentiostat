@@ -65,7 +65,7 @@
 *        EEPROM API Constants
 **************************************/
    
-#define VDAC_ADDRESS 0   
+#define VDAC_ADDRESS                            0   
 #define EEPROM_READ_TEMPERATURE_CORRECT        0
     
     
