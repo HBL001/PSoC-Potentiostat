@@ -30,7 +30,7 @@
 *  U is ADC configuration to use where config 1 uses a Vref of +-2.048 V and config 2 uses +-1.024 V
 *  X - the TIA resistor value index, a string between 0-7 that sets the TIA resisot value
 *  Y - the adc buffer gain setting
-*  Z - T or F for if an external resistor is to be used and the AMux_working_electrode should be set according
+* 
 *  W - 0 or 1 for which user resistor should be selected by AMux_working_electrode
 *  
 * Global variables: - found in calibrate.h and used by calibrate.c
@@ -54,15 +54,7 @@ void user_setup_TIA_ADC(uint8_t data_buffer[]) {
     if (ADC_buffer_index >= 0 || ADC_buffer_index <= 3) {
         ADC_SigDel_SetBufferGain(ADC_buffer_index); 
     }
-    if (data_buffer[8] == 'T') {
-        tia_mux.use_extra_resistor = true;
-        tia_mux.user_channel = data_buffer[10]-'0';  // not used yet
-        data_buffer[8] = 0;
-        AMux_TIA_resistor_bypass_Connect(0);
-    }
-    else {
-        AMux_TIA_resistor_bypass_Disconnect(0);
-    }
+
 }
 
 
@@ -88,11 +80,6 @@ void user_voltage_source_funcs(uint8_t data_buffer[]) {
         export_array[0] = 'V';
         export_array[1] = helper_check_voltage_source();
         USB_Export_Data(export_array, 2);
-    }
-    else if (data_buffer[1] == 'S') {  // User wants to set the voltage source
-        helper_set_voltage_source(data_buffer[2]-'0');
-        dac_Start();
-        dac_Sleep();
     }
 }
 

@@ -82,11 +82,10 @@
 **************************************/   
 
 static const int calibrate_TIA_resistor_list[] = {20, 30, 40, 80, 120, 250, 500, 1000};
-static uint8_t TIA_resistor_value_index;    
-static uint16_t ADC_value;
+uint8_t TIA_resistor_value_index;    
+uint16_t ADC_value;
 
 double voltage;
-static uint16_t dacIn;
 double current;
 uint8_t echo;
     

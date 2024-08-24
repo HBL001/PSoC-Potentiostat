@@ -54,17 +54,19 @@ uint8_t AMux_channel_select = 0;        // two electrode configuration=0, three 
 
 /* Process the dac interrupt */
 CY_ISR(dacInterrupt) {    
-    sprintf(LCD_str, "Voltage=%f Current=%E ", voltage, current);  // update the LCD Display
+    
+    LCD_ClearDisplay(); 
+    sprintf(LCD_str, "Volt=%.3fV Current=%.2eA \n", voltage, current);  // update the LCD Display
     LCD_PrintString(LCD_str);
 }
 
 /* Process the adc interrupt */
 CY_ISR(adcInterrupt){
     
-    // ADC_array[0].data[lut_index] = ADC_SigDel_GetResult16(); 
-    
-    
-    sprintf(LCD_str, "Voltage=%f Current=%E ", voltage, current);
+    LCD_ClearDisplay(); 
+    ADC_value =  ADC_SigDel_GetResult16();
+    current = adc_adcToAmp(ADC_value);
+    sprintf(LCD_str, "Volt=%.3fV Current=%.2eA \n", voltage, current);  // update the LCD Display
     LCD_PrintString(LCD_str); 
     
 }
@@ -72,12 +74,11 @@ CY_ISR(adcInterrupt){
 /* Process the adcAMP interrupt */
 CY_ISR(adcAmpInterrupt){
 
-    LCD_ClearDisplay();    
-    
-    =  ADC_SigDel_GetResult16();
-    
-    sprintf(LCD_str, "Voltage=%f Current=%E ", voltage, current);
-    LCD_PrintString(LCD_str); 
+    LCD_ClearDisplay(); 
+    ADC_value =  ADC_SigDel_GetResult16();
+    current = adc_adcToAmp(ADC_value);
+    sprintf(LCD_str, "Volt=%.3fV Current=%.2eA \n", voltage, current);  // update the LCD Display
+    LCD_PrintString(LCD_str);
    
     if (echo == ECHO_USB_ON) {           
         USB_Export_Data((uint8_t*)LCD_str, strlen(LCD_str));   
@@ -92,55 +93,30 @@ int main() {
     current = 0;
     
     /* Initialize all the hardware and interrupts */
-    CyGlobalIntEnable; 
-    
-    LCD_Start();
-    LCD_ClearDisplay();
-    LCD_PrintString("Initialisation");
-    
+    CyGlobalIntEnable;  
     USBUART_Start(0, USBUART_5V_OPERATION);
-    LCD_ClearDisplay();
-    LCD_PrintString("USB Started");
-    
     helper_HardwareSetup(AMux_channel_select);
-    LCD_ClearDisplay();
-    LCD_PrintString("Potentiostat");
     CyDelay(500);
-    
-    ADC_SigDel_SelectConfiguration(2, DO_NOT_RESTART_ADC);
-    LCD_ClearDisplay();
-    LCD_PrintString("ADC Configured");
-    
+    ADC_SigDel_SelectConfiguration(2, DO_NOT_RESTART_ADC); 
     while(USBUART_GetConfiguration()==0){};  
-    LCD_ClearDisplay();
-    LCD_PrintString("USB Configured");
-   
+    
     dac_Setvalue(voltage);
     isr_dac_StartEx(dacInterrupt);
     isr_dac_Disable();  // disable interrupt until a voltage signal needs to be given
-    LCD_ClearDisplay();
-    LCD_PrintString("dac Interrupt");
-        
     OUT_Data_Buffer[0] = 65; // ASCII value for 'A'      
     OUT_Data_Buffer[0] = 48; // ASCII value for '0'
     user_setup_TIA_ADC(OUT_Data_Buffer);
-        
     isr_adc_StartEx(adcInterrupt);
-    isr_adc_Disable();
-    LCD_ClearDisplay();
-    LCD_PrintString("adc Interrupt");
-        
+    isr_adc_Disable();       
     CyDelay(500);
+    
     USBUART_CDC_Init();
-    LCD_ClearDisplay();
     isr_adcAmp_StartEx(adcAmpInterrupt);
     isr_adcAmp_Disable();   
-    LCD_PrintString("USBCDC Interrupt");    
-    
-    CyDelay(500);
-    LCD_PrintString("VDAC AMux");    
     dac_Start();
     dac_Sleep();
+    
+     LCD_PrintString("Ready. \n");
                
     for(;;) {
        
@@ -218,8 +194,7 @@ int main() {
                 ADC_SigDel_StartConvert();              // start the converstion process of the delta sigma adc so it will be ready to read when needed
                 CyDelay(10);                            // let the adc get ready
                 PWM_isr_WriteCounter(100);              // set the pwm timer so that it will trigger adc isr first
-            
-                dacIn = ADC_SigDel_GetResult16();       // get first adc reading
+                ADC_value = ADC_SigDel_GetResult16();       // get first adc reading
                 isr_dac_Enable();                       // enable the interrupts to start the dac
                 isr_adc_Enable();                       // and the adc           
                 break;

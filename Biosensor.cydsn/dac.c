@@ -31,7 +31,6 @@ void dac_Start(void)
 {   
         VDAC_source_Start();
         dac_ground_value = VIRTUAL_GROUND / 16;  // value of dac to make 0 V across working and aux electrodes
-        AMux_V_source_Select(VDAC_channel);
 }
 
 /******************************************************************************
