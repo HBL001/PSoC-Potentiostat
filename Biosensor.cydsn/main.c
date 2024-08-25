@@ -51,34 +51,47 @@ char usb_str[64];                       // buffer for string to send to the usb
 uint8_t Input_Flag = false;             // is there an incoming command to process
 uint8_t AMux_channel_select = 0;        // two electrode configuration=0, three electrode=1
 
+
+
+
 /* Process the dac interrupt */
 CY_ISR(dacInterrupt) {    
     
-    LCD_ClearDisplay(); 
-    sprintf(LCD_str, "Volt=%.3fV Current=%.2eA \n", voltage, current);  // update the LCD Display
-    LCD_PrintString(LCD_str);
+ //   LCD_ClearDisplay();
+ //   sprintf(LCD_str, "V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
+ //   LCD_PrintString(LCD_str);
+    
+ //   sprintf(usb_str, "dac interrupt V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
+ ///   USB_Export_Data((uint8_t*)usb_str, strlen(usb_str));
 }
 
 /* Process the adc interrupt */
 CY_ISR(adcInterrupt){
     
-    LCD_ClearDisplay(); 
-    ADC_value =  ADC_SigDel_GetResult16();
-    current = adc_adcToAmp(ADC_value);
-    sprintf(LCD_str, "Volt=%.3fV Current=%.2eA \n", voltage, current);  // update the LCD Display
-    LCD_PrintString(LCD_str); 
-    
+ //   LCD_ClearDisplay(); 
+ //   ADC_value =  ADC_SigDel_GetResult16();
+ //   current = adc_adcToAmp(ADC_value);
+ //   sprintf(LCD_str, "V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
+ //   LCD_PrintString(LCD_str); 
+
+ //   sprintf(usb_str, "adc interrupt V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
+ //   USB_Export_Data((uint8_t*)usb_str, strlen(usb_str));
+        
 }
 
 /* Process the adcAMP interrupt */
 CY_ISR(adcAmpInterrupt){
 
-    LCD_ClearDisplay(); 
-    ADC_value =  ADC_SigDel_GetResult16();
-    current = adc_adcToAmp(ADC_value);
-    sprintf(LCD_str, "Volt=%.3fV Current=%.2eA \n", voltage, current);  // update the LCD Display
-    LCD_PrintString(LCD_str);
+ //   LCD_ClearDisplay(); 
+ //   ADC_value =  ADC_SigDel_GetResult16();
+ //   current = adc_adcToAmp(ADC_value);
+ //   sprintf(LCD_str, "V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
+ //   LCD_PrintString(LCD_str);
    
+ //   sprintf(usb_str, "adcamp interrupt V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
+ //   USB_Export_Data((uint8_t*)usb_str, strlen(usb_str));
+    
+    
     if (echo == ECHO_USB_ON) {           
         USB_Export_Data((uint8_t*)LCD_str, strlen(LCD_str));   
     }  
@@ -102,8 +115,8 @@ int main() {
     dac_Setvalue(voltage);
     isr_dac_StartEx(dacInterrupt);
     isr_dac_Disable();  // disable interrupt until a voltage signal needs to be given
-    OUT_Data_Buffer[0] = 65; // ASCII value for 'A'      
-    OUT_Data_Buffer[0] = 48; // ASCII value for '0'
+    // OUT_Data_Buffer[0] = 65; // ASCII value for 'A'      
+    // OUT_Data_Buffer[0] = 48; // ASCII value for '0'
     user_setup_TIA_ADC(OUT_Data_Buffer);
     isr_adc_StartEx(adcInterrupt);
     isr_adc_Disable();       
@@ -115,7 +128,8 @@ int main() {
     dac_Start();
     dac_Sleep();
     
-     LCD_PrintString("Ready. \n");
+    LCD_ClearDisplay(); 
+    LCD_PrintString("Ready ");
                
     for(;;) {
        

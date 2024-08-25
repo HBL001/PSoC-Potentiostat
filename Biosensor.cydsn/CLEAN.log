@@ -1,4 +1,4 @@
---------------- Clean Started: 08/24/2024 22:00:12 Project: Biosensor, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+--------------- Clean Started: 08/25/2024 15:32:58 Project: Biosensor, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\calibrate.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\dac.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\helper_functions.o"
@@ -21,12 +21,10 @@ Deleting file ".\CortexM3\ARM_GCC_541\Debug\TIA_PM.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\VDAC_TIA.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\VDAC_TIA_PM.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\Working_Electrode.o"
-Deleting file ".\CortexM3\ARM_GCC_541\Debug\TIA_end_pin.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\ADC_SigDel.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\ADC_SigDel_PM.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\ADC_SigDel_INT.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\TIA_resistor1.o"
-Deleting file ".\CortexM3\ARM_GCC_541\Debug\AMux_TIA_resistor_bypass.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\Reference_Electrode.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\AMux_TIA_input.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\VDAC_source.o"
@@ -76,4 +74,4 @@ Deleting file ".\Biosensor.rpt"
 Deleting file ".\Biosensor_timing.html"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\.deps\SOURCE_C__ARM_GCC_GENERIC.P"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\.deps\SOURCE_ASM__ARM_GCC_GENERIC.P"
---------------- Clean Succeeded: 08/24/2024 22:00:12 ---------------
+--------------- Clean Succeeded: 08/25/2024 15:32:59 ---------------

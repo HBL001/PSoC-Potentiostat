@@ -2158,7 +2158,7 @@
 <v>C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\warp\lib\common\stdlogic\rtlpkg.vif</v>
 <v>C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\warp\lib\common\stdlogic\cy_psoc3.vif</v>
 </warp_dep>
-<deps_time v="133690077802974029" />
+<deps_time v="133690700006264546" />
 <top_block v="TopDesign" />
 <last_generation v="130" />
 <pdl_path v="" />
@@ -2168,7 +2168,7 @@
 <dataGuid v="769d31ea-68b1-4f0c-b90a-7c10a43ee563">
 <CyGuid_769d31ea-68b1-4f0c-b90a-7c10a43ee563 type_name="CyDesigner.Common.ProjMgmt.Model.CyLinkCustomData" version="1">
 <link_deps_times>
-<name_val_pair name="c9323d49-d323-40b8-9b59-cc008d68a989@Debug@CortexM3" v="133690079562998153" />
+<name_val_pair name="c9323d49-d323-40b8-9b59-cc008d68a989@Debug@CortexM3" v="133690700831317178" />
 </link_deps_times>
 </CyGuid_769d31ea-68b1-4f0c-b90a-7c10a43ee563>
 </dataGuid>
@@ -2213,7 +2213,7 @@
 <v>Off-Chip</v>
 </tree_states_tab_names>
 <tree_states>
-<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Community Component Catalog\Analog\DAC\MIDAC ( 9 - 11 bits ) Modulate Current DAC  [v1.3]">
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Community Component Catalog\Analog\DAC\PIDAC ( 9 - 11 bits ) Parallel Current DAC [v1.2]">
 <ExpandedNodeIds>
 <v>Community Component Catalog</v>
 <v>Community Component Catalog\Analog</v>
@@ -2236,6 +2236,12 @@
 <v>Cypress Component Catalog\Display</v>
 </ExpandedNodeIds>
 <VisibleNodeIds>
+<v>Cypress Component Catalog</v>
+<v>Cypress Component Catalog\Analog</v>
+<v>Cypress Component Catalog\CapSense</v>
+<v>Cypress Component Catalog\Communications</v>
+<v>Cypress Component Catalog\Communications\CAN Controller Macro [v3.0]</v>
+<v>Cypress Component Catalog\Communications\File System</v>
 <v>Cypress Component Catalog\Communications\I2C</v>
 <v>Cypress Component Catalog\Communications\I2S</v>
 <v>Cypress Component Catalog\Communications\MDIO Interface</v>
@@ -2264,12 +2270,6 @@
 <v>Cypress Component Catalog\Display\Graphic LCD Parallel Interface [v1.80]</v>
 <v>Cypress Component Catalog\Display\LED Segment and Matrix Driver [v1.10]</v>
 <v>Cypress Component Catalog\Display\ResistiveTouch [v2.0]</v>
-<v>Cypress Component Catalog\Display\Segment LCD - Static [v2.30]</v>
-<v>Cypress Component Catalog\Display\Segment LCD [v3.40]</v>
-<v>Cypress Component Catalog\Filters</v>
-<v>Cypress Component Catalog\Ports and Pins</v>
-<v>Cypress Component Catalog\Power Supervision</v>
-<v>Cypress Component Catalog\System</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 <CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Default Component Catalog\Components\TopDesign_01 [v0.0]">

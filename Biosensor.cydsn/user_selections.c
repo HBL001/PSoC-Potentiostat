@@ -126,7 +126,13 @@ void user_identify(void) {
     isr_adcAmp_Disable();
     isr_adc_Disable();
     isr_dac_Disable();
-    USB_Export_Data((uint8_t*)"PSTAT ", 7);
+   
+    
+    
+    LCD_PrintString("PSTAT ");
+    
+    USB_Export_Data((uint8_t*)"PSTAT \n", 7);
+    
 }
 
 /******************************************************************************
