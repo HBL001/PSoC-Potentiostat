@@ -10,16 +10,7 @@
 *********************************************************************************/
 
 #include <project.h>
-#include "math.h"
-#include <stdio.h>
-#include "stdlib.h"
-#include "globals.h"
-
 #include "calibrate.h"
-#include "usb_protocols.h"
-
-//extern char LCD_str[];  // for debug
-
 
 /***************************************
 * Forward function references
@@ -46,13 +37,14 @@ static void Calibrate_Hardware_Sleep(void);
 
 //void calibrate_TIA(uint8 TIA_resistor_value_index, uint8 ADC_buffer_index) {
 void calibrate_TIA(void) {
-    // The IDAC only 
     
+    // The IDAC only 
     IDAC_calibrate_Start();
     IDAC_calibrate_SetValue(0);
     // start the hardware required
     Calibrate_Hardware_Wakeup();
     CyDelay(100);
+    
     // decide what currents to use based on TIA resistor and ADC buffer settings
     uint16_t resistor_value = calibrate_TIA_resistor_list[TIA_resistor_value_index];
     uint var = 2;
@@ -65,12 +57,13 @@ void calibrate_TIA(void) {
     // the 8000 is because the IDAC has a 1/8 uA per bit and 8000=1000mV/(1/8 uA per bit)
     float32 transfer = 8000./(ADC_buffer_value*resistor_value);
     int transfer_int = (int) transfer;
-    if (transfer_int > 250) {  // the TIA needs too much current, reduce needs by half.  Is needed for the 20k resistor setting
+    
+    if (transfer_int > 250) 
+        {  // the TIA needs too much current, reduce needs by half.  Is needed for the 20k resistor setting
         transfer_int /= 2;
-    }
-    //    LCD_Position(0,0);
-//    sprintf(LCD_str, "in:%d |%d| ", resistor_value, ADC_buffer_value);
-//    LCD_PrintString(LCD_str);
+        }
+  
+ 
     // is not DRY but not sure how to fix
     IDAC_calibrate_SetPolarity(IDAC_calibrate_SINK);
     calibrate_step(transfer_int, 0);
@@ -79,9 +72,42 @@ void calibrate_TIA(void) {
     calibrate_step(transfer_int/2, 3);
     calibrate_step(transfer_int, 4);
     IDAC_calibrate_SetValue(0);
+ 
     Calibrate_Hardware_Sleep();
     
-    USB_Export_Data(calibrate_array.usb, 20);
+        helper_WipeIN();
+        helper_WipeLCD();
+    
+    
+        LCD_ClearDisplay();
+        LCD_Position(0,0);
+        sprintf(LCD_str_top, "SET: CALIB  ");  // update the LCD Display
+        LCD_PrintString(LCD_str_top);
+        
+        LCD_Position(1,0);
+        sprintf(LCD_str_bot, "ID:%d AD:%d", resistor_value, ADC_buffer_value);
+        LCD_PrintString(LCD_str_bot);
+      
+    
+    sprintf(IN_Data_Buffer, "IDAC VALUE %d %d %d %d %d", 
+    calibrate_array.data[0],
+    calibrate_array.data[1],
+    calibrate_array.data[2],
+    calibrate_array.data[3],
+    calibrate_array.data[4]);
+
+    USB_Export_Data(IN_Data_Buffer);
+    IN_Data_Buffer[0] = '\0';
+    
+    sprintf(IN_Data_Buffer, "ADC VALUE  %d %d %d %d %d", 
+    calibrate_array.data[5],
+    calibrate_array.data[6],
+    calibrate_array.data[7],
+    calibrate_array.data[8],
+    calibrate_array.data[9]);
+   
+    USB_Export_Data(IN_Data_Buffer);
+    IN_Data_Buffer[0] = '\0';
 }
 
 /******************************************************************************

@@ -12,9 +12,28 @@
 *********************************************************************************/
 
 #include <project.h>
-#include "stdio.h"  // gets rid of the type errors
 #include "adc.h"
 #include "user_selections.h"
+
+void user_setup_electrode (uint8_t data_buffer[]) {
+
+uint8_t electrode_config = data_buffer[2]-'0';    
+
+                
+    if (electrode_config == THREE_ELECTRODE_CONFIG) 
+       {
+            AMux_electrode_Select(THREE_ELECTRODE_CONFIG);
+            sprintf(IN_Data_Buffer, "3 ELECTRODE MODE");  // update the LCD Display                        
+       }
+       else
+       {
+            AMux_electrode_Select(TWO_ELECTRODE_CONFIG);
+            sprintf(IN_Data_Buffer, "2 ELECTRODE MODE");  // update the LCD Display      
+       }
+             
+USB_Export_Data(IN_Data_Buffer);  
+    
+}
 
 
 /******************************************************************************
@@ -42,45 +61,46 @@
 *
 *******************************************************************************/
 void user_setup_TIA_ADC(uint8_t data_buffer[]) {
+    
+    isr_dac_Disable();
+    isr_adc_Disable();
+    isr_adcAmp_Disable();
+    helper_HardwareSleep();
+    
+    helper_WipeLCD();
+    helper_WipeIN();
+    
+      
     uint8_t adc_config = data_buffer[2]-'0';
-    if (adc_config == 1 || adc_config == 2) {
-        ADC_SigDel_SelectConfiguration(adc_config, DO_NOT_RESTART_ADC); 
-    }
-    TIA_resistor_value_index = data_buffer[4]-'0';
-    if (TIA_resistor_value_index >= 0 || TIA_resistor_value_index <= 7) {
-        TIA_SetResFB(TIA_resistor_value_index);  // see TIA.h for how the values work, basically 0 - 20k, 1 -30k, etc.
-    }
-    ADC_buffer_index = data_buffer[6]-'0';
-    if (ADC_buffer_index >= 0 || ADC_buffer_index <= 3) {
-        ADC_SigDel_SetBufferGain(ADC_buffer_index); 
-    }
+    TIA_resistor_value_index = data_buffer[4]-'0';    
+    ADC_buffer_index = data_buffer[6]-'0';       
+    
+    if (adc_config == 1 || adc_config == 2) 
+        {
+            ADC_SigDel_SelectConfiguration(adc_config, DO_NOT_RESTART_ADC);            
+            sprintf(IN_Data_Buffer, "Vref=%u TIA resistor value=fail Adc Buffer Gain=fail ",adc_config);   
 
-}
-
-
-/******************************************************************************
-* Function Name: user_voltage_source_funcs
-*******************************************************************************
-*
-* Summary:
-*  Check if the user wants to read what type of DAC is to be used or the user can set the DAC to be used
-
-* Parameters:
-*  uint8 data_buffer[]: array of chars used to setup the DAC or to read the DAC settings
-*  input is VXY: where X is either 'R' or 'S' for read or set
-*  Y is '0' or '1'
-*
-* Return:
-*  export the DAC information to the USB, or set the DAC source depending on user input
-*
-*******************************************************************************/
-void user_voltage_source_funcs(uint8_t data_buffer[]) {
-    if (data_buffer[1] == 'R') {  // User wants to read status of VDAC
-        uint8_t export_array[2];
-        export_array[0] = 'V';
-        export_array[1] = helper_check_voltage_source();
-        USB_Export_Data(export_array, 2);
-    }
+            
+            if (TIA_resistor_value_index >= 0 || TIA_resistor_value_index <= 7) 
+               {
+                    TIA_SetResFB(TIA_resistor_value_index);  // see TIA.h for how the values work, basically 0 - 20k, 1 - 30k, etc.
+                    sprintf(IN_Data_Buffer, "Vref=%u  TIA resistor value=%u Adc Buffer Gain=fail ",adc_config , calibrate_TIA_resistor_list[TIA_resistor_value_index]);                    
+    
+                    if (ADC_buffer_index >= 0 || ADC_buffer_index <= 3) 
+                        {
+                            ADC_SigDel_SetBufferGain(ADC_buffer_index); 
+                            sprintf(IN_Data_Buffer, "Vref=%u  TIA resistor value=%u Adc Buffer Gain=%u ",adc_config , calibrate_TIA_resistor_list[TIA_resistor_value_index],  (unsigned int)pow(2, ADC_buffer_index));
+                            }
+               }
+        }    
+        else
+        {
+            sprintf(IN_Data_Buffer, "Vref=fail TIA resistor value=fail Adc Buffer Gain=fail ");   
+        }
+        
+    USB_Export_Data(IN_Data_Buffer);  
+    
+  
 }
 
 /******************************************************************************
@@ -123,83 +143,10 @@ void user_reset_device(void) {
 *******************************************************************************/
 
 void user_identify(void) {
-    isr_adcAmp_Disable();
-    isr_adc_Disable();
-    isr_dac_Disable();
-   
+        
+    USB_Export_Data("(c) 2024 Siddharta LLC - Potentiostat rev 1.0");
     
-    
-    LCD_PrintString("PSTAT ");
-    
-    USB_Export_Data((uint8_t*)"PSTAT \n", 7);
-    
-}
-
-/******************************************************************************
-* Function Name: user_set_isr_timer
-*******************************************************************************
-*
-* Summary:
-*  Set the PWM that is used as the isr timer
-* 
-* Parameters:
-*  uint8 data_buffer[]: array of chars used to setup the DAC or to read the DAC settings
-*  input is T|XXXXX
-*  XXXXX - uint16_t with the number to put in the period register
-*  the compare register will be loaded with XXXXX / 2
-*  
-* Return:
-*  Set the compare and period register of the pwm 
-*
-*******************************************************************************/
-void user_set_isr_timer(uint8_t data_buffer[]) {
-    PWM_isr_Wakeup();
-    uint16_t timer_period = adc_Convert2Dec(&data_buffer[2], 5);
-    PWM_isr_WriteCompare(timer_period / 2);  // not used in amperometry run so just set in the middle
-    PWM_isr_WritePeriod(timer_period);
-    PWM_isr_Sleep();
-}
-
-
-
-/******************************************************************************
-* Function Name: user_run_amperometry
-*******************************************************************************
-*
-* Summary:
-*  Start an amperometry experiment.  Turn on all the hardware required, set the dac,
-*  initialize the look up table index that will be a point where to put the data points
-*  in the adc buffer, and start the Delta Sigma ADC to start converting.
-* 
-* Parameters:
-*  uint8 data_buffer[]: array of chars used to make the look up table
-*  input is M|XXXX|YYYY
-*  XXXX - uint16_t number to set the DAC value to so the electrodes are at the approriate voltage
-*  YYYY - uint16_t of how many data points to collect in each ADC buffer before exporting the data
-*  
-* Global variables:
-*  
-* Return:
-*  uint16_t - number of data points to collect in each ADC buffer before exporting the data
-*
-*******************************************************************************/
-uint16_t user_run_amperometry(uint8_t data_buffer[]) {
-    helper_HardwareWakeup();  
-    if (!isr_adcAmp_GetState()) {  // enable isr if it is not already
-        if (isr_dac_GetState()) {  // User selected to run amperometry but a CV is still running 
-            isr_dac_Disable();
-            isr_adc_Disable();
-        }
     }
-    uint16_t dac_value = adc_Convert2Dec(&data_buffer[2], 4);  // get the voltage the user wants and set the dac
-    dac_Setvalue(dac_value);
-    
-    ADC_SigDel_StartConvert();
-    CyDelay(15);
-    uint16_t buffer_size_data_pts = adc_Convert2Dec(&data_buffer[7], 4);  // how many data points to collect in each adc channel before exporting the data
-    isr_adcAmp_Enable();
-    return buffer_size_data_pts;
-}
 
 
 /* [] END OF FILE */

@@ -13,9 +13,11 @@
 #define DAC_H
 
 #include <project.h>
+#include <math.h>
 #include "cytypes.h"
 #include "helper_functions.h"
 #include "globals.h"
+#include "usb_protocols.h"
     
 /**************************************
 *        AMuX API Constants
@@ -33,10 +35,11 @@ extern uint16_t dac_ground_value;
 /***************************************
 *        Function Prototypes
 ***************************************/  
-void dac_Start(void);
+void dac_Init(void);
 void dac_Sleep(void);
 void dac_Wakeup(void);
-void dac_Setvalue(uint16_t value);
+void dac_Setvalue(uint8_t value);
+uint8_t dac_Volts2adc(uint8_t data_buffer[]);
     
 #endif
 /* [] END OF FILE */

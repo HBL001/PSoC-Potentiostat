@@ -13,25 +13,24 @@
 *
 * PSoC-Potentiostat Commands
 * The following are the inputs commands the device will take, all inputs are inputted as ASCII strings.
-* 'I' - Identifies the device, will respond with "PSTAT1" through the USB
-* "L|X" - Set electrode configuration to 2 or 3 electrodes. X is the number of electrodes, only 2 or 3 works
+* 'I' - Identifies the device, will respond through the USB
+* "L|X" - Set electrode configuration to 2 or 3 electrodes. X=0 is 2 electrodes, 1=3 electrodes
 * "M|XXXX|YYYY" - Run an amperometry experiment. You need to start to read the data the device will start streaming when given this command. XXXX is an uint16 number to set the DAC value to so the electrodes are at the approriate voltage. YYYY is an uint16 of how many data points to collect in each ADC buffer before exporting the data
-* "A|U|X|Y|Z|W" - Set up the TIA and ADC. U is the ADC configuration to use where config 1 uses a Vref of +-2.048 V and config 2 uses +-1.024 V.
-*       X is the TIA resistor value index, 
-*       a string between 0-7 that sets the TIA resistor value {0-20k, 1-30k, 2-40k, 3-80k, 4-120k, 5-250k, 6-500k, 7-1000k}. 
+* "A|U|X|Y" - Set up the TIA and ADC. 
+*       U is the ADC configuration to use where config 1 uses a Vref of +-2.048 V and config 2 uses +-1.024 V.
+*       X is the TIA resistor value index, a string between 0-7 that sets the TIA resistor value {0-20k, 1-30k, 2-40k, 3-80k, 4-120k, 5-250k, 6-500k, 7-1000k}. 
 *       Y is the adc buffer gain setting {1, 2, 4, 8}. Z is 'T' or 'F' for if an external resistor is to be used and the AMux_working_electrode should be set according. 
-*       W is 0 or 1 for which user resistor should be selected by the AMux_working_electrode.
 * 'B' - Calibrate the ADC and TIA signal chain.
-* "S|XXXXX" - set the period value of the PWM used as a timer that starts the isrs to change the DAC and read the ADC. XXXXX is a uint16 that is put into the PWM that set the timing with a sample rate of 240 kHz / XXXXX
+* "T|XXXXX" - set the period value of the PWM used as a timer that starts the isrs to change the DAC and read the ADC. XXXXX is a uint16 that is put into the PWM that set the timing with a sample rate of 240 kHz / XXXXX
 * "C|XXXXX" - set the compare value of the PWM used as a timer that sets when the DAC changes compared to when the ADC measures.
 * 'X' - Reset the device. Disable all isrs and put the hardware to sleep.
-* "D|XXXX" - Set the voltage control DAC. XXXX is the value to put in the DAC, which ever one is active.
-* 'H' - Wake up all the hardware.
+* "D|XXX" - Set the voltage control 8 bit DAC. XXX is the value to put in the DAC
+* 'H' - Wake up all the hardware, enable All
 * 's' - Short the TIA so the working electrode can sink more current.
 * 'd' - Stop shorting the TIA
 *********************************************************************************/
 
-#include <project.h>
+#include "project.h"
 #include "stdio.h"
 #include "stdlib.h"
 
@@ -44,123 +43,111 @@
 #include "usb_protocols.h"
 #include "user_selections.h"
 
-uint8_t IN_Data_Buffer[MAX_NUM_BYTES];  // buffer for incoming USB Commands
-uint8_t OUT_Data_Buffer[MAX_NUM_BYTES]; // buffer for outgoing USB Commands
-char LCD_str[32];                       // buffer for LCD screen, make it extra big to avoid overflow
-char usb_str[64];                       // buffer for string to send to the usb
-uint8_t Input_Flag = false;             // is there an incoming command to process
-uint8_t AMux_channel_select = 0;        // two electrode configuration=0, three electrode=1
 
 
-
-
-/* Process the dac interrupt */
-CY_ISR(dacInterrupt) {    
+//CY_ISR(isr_dac_Handler) {                              // process the dac interrupt
+ 
     
- //   LCD_ClearDisplay();
- //   sprintf(LCD_str, "V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
- //   LCD_PrintString(LCD_str);
-    
- //   sprintf(usb_str, "dac interrupt V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
- ///   USB_Export_Data((uint8_t*)usb_str, strlen(usb_str));
-}
+  //  dac_Setvalue(dac_Volts);                           // update the output dac 
+
+//}
 
 /* Process the adc interrupt */
-CY_ISR(adcInterrupt){
+CY_ISR(isr_adc_Handler){
     
- //   LCD_ClearDisplay(); 
- //   ADC_value =  ADC_SigDel_GetResult16();
- //   current = adc_adcToAmp(ADC_value);
- //   sprintf(LCD_str, "V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
- //   LCD_PrintString(LCD_str); 
 
- //   sprintf(usb_str, "adc interrupt V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
- //   USB_Export_Data((uint8_t*)usb_str, strlen(usb_str));
-        
+ while(!ADC_SigDel_IsEndConversion(ADC_SigDel_WAIT_FOR_RESULT)); // Wait for conversion to complete
+    
+    
+ ADC_value =  ADC_SigDel_GetResult16();
+ current = adc_adcToAmp(ADC_value);
+
+  sprintf(IN_Data_Buffer, "Voltage=%u mV Current=%E \n", voltage, current);  // update the LCD Display
+   USB_Export_Data(IN_Data_Buffer);
+
+ 
 }
 
 /* Process the adcAMP interrupt */
 CY_ISR(adcAmpInterrupt){
 
- //   LCD_ClearDisplay(); 
- //   ADC_value =  ADC_SigDel_GetResult16();
- //   current = adc_adcToAmp(ADC_value);
- //   sprintf(LCD_str, "V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
- //   LCD_PrintString(LCD_str);
-   
- //   sprintf(usb_str, "adcamp interrupt V=%.3fV I=%.2eA \n", voltage, current);  // update the LCD Display
- //   USB_Export_Data((uint8_t*)usb_str, strlen(usb_str));
-    
-    
-    if (echo == ECHO_USB_ON) {           
-        USB_Export_Data((uint8_t*)LCD_str, strlen(LCD_str));   
-    }  
+   ADC_value =  ADC_SigDel_GetResult16();
+   current = adc_adcToAmp(ADC_value);
+
+   helper_WipeLCD();
+   sprintf(LCD_str_top, "Voltage %d mV", voltage);  // update the LCD Display
+
+   LCD_ClearDisplay();
+
+   LCD_Position(0,0);
+   LCD_PrintString(LCD_str_top);
+
+   LCD_Position(1,0);
+   sprintf(LCD_str_bot, "Current %E mA", current);  // update the LCD Display
+   LCD_PrintString(LCD_str_bot);
+
+   sprintf(IN_Data_Buffer, "Voltage=%u mV Current=%E \n", voltage, current);  // update the LCD Display
+   USB_Export_Data(IN_Data_Buffer);
  }
 
 int main() {
+
+    // Enable global interrupts
+    CyGlobalIntEnable;   
+     
    
+    
     /* Default settings*/
-    AMux_channel_select = TWO_ELECTRODE_CONFIG;
-    voltage = 0;
-    current = 0;
+    voltage = 0;                                                // real mV output
+    dac_Volts = 128;                                            // dac value ouput
+    uint8_t Input_Flag = false;                                 // is there an incoming command to process
+ 
+    /* initialise the system */
+    helper_HardwareInit();
+    helper_HardwareEnable();
+    ADC_SigDel_SelectConfiguration(2, DO_NOT_RESTART_ADC);
     
-    /* Initialize all the hardware and interrupts */
-    CyGlobalIntEnable;  
+    
     USBUART_Start(0, USBUART_5V_OPERATION);
-    helper_HardwareSetup(AMux_channel_select);
-    CyDelay(500);
-    ADC_SigDel_SelectConfiguration(2, DO_NOT_RESTART_ADC); 
-    while(USBUART_GetConfiguration()==0){};  
-    
-    dac_Setvalue(voltage);
-    isr_dac_StartEx(dacInterrupt);
-    isr_dac_Disable();  // disable interrupt until a voltage signal needs to be given
-    // OUT_Data_Buffer[0] = 65; // ASCII value for 'A'      
-    // OUT_Data_Buffer[0] = 48; // ASCII value for '0'
-    user_setup_TIA_ADC(OUT_Data_Buffer);
-    isr_adc_StartEx(adcInterrupt);
-    isr_adc_Disable();       
-    CyDelay(500);
-    
+    while(!USBUART_GetConfiguration());   
+        
     USBUART_CDC_Init();
-    isr_adcAmp_StartEx(adcAmpInterrupt);
-    isr_adcAmp_Disable();   
-    dac_Start();
-    dac_Sleep();
+        
+    USB_Export_Data("(c) 2024 Siddharta LLC - Potentiostat rev 1.0 ");
+    USB_Export_Data("Ready ");
+    USB_Export_Data("> ");
     
-    LCD_ClearDisplay(); 
-    LCD_PrintString("Ready ");
-               
-    for(;;) {
+    helper_HardwareSleep();
+
+    // isr_dac_StartEx(isr_dac_Handler);
        
+    // isr_adcAmp_StartEx(adcAmpInterrupt);
+   
+    isr_adc_StartEx(isr_adc_Handler);
+    
+    ADC_SigDel_StartConvert(); // Start continuous conversions
+    
+    
+    for(;;) {
         if (!Input_Flag) 
-        
         {  
-            Input_Flag = USB_CheckInput(OUT_Data_Buffer);  // check if there is a request from the computer host
+            helper_WipeOUT();
+            Input_Flag = USB_CheckInput(OUT_Data_Buffer);  // check the computer host
         }
-        
         else
-        
         {
-            LCD_ClearDisplay();
-                           
+            helper_WipeIN();
+            sprintf(IN_Data_Buffer, "> %s",OUT_Data_Buffer );  // update the USB Display
+            USB_Export_Data(IN_Data_Buffer);
+                        
             switch (OUT_Data_Buffer[0]) {           // select case based upon the first 'L'etter
                 
             case CALIBRATE_TIA_ADC: ;               // 'B' calibrate the TIA / ADC current measuring circuit
                 calibrate_TIA();
                 break;
-                
-            case SET_PWM_TIMER_COMPARE: ;           // 'C' change the compare value of the PWM to start the adc isr
-                PWM_isr_WriteCompare(adc_Convert2Dec(&OUT_Data_Buffer[2], 5));
-                break;
-                
-            case SET_PWM_TIMER_PERIOD: ;            // 'T' Set the PWM timer period
-                user_set_isr_timer(OUT_Data_Buffer);
-                break;
-                
+                               
             case SET_TIA_ADC: ;                     // 'A' Set the TIA resistor, ADC gain and if external resistor is used              
                 user_setup_TIA_ADC(OUT_Data_Buffer);
-               
                 break;
 
             case RESET_DEVICE: ;                    // 'X' reset the device by disableing isrs
@@ -172,60 +159,51 @@ int main() {
                 break;
                 
             case CHANGE_NUMBER_ELECTRODES: ;        // 'L' User wants to change the electrode configuration         
-                if (AMux_channel_select == TWO_ELECTRODE_CONFIG) 
-                    {
-                        AMux_channel_select = THREE_ELECTRODE_CONFIG;
-                    }
-                    else
-                    {
-                        AMux_channel_select = TWO_ELECTRODE_CONFIG;
-                    }
-                AMux_electrode_Select(AMux_channel_select);
+                user_setup_electrode(OUT_Data_Buffer);
                 break;
             
-            case SET_DAC_VALUE: ;                   // 'D' set the dac value
-                voltage = adc_Convert2Dec(&OUT_Data_Buffer[2], 4);      // convert the string arguement into an int value
-                dac_Setvalue(voltage);                                  // set the dac output 
-                CyDelay(20);                                            // let the electrode voltage settle         
+            case SET_DAC_VALUE: ;                   // 'D' set the dac value, based on the voltage in millivolts
+                dac_Volts = dac_Volts2adc(OUT_Data_Buffer);
+                dac_Setvalue(dac_Volts);                                  // set the dac output 
                 break;
                 
-            case REPORT_DATA: ;                     // 'M' run a datapoint toggle
-                if (echo == ECHO_USB_OFF) 
-                {   
-                    echo = ECHO_USB_ON;
-                }
-                else
-                {
-                    echo = ECHO_USB_OFF;                
-                }                        
+            case STOP_HARDWARE: ;                     // 'M' stop data acquisition
+                helper_HardwareSleep();                // Sleep the hardware
+           
+                isr_dac_Disable();
+                isr_adc_Disable();
+                isr_adcAmp_Disable();
+                ADC_SigDel_StopConvert();                           
                 break;
                 
-            case START_HARDWARE: ;                      // 'H' Start taking measurements from the electrode
-                helper_HardwareWakeup();                // wake all the hardware ready to go
-                dac_Setvalue(voltage);                  // Set the electrode voltage 
-                CyDelay(20);                            // let the electrode voltage settle
-                ADC_SigDel_StartConvert();              // start the converstion process of the delta sigma adc so it will be ready to read when needed
-                CyDelay(10);                            // let the adc get ready
-                PWM_isr_WriteCounter(100);              // set the pwm timer so that it will trigger adc isr first
-                ADC_value = ADC_SigDel_GetResult16();       // get first adc reading
-                isr_dac_Enable();                       // enable the interrupts to start the dac
-                isr_adc_Enable();                       // and the adc           
+            case START_HARDWARE: ;                      // 'H' Start taking measurements from the electrode                
+                // helper_HardwareWakeup();                // wake the hardware
+                isr_adc_ClearPending();
+                isr_dac_ClearPending();
+                isr_adcAmp_ClearPending();
+                isr_dac_Enable();
+                isr_adc_Enable();
+                ADC_SigDel_StartConvert();
+                isr_adcAmp_Enable();  
                 break;
                
-            case SHORT_TIA: ;                       // 's' user wants to short the TIA
+            case SHORT_TIA: ;                           // 's' user wants to short the TIA
                 AMux_TIA_input_Connect(2);
                 break;
                 
-            case STOP_SHORTING_TIA: ;               // 'd' user wants to stop shorting the TIA
+            case STOP_SHORTING_TIA: ;                   // 'd' user wants to stop shorting the TIA
                 AMux_TIA_input_Disconnect(2);
                 break;
+            }                                           // end of switch statment
             
-            }  // end of switch statment
-            OUT_Data_Buffer[0] = '0';  // clear data buffer cause it has been processed
-            Input_Flag = false;  // turn off input flag because it has been processed
+           helper_WipeOUT();                              // clear data buffer cause it has been processed                      
+           helper_WipeIN();        
+           Input_Flag = false;                         // turn off input flag because it has been processed
+            
         }
-    }  // end of for loop in main
+    }                                                   // end of for loop in main
     
 }  // end of main
 
 /* [] END OF FILE */
+

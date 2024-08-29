@@ -20,10 +20,10 @@
       <Group key="1c1039a1-069d-4c0e-815b-534a8889bd04">
         <Data key="check_tolerance" value="True" />
         <Data key="clock_version" value="v1" />
-        <Data key="derive_type" value="NAMED_DIVIDER" />
-        <Data key="desired_freq" value="0" />
-        <Data key="desired_unit" value="15" />
-        <Data key="divider" value="100" />
+        <Data key="derive_type" value="NAMED_FREQ" />
+        <Data key="desired_freq" value="100" />
+        <Data key="desired_unit" value="0" />
+        <Data key="divider" value="65536" />
         <Data key="domain" value="DIGITAL" />
         <Data key="enabled" value="True" />
         <Data key="minus_accuracy" value="0.25" />

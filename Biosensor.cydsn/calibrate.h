@@ -16,7 +16,10 @@
 #include <project.h>
 #include "cytypes.h"
 #include "math.h"
-#include "stdio.h"  // gets rid of the type errors
+#include "stdio.h" 
+#include "usb_protocols.h"
+#include "helper_functions.h"
+#include "globals.h"
     
 /**************************************
 *      Constants
@@ -38,18 +41,6 @@ calibrate_data_usb_union = [highest IDAC value, 2nd highest IDAC value, 0 IDAC i
 lowest IDAC value, ADC reading for highest IDAC value, ADC reading for 2ndhighest IDAC value,
 ADC reading 0 IDAC input, ADC reading for 2nd lowest IDAC value, ADC reading for lowest IDAC value]
 */
-
-/***************************************
-* Global variables identifier 
-***************************************/
-
-uint8_t ADC_buffer_index;
-extern float32 uA_per_adc_count;
-extern float32 R_analog_route;
-
-    
-extern char LCD_str[];  // for debug
-
 
 /***************************************
 *        Function Prototypes

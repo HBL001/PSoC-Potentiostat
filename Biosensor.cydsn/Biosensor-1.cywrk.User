@@ -13,7 +13,7 @@
 <v>Output</v>
 </TreeKeys>
 <TreeStates>
-<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Biosensor-1\Biosensor\Source Files\main.c">
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
 <ExpandedNodeIds>
 <v>Biosensor-1</v>
 <v>Biosensor-1\Biosensor</v>
@@ -45,8 +45,8 @@
 <v>Biosensor-1\Biosensor\Source Files\usb_protocols.c</v>
 <v>Biosensor-1\Biosensor\Source Files\user_selections.c</v>
 <v>Biosensor-1\Biosensor\Generated_Source</v>
-<v>Biosensor-1\Biosensor\Generated_Source\PSoC5\LCD</v>
-<v>Biosensor-1\Biosensor\Generated_Source\PSoC5\LCD_LCDPort</v>
+<v>Biosensor-1\Biosensor\Generated_Source\PSoC5\VDAC_Poise</v>
+<v>Biosensor-1\Biosensor\Generated_Source\PSoC5\Working_Electrode</v>
 </ExpandedNodeIds>
 <VisibleNodeIds>
 <v>Biosensor-1</v>
@@ -129,6 +129,7 @@
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\cyPm.lst</v>
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\CySpc.lst</v>
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\cyutils.lst</v>
+<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\dac.lst</v>
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\EEPROM.lst</v>
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\helper_functions.lst</v>
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\IDAC_calibrate.lst</v>
@@ -166,8 +167,6 @@
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\USBUART_std.lst</v>
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\USBUART_vnd.lst</v>
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\user_selections.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\VDAC_source.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\VDAC_source_PM.lst</v>
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\VDAC_TIA.lst</v>
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\VDAC_TIA_PM.lst</v>
 <v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\Working_Electrode.lst</v>
@@ -181,50 +180,6 @@
 <VisibleNodeIds>
 <v>Biosensor-1</v>
 <v>Biosensor-1\Biosensor</v>
-<v>Biosensor-1\Biosensor\CortexM3</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\adc.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_SigDel.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_SigDel_Ext_CP_Clk.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_SigDel_INT.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_SigDel_IRQ.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_SigDel_PM.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_SigDel_theACLK.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\AMux_electrode.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\AMux_TIA_input.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\calibrate.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\Clock_PWM.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\Cm3Start.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\Counter_Electrode.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\cy_em_eeprom.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\CyBootAsmGnu.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\CyDmac.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\cyfitter_cfg.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\CyFlash.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\CyLib.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\cyPm.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\CySpc.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\cyutils.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\EEPROM.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\helper_functions.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\IDAC_calibrate.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\IDAC_calibrate_PM.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_adc.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_adcAmp.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_dac.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\LCD.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\LCD_LCDPort.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\LCD_PM.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\main.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\Opamp_Aux.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\Opamp_Aux_PM.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_isr.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_isr_PM.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\Reference_Electrode.lst</v>
-<v>Biosensor-1\Biosensor\CortexM3\ARM_GCC_541\Debug\Listing Files\TIA.lst</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 </TreeStates>
@@ -302,15 +257,8 @@
 </CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997>
 <Unloaded />
 <OpenDocs>
-<name v=".\TopDesign\TopDesign.cysch" />
-<name v=".\Biosensor.cydwr" />
-<name v=".\adc.h" />
-<name v=".\calibrate.h" />
-<name v=".\dac.h" />
-<name v=".\globals.h" />
 <name v=".\main.c" />
-<name v=".\user_selections.c" />
-<name v=".\calibrate.c" />
+<name v=".\Biosensor.cydwr" />
 </OpenDocs>
 <OpenDocsLayout><![CDATA[<?xml version="1.0"?><!--
 
@@ -318,7 +266,7 @@
   Copyright (c) 2001-2016 Actipro Software LLC.  All rights reserved.
   http://www.actiprosoftware.com
 
---><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1427, 526" SelectedTabbedMdiWindow="25652cc8-2e3c-4ec8-9c98-d39259564825"><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Biosensor.cydsn\TopDesign\TopDesign.cysch" Guid="03a7a05c-a99c-4410-9099-ed909ffc6c32" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Biosensor.cydsn\Biosensor.cydwr" Guid="25652cc8-2e3c-4ec8-9c98-d39259564825" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Biosensor.cydsn\adc.h" Guid="620c14f7-ef8c-48cb-901f-8406c49f42ed" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Biosensor.cydsn\calibrate.h" Guid="02326ca3-579e-4ead-8800-d43ae4511de8" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Biosensor.cydsn\dac.h" Guid="a5d9a51f-44c7-4eae-8a33-13b621c17e36" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Biosensor.cydsn\globals.h" Guid="ef2fccaf-1386-4706-bd90-be9840eb6b3c" /><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="532ab3f3-3830-48f6-b205-4a79a0d09e53" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Biosensor.cydsn\main.c" Guid="5669760a-50ce-4632-b6f8-352d5ec1e875" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Biosensor.cydsn\user_selections.c" Guid="6f7b2a75-b6f2-4864-954a-275b213d9c9f" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Biosensor.cydsn\calibrate.c" Guid="bdf16bee-b474-4a8a-8d5e-fe3dd6298541" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1360, 637" SelectedTabbedMdiWindow="d955eab4-b8a9-4c32-8320-2f7cd6653f52"><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Biosensor.cydsn\main.c" Guid="ef479a2c-d55e-461c-a62d-beeccb43bc00" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\Biosensor.cydsn\Biosensor.cydwr" Guid="d955eab4-b8a9-4c32-8320-2f7cd6653f52" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
 <config v="" />
 <AutoUpdate v="true" />
 </CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>

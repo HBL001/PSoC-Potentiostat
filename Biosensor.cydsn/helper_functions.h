@@ -5,8 +5,9 @@
 *  Functions prototypes and their variables used by main.
 *
 **********************************************************************************
- * Copyright Naresuan University, Phitsanulok Thailand
- * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
+* Copyright Highland Biosciences Ltd
+* Copyright Naresuan University, Phitsanulok Thailand
+* Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
 *********************************************************************************/
 
 #if !defined(HELPER_FUNCTIONS_H)
@@ -14,7 +15,7 @@
 
 #include <project.h>
 #include "cytypes.h"
-#include "stdio.h"  // gets rid of the type errors
+#include "stdio.h"  
 #include "globals.h"
 #include "dac.h"
     
@@ -30,15 +31,21 @@ extern uint8_t selected_voltage_source;
 *        Function Prototypes
 ***************************************/ 
 
-uint8_t helper_check_voltage_source(void);
-void helper_set_voltage_source(uint8_t selected_voltage_source);
 uint8_t helper_Writebyte_EEPROM(uint8_t data, uint16_t address);
 uint8_t helper_Readbyte_EEPROM(uint16_t address);
 
-void helper_HardwareSetup(uint8_t AMux_channel_select);
-void helper_HardwareStart(void);
+void helper_HardwareInit(void);
+void helper_HardwareEnable(void);
 void helper_HardwareSleep(void);
 void helper_HardwareWakeup(void);
+
+void helper_InitializeISR(void);
+
+void helper_WipeIN(void);
+void helper_WipeOUT(void);
+void helper_WipeLCD(void);
+void helper_WipeLCD_top(void);
+void helper_WipeLCD_bot(void);
 
 
 #endif

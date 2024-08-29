@@ -6,33 +6,12 @@
 *  basically EEPROM functions at this point.
 *
 **********************************************************************************
- * Copyright Naresuan University, Phitsanulok Thailand
- * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
+* Copyright Highland Biosciences Ltd
+* Copyright Naresuan University, Phitsanulok Thailand
+* Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
 *********************************************************************************/
 
 #include "helper_functions.h"
-
-/******************************************************************************
-* Function Name: helper_check_voltage_source
-*******************************************************************************
-*
-* Summary:
-*  Look in the EEPROM to for what Voltage source is selected
-  # TODO: dont look in eeprom first, check selected_voltage_source before going to the eeprom
-*
-* Parameters:
-*
-* Return:
-*
-* Global variables:
-*  OUT_ENDPOINT:  number that is the endpoint coming out of the computer
-*
-*******************************************************************************/
-
-uint8_t helper_check_voltage_source(void) {
-    // start eeprom and read the value at voltage source address
-    return helper_Readbyte_EEPROM(VDAC_ADDRESS);
-}
 
 /******************************************************************************
 * Function Name: helper_Writebyte_EEPROM
@@ -84,84 +63,158 @@ uint8_t helper_Readbyte_EEPROM(uint16_t address) {
 }
 
 /******************************************************************************
-* Function Name: helper_HardwareSetup
+* Function Name: helper_HardwareInit
 *******************************************************************************
 *
 * Summary:
-*   Setup all the hardware needed for an experiment.  
-*   Connect all the default analog muxes
+*    Start all the hardware needed for an experiment.
 *
 *******************************************************************************/
-
-void helper_HardwareSetup(uint8_t AMux_channel_select) {
-    helper_HardwareStart();
-    helper_HardwareSleep();
-
+void helper_HardwareInit(void){ 
+ 
+    /* setup the communications */
+    Clock_PWM_Start();    
+    LCD_Start();
+    
+    /* Initialise system timing */
+    PWM_isr_Init();            
+    
+    /* Voltage Control Circuit */  
+    VDAC_Poise_Init();   
+    Opamp_Aux_Init();
+    
     AMux_electrode_Init();
-    AMux_TIA_input_Init();
-
-    dac_Start();  // DAC has to be started after the AMux_V_source because it will set it based what DAC source is selected
+    AMux_electrode_Select(TWO_ELECTRODE_CONFIG);  
     
-    // initialise the analog muxes connections 
-    AMux_electrode_Select(AMux_channel_select);             // start with 3 electrode configuration
-    AMux_TIA_input_Select(AMux_TIA_working_electrode_ch);   // Connect the working electrode
    
-}
-
-/******************************************************************************
-* Function Name: helper_HardwareStart
-*******************************************************************************
-*
-* Summary:
-*    Start all the hardware needed for an experiment.
-*
-*******************************************************************************/
-
-void helper_HardwareStart(void){  // start all the components that have to be on for a reading
-    ADC_SigDel_Start();
-    TIA_Start();
-    VDAC_TIA_Start();
-    Opamp_Aux_Start();
-    PWM_isr_Start();
-}
-
-/******************************************************************************
-* Function Name: helper_HardwareWakeup
-*******************************************************************************
-*
-* Summary:
-*    Start all the hardware needed for an experiment.
-*
-*******************************************************************************/
-
-void helper_HardwareWakeup(void){  // wakeup all the components that have to be on for a reading
-    ADC_SigDel_Wakeup();
-    TIA_Wakeup();
-    VDAC_TIA_Wakeup();
-    dac_Wakeup();
-    CyDelay(1);
-    Opamp_Aux_Wakeup();
-    PWM_isr_Wakeup();
+    /* Current Measuring Circuit */
+    ADC_SigDel_Init();
+    VDAC_TIA_Init();
+    TIA_Init();
+    IDAC_calibrate_Init();
+    AMux_TIA_input_Init();
+    AMux_TIA_input_Select(AMux_TIA_working_electrode_ch);  // Connect the working electrode
     
 }
 
 /******************************************************************************
-* Function Name: helper_HardwareWakeup
+* Function Name: helper_Hardware Enable
+*******************************************************************************
+*
+* Summary:
+*    Start all the hardware needed for an experiment.
+*
+*******************************************************************************/
+void helper_HardwareEnable(void){ 
+ 
+    /* setup the communications and system timing */                             
+    PWM_isr_Enable();         
+    
+    /* Voltage Control Circuit */  
+    VDAC_Poise_Enable();
+    Opamp_Aux_Enable();
+    
+     /* Current Measuring Circuit */   
+    ADC_SigDel_Enable();
+    VDAC_TIA_Enable();
+    TIA_Enable();
+    AMux_TIA_input_Select(AMux_TIA_working_electrode_ch);    
+}
+
+/******************************************************************************
+* Function Name: helper_HardwareSleep
 *******************************************************************************
 *
 * Summary:
 *    Put to sleep all the hardware needed for an experiment.
 *
 *******************************************************************************/
-
-void helper_HardwareSleep(void){  // put to sleep all the components that have to be on for a reading
-    ADC_SigDel_Sleep();
-    dac_Sleep();
-    TIA_Sleep();
-    VDAC_TIA_Sleep();
-    Opamp_Aux_Sleep();
-    PWM_isr_Sleep();
+void helper_HardwareSleep(void){  
     
+    /* Voltage Control Circuit */  
+    VDAC_Poise_Sleep();
+    Opamp_Aux_Sleep();
+    
+    /* Current Measuring Circuit */
+//    ADC_SigDel_Sleep();
+    VDAC_TIA_Sleep();
+    TIA_Sleep();  
+}
+
+
+/******************************************************************************
+* Function Name: helper_HardwareWakeup
+*******************************************************************************
+*
+* Summary:
+*    Start all the hardware needed for an experiment.
+*
+*******************************************************************************/
+void helper_HardwareWakeup(void){  // wakeup all the components that have to be on for a reading
+        
+       /* Voltage Control Circuit */  
+    dac_Wakeup();
+    Opamp_Aux_Wakeup();
+    
+    /* Current Measuring Circuit */
+   
+    VDAC_TIA_Wakeup();
+    TIA_Wakeup();  
+        
+}
+
+
+/******************************************************************************
+* Function Name: helper_WipeLCD
+*******************************************************************************
+*
+* Summary: Wipe the LCD buffers ready for new messages
+*
+*******************************************************************************/
+
+void helper_WipeLCD(void){  // wipe the text 
+memset(LCD_str_top, 0, MAX_LCD_BYTES);          
+memset(LCD_str_bot, 0, MAX_LCD_BYTES);              
+}
+
+void helper_WipeLCD_top(void){  // wipe the text top line
+memset(LCD_str_top, 0, MAX_LCD_BYTES);          
+}
+
+void helper_WipeLCD_bot (void){  // wipe the text top line
+memset(LCD_str_bot, 0, MAX_LCD_BYTES);          
+}
+
+
+/******************************************************************************
+* Function Name: helper_WipeOut
+*******************************************************************************
+*
+* Summary:
+*    Wipe the buffers used to collect output from Host PC
+*
+*******************************************************************************/
+void helper_WipeOUT(void)
+{
+            
+memset(OUT_Data_Buffer, 0, MAX_NUM_BYTES);          
+  
+}
+
+
+/******************************************************************************
+* Function Name: helper_WipeIn
+*******************************************************************************
+*
+* Summary:
+*    Wipe the buffers used to collect output from Host PC
+*
+*******************************************************************************/
+void helper_WipeIN(void)
+{
+                       
+memset(IN_Data_Buffer, 0, MAX_NUM_BYTES);
+            
 }
 
 

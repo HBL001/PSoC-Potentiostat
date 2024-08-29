@@ -564,7 +564,7 @@
       </registers>
     </peripheral>
     <peripheral>
-      <name>VDAC_source</name>
+      <name>VDAC_Poise</name>
       <description>No description available</description>
       <baseAddress>0x0</baseAddress>
       <addressBlock>

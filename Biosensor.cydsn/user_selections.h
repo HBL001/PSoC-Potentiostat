@@ -5,10 +5,9 @@
 *  
 *
 **********************************************************************************
- * Copyright Kyle Vitautas Lopin, Naresuan University, Phitsanulok Thailand
- * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
+* Copyright Kyle Vitautas Lopin, Naresuan University, Phitsanulok Thailand
+* Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
 *********************************************************************************/
-
 #if !defined(USER_SELECTIONS_H)
 #define USER_SELECTIONS_H
     
@@ -19,30 +18,15 @@
 #include "helper_functions.h"
 #include "usb_protocols.h"
     
-    
-
-   
 /***************************************
 *        Function Prototypes
 ***************************************/  
-
-void user_export_lut(uint8_t data_buffer[]);
 void user_setup_TIA_ADC(uint8_t data_buffer[]);
-void user_run_cv_experiment(uint8_t data_buffer[]);
-void user_voltage_source_funcs(uint8_t data_buffer[]);
-void user_start_cv_run(void);
-void user_reset_device(void);
 void user_identify(void);
 void user_set_isr_timer(uint8_t data_buffer[]);
-uint16_t user_run_amperometry(uint8_t data_buffer[]);
+void user_setup_electrode (uint8_t data_buffer[]);
+void user_reset_device(void);
 
-
-/***************************************
-* Global variables external identifier
-***************************************/
-
-extern uint8_t TIA_resistor_value_index;
-extern uint8_t ADC_buffer_index;
     
 #endif
 

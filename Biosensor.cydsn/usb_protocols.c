@@ -13,9 +13,7 @@
 
 #include <project.h>
 #include "usb_protocols.h"
-#include "stdio.h"
-#include "stdlib.h"
-extern char LCD_str[];  // for debug
+
 
 /******************************************************************************
 * Function Name: USB_CheckInput
@@ -58,19 +56,22 @@ uint8 USB_CheckInput(uint8 buffer[]) {
 *
 *******************************************************************************************/
 
-void USB_Export_Data(uint8 array[], uint16_t size) {
-    uint16_t size_to_send;
-    for (int i=0; i < size; i=i+MAX_BUFFER_SIZE) {
-        
-        size_to_send = size - i;
-        if (size_to_send > MAX_BUFFER_SIZE) {
-            size_to_send = MAX_BUFFER_SIZE;
+void USB_Export_Data(const char8 string[]) 
+{
+       
+    while(USBUART_CDCIsReady() == 0)
+        {
         }
+   
+    USBUART_PutString(string);
+    
         while(USBUART_CDCIsReady() == 0)
         {
         }
-        USBUART_PutData(&array[i], size_to_send);
-    }
+        
+    USBUART_PutCRLF();
+        
+    
 }
 
 /* [] END OF FILE */

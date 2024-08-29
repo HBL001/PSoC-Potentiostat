@@ -7,8 +7,9 @@
 *
 *
 **********************************************************************************
- * Copyright Naresuan University, Phitsanulok Thailand
- * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
+* Copyright Highland Biosciences Ltd.
+* Copyright Naresuan University, Phitsanulok Thailand
+* Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
 *********************************************************************************/
 
 
@@ -16,33 +17,15 @@
 #define USB_PROTOCOLS_H
     
 #include <project.h>
-#include "stdio.h"  // gets rid of the type errors
-
-/**************************************
-*      Constants
-**************************************/
-    
-#define IN_ENDPOINT 0X01
-#define OUT_ENDPOINT 0x02
-#define STREAMING_ENDPOINT 0x03
-#define MAX_BUFFER_SIZE 64
-#define true 1
-#define false 0
-    
-// Define variables for the UBS device
-    // TODO:  is this correct and can IN_data_buffer be deleted
-#define MAX_NUM_BYTES 512 // how big to make the IN and OUT ENDPOINT BUFFERS
-#define MAX_DATA_BUFFER 256 // make this MAX_NUM_BYTES / 2
-
-/* External variable of the device address located in USBFS.h */
-extern uint8_t USB_deviceAdress;
+#include "globals.h"
+   
     
 /***************************************
 *        Function Prototypes
 ***************************************/  
     
 uint8_t USB_CheckInput(uint8_t buffer[]);
-void USB_Export_Data(uint8_t array[], uint16_t size);
+void USB_Export_Data(const char8 string[]);
 
 #endif
 
