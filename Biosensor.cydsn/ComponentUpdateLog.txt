@@ -15,3 +15,17 @@ Amperometry_v059_2: TopDesign.cysch
 Last Modified Date & Time: 11/11/2022 09:24:07
 
 
+Last Modified Date & Time: 09/01/2024 18:07:30
+
+Biosensor: TopDesign.cysch
+	USBUART [v3.10] to [v3.20]
+
+
+Last Modified Date & Time: 09/01/2024 22:13:54
+
+ADC_SingleEndedMode01: ADC_SingleEndedMode01.cydwr
+	cy_boot [v5.70] to [v6.10]
+	Em_EEPROM_Dynamic [v2.0] to [v2.20]
+	LIN_Dynamic [v4.0] to [v6.0]
+
+

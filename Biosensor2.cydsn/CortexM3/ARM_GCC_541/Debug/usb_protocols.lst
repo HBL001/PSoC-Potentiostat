@@ -1,0 +1,684 @@
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"usb_protocols.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.comm	buffer,64,4
+  20              		.section	.text.USB_send,"ax",%progbits
+  21              		.align	2
+  22              		.global	USB_send
+  23              		.thumb
+  24              		.thumb_func
+  25              		.type	USB_send, %function
+  26              	USB_send:
+  27              	.LFB64:
+  28              		.file 1 "usb_protocols.c"
+   1:usb_protocols.c **** /*********************************************************************************
+   2:usb_protocols.c **** * File Name: usb_protocols.c
+   3:usb_protocols.c **** *
+   4:usb_protocols.c **** * Description:
+   5:usb_protocols.c **** *  Source code for the protocols used by the USB.
+   6:usb_protocols.c **** *  converted to USBUART in January 2023
+   7:usb_protocols.c **** *
+   8:usb_protocols.c **** *
+   9:usb_protocols.c **** **********************************************************************************
+  10:usb_protocols.c ****  * Copyright Naresuan University, Phitsanulok Thailand 2017-2023
+  11:usb_protocols.c ****  * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
+  12:usb_protocols.c **** *********************************************************************************/
+  13:usb_protocols.c **** 
+  14:usb_protocols.c **** #include <project.h>
+  15:usb_protocols.c **** #include "usb_protocols.h"
+  16:usb_protocols.c **** 
+  17:usb_protocols.c **** 
+  18:usb_protocols.c **** /******************************************************************************
+  19:usb_protocols.c **** * Function Name: USB_Send
+  20:usb_protocols.c **** *************************************************************************************
+  21:usb_protocols.c **** *
+  22:usb_protocols.c **** * Summary:
+  23:usb_protocols.c **** *  Take a buffer as input and export it, the size of bytes to send is also inputted
+  24:usb_protocols.c **** *
+  25:usb_protocols.c **** * Parameters:
+  26:usb_protocols.c **** *  uint8_t data buffer: array of data to send
+  27:usb_protocols.c **** *  uint16_t count: the size of the buffer
+  28:usb_protocols.c **** *
+  29:usb_protocols.c **** * Return:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 2
+
+
+  30:usb_protocols.c **** *  None
+  31:usb_protocols.c **** *
+  32:usb_protocols.c **** *******************************************************************************************/
+  33:usb_protocols.c **** 
+  34:usb_protocols.c **** 
+  35:usb_protocols.c **** void USB_send (uint8_t data_buffer[], size_t count ) 
+  36:usb_protocols.c **** {
+  29              		.loc 1 36 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 8
+  32              		@ frame_needed = 1, uses_anonymous_args = 0
+  33 0000 80B5     		push	{r7, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 7, -8
+  36              		.cfi_offset 14, -4
+  37 0002 82B0     		sub	sp, sp, #8
+  38              		.cfi_def_cfa_offset 16
+  39 0004 00AF     		add	r7, sp, #0
+  40              		.cfi_def_cfa_register 7
+  41 0006 7860     		str	r0, [r7, #4]
+  42 0008 3960     		str	r1, [r7]
+  37:usb_protocols.c ****     if (count==0) {
+  43              		.loc 1 37 0
+  44 000a 3B68     		ldr	r3, [r7]
+  45 000c 002B     		cmp	r3, #0
+  46 000e 03D1     		bne	.L2
+  38:usb_protocols.c ****         count = strlen((char*)data_buffer); }
+  47              		.loc 1 38 0
+  48 0010 7868     		ldr	r0, [r7, #4]
+  49 0012 FFF7FEFF 		bl	strlen
+  50 0016 3860     		str	r0, [r7]
+  51              	.L2:
+  39:usb_protocols.c ****                    
+  40:usb_protocols.c ****         /* Echo back */
+  41:usb_protocols.c ****         USBUART_PutData(data_buffer, count);
+  52              		.loc 1 41 0
+  53 0018 3B68     		ldr	r3, [r7]
+  54 001a 9BB2     		uxth	r3, r3
+  55 001c 1946     		mov	r1, r3
+  56 001e 7868     		ldr	r0, [r7, #4]
+  57 0020 FFF7FEFF 		bl	USBUART_PutData
+  42:usb_protocols.c ****                   
+  43:usb_protocols.c ****         /* Terminate with Null */
+  44:usb_protocols.c ****         if (USBUART_BUFFER_SIZE == count){
+  58              		.loc 1 44 0
+  59 0024 3B68     		ldr	r3, [r7]
+  60 0026 402B     		cmp	r3, #64
+  61 0028 09D1     		bne	.L6
+  45:usb_protocols.c ****             
+  46:usb_protocols.c ****             /* Wait until component is ready to send data to PC. */
+  47:usb_protocols.c ****             while (0u == USBUART_CDCIsReady())
+  62              		.loc 1 47 0
+  63 002a 00BF     		nop
+  64              	.L4:
+  65              		.loc 1 47 0 is_stmt 0 discriminator 1
+  66 002c FFF7FEFF 		bl	USBUART_CDCIsReady
+  67 0030 0346     		mov	r3, r0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 3
+
+
+  68 0032 002B     		cmp	r3, #0
+  69 0034 FAD0     		beq	.L4
+  48:usb_protocols.c ****                 {
+  49:usb_protocols.c ****                 }
+  50:usb_protocols.c **** 
+  51:usb_protocols.c ****                 /* Send zero-length packet to PC. */
+  52:usb_protocols.c ****                 USBUART_PutData(NULL, 0u);
+  70              		.loc 1 52 0 is_stmt 1
+  71 0036 0021     		movs	r1, #0
+  72 0038 0020     		movs	r0, #0
+  73 003a FFF7FEFF 		bl	USBUART_PutData
+  74              	.L6:
+  53:usb_protocols.c ****             }
+  54:usb_protocols.c ****                     
+  55:usb_protocols.c ****         /* Send a crlf out */
+  56:usb_protocols.c ****         while (0u == USBUART_CDCIsReady())
+  75              		.loc 1 56 0
+  76 003e 00BF     		nop
+  77              	.L5:
+  78              		.loc 1 56 0 is_stmt 0 discriminator 1
+  79 0040 FFF7FEFF 		bl	USBUART_CDCIsReady
+  80 0044 0346     		mov	r3, r0
+  81 0046 002B     		cmp	r3, #0
+  82 0048 FAD0     		beq	.L5
+  57:usb_protocols.c ****            {
+  58:usb_protocols.c ****            }
+  59:usb_protocols.c ****            USBUART_PutCRLF();        
+  83              		.loc 1 59 0 is_stmt 1
+  84 004a FFF7FEFF 		bl	USBUART_PutCRLF
+  60:usb_protocols.c **** }
+  85              		.loc 1 60 0
+  86 004e 00BF     		nop
+  87 0050 0837     		adds	r7, r7, #8
+  88              		.cfi_def_cfa_offset 8
+  89 0052 BD46     		mov	sp, r7
+  90              		.cfi_def_cfa_register 13
+  91              		@ sp needed
+  92 0054 80BD     		pop	{r7, pc}
+  93              		.cfi_endproc
+  94              	.LFE64:
+  95              		.size	USB_send, .-USB_send
+  96 0056 00BF     		.text
+  97              	.Letext0:
+  98              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+  99              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 100              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 101              		.file 5 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 102              		.file 6 "Generated_Source\\PSoC5/core_cm3.h"
+ 103              		.file 7 "globals.h"
+ 104              		.section	.debug_info,"",%progbits
+ 105              	.Ldebug_info0:
+ 106 0000 31010000 		.4byte	0x131
+ 107 0004 0400     		.2byte	0x4
+ 108 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 109 000a 04       		.byte	0x4
+ 110 000b 01       		.uleb128 0x1
+ 111 000c F7000000 		.4byte	.LASF23
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 4
+
+
+ 112 0010 0C       		.byte	0xc
+ 113 0011 76000000 		.4byte	.LASF24
+ 114 0015 B0000000 		.4byte	.LASF25
+ 115 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 116 001d 00000000 		.4byte	0
+ 117 0021 00000000 		.4byte	.Ldebug_line0
+ 118 0025 02       		.uleb128 0x2
+ 119 0026 01       		.byte	0x1
+ 120 0027 06       		.byte	0x6
+ 121 0028 A6010000 		.4byte	.LASF0
+ 122 002c 03       		.uleb128 0x3
+ 123 002d 6C000000 		.4byte	.LASF4
+ 124 0031 02       		.byte	0x2
+ 125 0032 1D       		.byte	0x1d
+ 126 0033 37000000 		.4byte	0x37
+ 127 0037 02       		.uleb128 0x2
+ 128 0038 01       		.byte	0x1
+ 129 0039 08       		.byte	0x8
+ 130 003a 8E000000 		.4byte	.LASF1
+ 131 003e 02       		.uleb128 0x2
+ 132 003f 02       		.byte	0x2
+ 133 0040 05       		.byte	0x5
+ 134 0041 C2010000 		.4byte	.LASF2
+ 135 0045 02       		.uleb128 0x2
+ 136 0046 02       		.byte	0x2
+ 137 0047 07       		.byte	0x7
+ 138 0048 0E000000 		.4byte	.LASF3
+ 139 004c 03       		.uleb128 0x3
+ 140 004d B2010000 		.4byte	.LASF5
+ 141 0051 02       		.byte	0x2
+ 142 0052 3F       		.byte	0x3f
+ 143 0053 57000000 		.4byte	0x57
+ 144 0057 02       		.uleb128 0x2
+ 145 0058 04       		.byte	0x4
+ 146 0059 05       		.byte	0x5
+ 147 005a A7000000 		.4byte	.LASF6
+ 148 005e 02       		.uleb128 0x2
+ 149 005f 04       		.byte	0x4
+ 150 0060 07       		.byte	0x7
+ 151 0061 43000000 		.4byte	.LASF7
+ 152 0065 02       		.uleb128 0x2
+ 153 0066 08       		.byte	0x8
+ 154 0067 05       		.byte	0x5
+ 155 0068 00000000 		.4byte	.LASF8
+ 156 006c 02       		.uleb128 0x2
+ 157 006d 08       		.byte	0x8
+ 158 006e 07       		.byte	0x7
+ 159 006f 55000000 		.4byte	.LASF9
+ 160 0073 04       		.uleb128 0x4
+ 161 0074 04       		.byte	0x4
+ 162 0075 05       		.byte	0x5
+ 163 0076 696E7400 		.ascii	"int\000"
+ 164 007a 02       		.uleb128 0x2
+ 165 007b 04       		.byte	0x4
+ 166 007c 07       		.byte	0x7
+ 167 007d 21000000 		.4byte	.LASF10
+ 168 0081 03       		.uleb128 0x3
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 5
+
+
+ 169 0082 86000000 		.4byte	.LASF11
+ 170 0086 03       		.byte	0x3
+ 171 0087 18       		.byte	0x18
+ 172 0088 2C000000 		.4byte	0x2c
+ 173 008c 03       		.uleb128 0x3
+ 174 008d 3B000000 		.4byte	.LASF12
+ 175 0091 03       		.byte	0x3
+ 176 0092 2C       		.byte	0x2c
+ 177 0093 4C000000 		.4byte	0x4c
+ 178 0097 05       		.uleb128 0x5
+ 179 0098 35000000 		.4byte	.LASF13
+ 180 009c 04       		.byte	0x4
+ 181 009d E901     		.2byte	0x1e9
+ 182 009f 37000000 		.4byte	0x37
+ 183 00a3 02       		.uleb128 0x2
+ 184 00a4 04       		.byte	0x4
+ 185 00a5 04       		.byte	0x4
+ 186 00a6 BC010000 		.4byte	.LASF14
+ 187 00aa 02       		.uleb128 0x2
+ 188 00ab 08       		.byte	0x8
+ 189 00ac 04       		.byte	0x4
+ 190 00ad F0000000 		.4byte	.LASF15
+ 191 00b1 02       		.uleb128 0x2
+ 192 00b2 01       		.byte	0x1
+ 193 00b3 08       		.byte	0x8
+ 194 00b4 9C000000 		.4byte	.LASF16
+ 195 00b8 03       		.uleb128 0x3
+ 196 00b9 2E000000 		.4byte	.LASF17
+ 197 00bd 05       		.byte	0x5
+ 198 00be D8       		.byte	0xd8
+ 199 00bf 7A000000 		.4byte	0x7a
+ 200 00c3 02       		.uleb128 0x2
+ 201 00c4 04       		.byte	0x4
+ 202 00c5 07       		.byte	0x7
+ 203 00c6 90010000 		.4byte	.LASF18
+ 204 00ca 06       		.uleb128 0x6
+ 205 00cb CC010000 		.4byte	.LASF26
+ 206 00cf 01       		.byte	0x1
+ 207 00d0 23       		.byte	0x23
+ 208 00d1 00000000 		.4byte	.LFB64
+ 209 00d5 56000000 		.4byte	.LFE64-.LFB64
+ 210 00d9 01       		.uleb128 0x1
+ 211 00da 9C       		.byte	0x9c
+ 212 00db FC000000 		.4byte	0xfc
+ 213 00df 07       		.uleb128 0x7
+ 214 00e0 DC010000 		.4byte	.LASF19
+ 215 00e4 01       		.byte	0x1
+ 216 00e5 23       		.byte	0x23
+ 217 00e6 FC000000 		.4byte	0xfc
+ 218 00ea 02       		.uleb128 0x2
+ 219 00eb 91       		.byte	0x91
+ 220 00ec 74       		.sleb128 -12
+ 221 00ed 07       		.uleb128 0x7
+ 222 00ee A1000000 		.4byte	.LASF20
+ 223 00f2 01       		.byte	0x1
+ 224 00f3 23       		.byte	0x23
+ 225 00f4 B8000000 		.4byte	0xb8
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 6
+
+
+ 226 00f8 02       		.uleb128 0x2
+ 227 00f9 91       		.byte	0x91
+ 228 00fa 70       		.sleb128 -16
+ 229 00fb 00       		.byte	0
+ 230 00fc 08       		.uleb128 0x8
+ 231 00fd 04       		.byte	0x4
+ 232 00fe 81000000 		.4byte	0x81
+ 233 0102 09       		.uleb128 0x9
+ 234 0103 99010000 		.4byte	.LASF21
+ 235 0107 06       		.byte	0x6
+ 236 0108 1207     		.2byte	0x712
+ 237 010a 0E010000 		.4byte	0x10e
+ 238 010e 0A       		.uleb128 0xa
+ 239 010f 8C000000 		.4byte	0x8c
+ 240 0113 0B       		.uleb128 0xb
+ 241 0114 97000000 		.4byte	0x97
+ 242 0118 23010000 		.4byte	0x123
+ 243 011c 0C       		.uleb128 0xc
+ 244 011d C3000000 		.4byte	0xc3
+ 245 0121 3F       		.byte	0x3f
+ 246 0122 00       		.byte	0
+ 247 0123 0D       		.uleb128 0xd
+ 248 0124 D5010000 		.4byte	.LASF22
+ 249 0128 07       		.byte	0x7
+ 250 0129 50       		.byte	0x50
+ 251 012a 13010000 		.4byte	0x113
+ 252 012e 05       		.uleb128 0x5
+ 253 012f 03       		.byte	0x3
+ 254 0130 00000000 		.4byte	buffer
+ 255 0134 00       		.byte	0
+ 256              		.section	.debug_abbrev,"",%progbits
+ 257              	.Ldebug_abbrev0:
+ 258 0000 01       		.uleb128 0x1
+ 259 0001 11       		.uleb128 0x11
+ 260 0002 01       		.byte	0x1
+ 261 0003 25       		.uleb128 0x25
+ 262 0004 0E       		.uleb128 0xe
+ 263 0005 13       		.uleb128 0x13
+ 264 0006 0B       		.uleb128 0xb
+ 265 0007 03       		.uleb128 0x3
+ 266 0008 0E       		.uleb128 0xe
+ 267 0009 1B       		.uleb128 0x1b
+ 268 000a 0E       		.uleb128 0xe
+ 269 000b 55       		.uleb128 0x55
+ 270 000c 17       		.uleb128 0x17
+ 271 000d 11       		.uleb128 0x11
+ 272 000e 01       		.uleb128 0x1
+ 273 000f 10       		.uleb128 0x10
+ 274 0010 17       		.uleb128 0x17
+ 275 0011 00       		.byte	0
+ 276 0012 00       		.byte	0
+ 277 0013 02       		.uleb128 0x2
+ 278 0014 24       		.uleb128 0x24
+ 279 0015 00       		.byte	0
+ 280 0016 0B       		.uleb128 0xb
+ 281 0017 0B       		.uleb128 0xb
+ 282 0018 3E       		.uleb128 0x3e
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 7
+
+
+ 283 0019 0B       		.uleb128 0xb
+ 284 001a 03       		.uleb128 0x3
+ 285 001b 0E       		.uleb128 0xe
+ 286 001c 00       		.byte	0
+ 287 001d 00       		.byte	0
+ 288 001e 03       		.uleb128 0x3
+ 289 001f 16       		.uleb128 0x16
+ 290 0020 00       		.byte	0
+ 291 0021 03       		.uleb128 0x3
+ 292 0022 0E       		.uleb128 0xe
+ 293 0023 3A       		.uleb128 0x3a
+ 294 0024 0B       		.uleb128 0xb
+ 295 0025 3B       		.uleb128 0x3b
+ 296 0026 0B       		.uleb128 0xb
+ 297 0027 49       		.uleb128 0x49
+ 298 0028 13       		.uleb128 0x13
+ 299 0029 00       		.byte	0
+ 300 002a 00       		.byte	0
+ 301 002b 04       		.uleb128 0x4
+ 302 002c 24       		.uleb128 0x24
+ 303 002d 00       		.byte	0
+ 304 002e 0B       		.uleb128 0xb
+ 305 002f 0B       		.uleb128 0xb
+ 306 0030 3E       		.uleb128 0x3e
+ 307 0031 0B       		.uleb128 0xb
+ 308 0032 03       		.uleb128 0x3
+ 309 0033 08       		.uleb128 0x8
+ 310 0034 00       		.byte	0
+ 311 0035 00       		.byte	0
+ 312 0036 05       		.uleb128 0x5
+ 313 0037 16       		.uleb128 0x16
+ 314 0038 00       		.byte	0
+ 315 0039 03       		.uleb128 0x3
+ 316 003a 0E       		.uleb128 0xe
+ 317 003b 3A       		.uleb128 0x3a
+ 318 003c 0B       		.uleb128 0xb
+ 319 003d 3B       		.uleb128 0x3b
+ 320 003e 05       		.uleb128 0x5
+ 321 003f 49       		.uleb128 0x49
+ 322 0040 13       		.uleb128 0x13
+ 323 0041 00       		.byte	0
+ 324 0042 00       		.byte	0
+ 325 0043 06       		.uleb128 0x6
+ 326 0044 2E       		.uleb128 0x2e
+ 327 0045 01       		.byte	0x1
+ 328 0046 3F       		.uleb128 0x3f
+ 329 0047 19       		.uleb128 0x19
+ 330 0048 03       		.uleb128 0x3
+ 331 0049 0E       		.uleb128 0xe
+ 332 004a 3A       		.uleb128 0x3a
+ 333 004b 0B       		.uleb128 0xb
+ 334 004c 3B       		.uleb128 0x3b
+ 335 004d 0B       		.uleb128 0xb
+ 336 004e 27       		.uleb128 0x27
+ 337 004f 19       		.uleb128 0x19
+ 338 0050 11       		.uleb128 0x11
+ 339 0051 01       		.uleb128 0x1
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 8
+
+
+ 340 0052 12       		.uleb128 0x12
+ 341 0053 06       		.uleb128 0x6
+ 342 0054 40       		.uleb128 0x40
+ 343 0055 18       		.uleb128 0x18
+ 344 0056 9642     		.uleb128 0x2116
+ 345 0058 19       		.uleb128 0x19
+ 346 0059 01       		.uleb128 0x1
+ 347 005a 13       		.uleb128 0x13
+ 348 005b 00       		.byte	0
+ 349 005c 00       		.byte	0
+ 350 005d 07       		.uleb128 0x7
+ 351 005e 05       		.uleb128 0x5
+ 352 005f 00       		.byte	0
+ 353 0060 03       		.uleb128 0x3
+ 354 0061 0E       		.uleb128 0xe
+ 355 0062 3A       		.uleb128 0x3a
+ 356 0063 0B       		.uleb128 0xb
+ 357 0064 3B       		.uleb128 0x3b
+ 358 0065 0B       		.uleb128 0xb
+ 359 0066 49       		.uleb128 0x49
+ 360 0067 13       		.uleb128 0x13
+ 361 0068 02       		.uleb128 0x2
+ 362 0069 18       		.uleb128 0x18
+ 363 006a 00       		.byte	0
+ 364 006b 00       		.byte	0
+ 365 006c 08       		.uleb128 0x8
+ 366 006d 0F       		.uleb128 0xf
+ 367 006e 00       		.byte	0
+ 368 006f 0B       		.uleb128 0xb
+ 369 0070 0B       		.uleb128 0xb
+ 370 0071 49       		.uleb128 0x49
+ 371 0072 13       		.uleb128 0x13
+ 372 0073 00       		.byte	0
+ 373 0074 00       		.byte	0
+ 374 0075 09       		.uleb128 0x9
+ 375 0076 34       		.uleb128 0x34
+ 376 0077 00       		.byte	0
+ 377 0078 03       		.uleb128 0x3
+ 378 0079 0E       		.uleb128 0xe
+ 379 007a 3A       		.uleb128 0x3a
+ 380 007b 0B       		.uleb128 0xb
+ 381 007c 3B       		.uleb128 0x3b
+ 382 007d 05       		.uleb128 0x5
+ 383 007e 49       		.uleb128 0x49
+ 384 007f 13       		.uleb128 0x13
+ 385 0080 3F       		.uleb128 0x3f
+ 386 0081 19       		.uleb128 0x19
+ 387 0082 3C       		.uleb128 0x3c
+ 388 0083 19       		.uleb128 0x19
+ 389 0084 00       		.byte	0
+ 390 0085 00       		.byte	0
+ 391 0086 0A       		.uleb128 0xa
+ 392 0087 35       		.uleb128 0x35
+ 393 0088 00       		.byte	0
+ 394 0089 49       		.uleb128 0x49
+ 395 008a 13       		.uleb128 0x13
+ 396 008b 00       		.byte	0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 9
+
+
+ 397 008c 00       		.byte	0
+ 398 008d 0B       		.uleb128 0xb
+ 399 008e 01       		.uleb128 0x1
+ 400 008f 01       		.byte	0x1
+ 401 0090 49       		.uleb128 0x49
+ 402 0091 13       		.uleb128 0x13
+ 403 0092 01       		.uleb128 0x1
+ 404 0093 13       		.uleb128 0x13
+ 405 0094 00       		.byte	0
+ 406 0095 00       		.byte	0
+ 407 0096 0C       		.uleb128 0xc
+ 408 0097 21       		.uleb128 0x21
+ 409 0098 00       		.byte	0
+ 410 0099 49       		.uleb128 0x49
+ 411 009a 13       		.uleb128 0x13
+ 412 009b 2F       		.uleb128 0x2f
+ 413 009c 0B       		.uleb128 0xb
+ 414 009d 00       		.byte	0
+ 415 009e 00       		.byte	0
+ 416 009f 0D       		.uleb128 0xd
+ 417 00a0 34       		.uleb128 0x34
+ 418 00a1 00       		.byte	0
+ 419 00a2 03       		.uleb128 0x3
+ 420 00a3 0E       		.uleb128 0xe
+ 421 00a4 3A       		.uleb128 0x3a
+ 422 00a5 0B       		.uleb128 0xb
+ 423 00a6 3B       		.uleb128 0x3b
+ 424 00a7 0B       		.uleb128 0xb
+ 425 00a8 49       		.uleb128 0x49
+ 426 00a9 13       		.uleb128 0x13
+ 427 00aa 3F       		.uleb128 0x3f
+ 428 00ab 19       		.uleb128 0x19
+ 429 00ac 02       		.uleb128 0x2
+ 430 00ad 18       		.uleb128 0x18
+ 431 00ae 00       		.byte	0
+ 432 00af 00       		.byte	0
+ 433 00b0 00       		.byte	0
+ 434              		.section	.debug_aranges,"",%progbits
+ 435 0000 1C000000 		.4byte	0x1c
+ 436 0004 0200     		.2byte	0x2
+ 437 0006 00000000 		.4byte	.Ldebug_info0
+ 438 000a 04       		.byte	0x4
+ 439 000b 00       		.byte	0
+ 440 000c 0000     		.2byte	0
+ 441 000e 0000     		.2byte	0
+ 442 0010 00000000 		.4byte	.LFB64
+ 443 0014 56000000 		.4byte	.LFE64-.LFB64
+ 444 0018 00000000 		.4byte	0
+ 445 001c 00000000 		.4byte	0
+ 446              		.section	.debug_ranges,"",%progbits
+ 447              	.Ldebug_ranges0:
+ 448 0000 00000000 		.4byte	.LFB64
+ 449 0004 56000000 		.4byte	.LFE64
+ 450 0008 00000000 		.4byte	0
+ 451 000c 00000000 		.4byte	0
+ 452              		.section	.debug_line,"",%progbits
+ 453              	.Ldebug_line0:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 10
+
+
+ 454 0000 10020000 		.section	.debug_str,"MS",%progbits,1
+ 454      0200E401 
+ 454      00000201 
+ 454      FB0E0D00 
+ 454      01010101 
+ 455              	.LASF8:
+ 456 0000 6C6F6E67 		.ascii	"long long int\000"
+ 456      206C6F6E 
+ 456      6720696E 
+ 456      7400
+ 457              	.LASF3:
+ 458 000e 73686F72 		.ascii	"short unsigned int\000"
+ 458      7420756E 
+ 458      7369676E 
+ 458      65642069 
+ 458      6E7400
+ 459              	.LASF10:
+ 460 0021 756E7369 		.ascii	"unsigned int\000"
+ 460      676E6564 
+ 460      20696E74 
+ 460      00
+ 461              	.LASF17:
+ 462 002e 73697A65 		.ascii	"size_t\000"
+ 462      5F7400
+ 463              	.LASF13:
+ 464 0035 75696E74 		.ascii	"uint8\000"
+ 464      3800
+ 465              	.LASF12:
+ 466 003b 696E7433 		.ascii	"int32_t\000"
+ 466      325F7400 
+ 467              	.LASF7:
+ 468 0043 6C6F6E67 		.ascii	"long unsigned int\000"
+ 468      20756E73 
+ 468      69676E65 
+ 468      6420696E 
+ 468      7400
+ 469              	.LASF9:
+ 470 0055 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 470      206C6F6E 
+ 470      6720756E 
+ 470      7369676E 
+ 470      65642069 
+ 471              	.LASF4:
+ 472 006c 5F5F7569 		.ascii	"__uint8_t\000"
+ 472      6E74385F 
+ 472      7400
+ 473              	.LASF24:
+ 474 0076 7573625F 		.ascii	"usb_protocols.c\000"
+ 474      70726F74 
+ 474      6F636F6C 
+ 474      732E6300 
+ 475              	.LASF11:
+ 476 0086 75696E74 		.ascii	"uint8_t\000"
+ 476      385F7400 
+ 477              	.LASF1:
+ 478 008e 756E7369 		.ascii	"unsigned char\000"
+ 478      676E6564 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 11
+
+
+ 478      20636861 
+ 478      7200
+ 479              	.LASF16:
+ 480 009c 63686172 		.ascii	"char\000"
+ 480      00
+ 481              	.LASF20:
+ 482 00a1 636F756E 		.ascii	"count\000"
+ 482      7400
+ 483              	.LASF6:
+ 484 00a7 6C6F6E67 		.ascii	"long int\000"
+ 484      20696E74 
+ 484      00
+ 485              	.LASF25:
+ 486 00b0 433A5C55 		.ascii	"C:\\Users\\User\\Dropbox\\67 PSOC\\PSoC-Potentiosta"
+ 486      73657273 
+ 486      5C557365 
+ 486      725C4472 
+ 486      6F70626F 
+ 487 00de 745C4269 		.ascii	"t\\Biosensor.cydsn\000"
+ 487      6F73656E 
+ 487      736F722E 
+ 487      63796473 
+ 487      6E00
+ 488              	.LASF15:
+ 489 00f0 646F7562 		.ascii	"double\000"
+ 489      6C6500
+ 490              	.LASF23:
+ 491 00f7 474E5520 		.ascii	"GNU C99 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 491      43393920 
+ 491      352E342E 
+ 491      31203230 
+ 491      31363036 
+ 492 012a 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 492      20726576 
+ 492      6973696F 
+ 492      6E203233 
+ 492      37373135 
+ 493 015d 30202D73 		.ascii	"0 -std=gnu99 -ffunction-sections -ffat-lto-objects\000"
+ 493      74643D67 
+ 493      6E753939 
+ 493      202D6666 
+ 493      756E6374 
+ 494              	.LASF18:
+ 495 0190 73697A65 		.ascii	"sizetype\000"
+ 495      74797065 
+ 495      00
+ 496              	.LASF21:
+ 497 0199 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 497      52784275 
+ 497      66666572 
+ 497      00
+ 498              	.LASF0:
+ 499 01a6 7369676E 		.ascii	"signed char\000"
+ 499      65642063 
+ 499      68617200 
+ 500              	.LASF5:
+ 501 01b2 5F5F696E 		.ascii	"__int32_t\000"
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccbSGyB0.s 			page 12
+
+
+ 501      7433325F 
+ 501      7400
+ 502              	.LASF14:
+ 503 01bc 666C6F61 		.ascii	"float\000"
+ 503      7400
+ 504              	.LASF2:
+ 505 01c2 73686F72 		.ascii	"short int\000"
+ 505      7420696E 
+ 505      7400
+ 506              	.LASF26:
+ 507 01cc 5553425F 		.ascii	"USB_send\000"
+ 507      73656E64 
+ 507      00
+ 508              	.LASF22:
+ 509 01d5 62756666 		.ascii	"buffer\000"
+ 509      657200
+ 510              	.LASF19:
+ 511 01dc 64617461 		.ascii	"data_buffer\000"
+ 511      5F627566 
+ 511      66657200 
+ 512              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

@@ -1,0 +1,51 @@
+dont_use_io iocell 1 0
+dont_use_io iocell 1 1
+dont_use_io iocell 1 3
+set_location "\PWM_M:PWMUDB:runmode_enable\" macrocell 0 4 1 0
+set_location "\PWM_S:PWMUDB:sP8:pwmdp:u0\" datapathcell 1 4 2 
+set_location "\PWM_M:PWMUDB:sP8:pwmdp:u0\" datapathcell 0 4 2 
+set_location "Net_529" macrocell 0 4 0 3
+set_location "\PWM_S:PWMUDB:trig_last\" macrocell 0 4 0 1
+set_location "\PWM_S:PWMUDB:runmode_enable\" macrocell 0 4 0 0
+set_location "Net_3579" macrocell 0 4 0 2
+set_location "\USBUART:bus_reset\" interrupt -1 -1 23
+set_location "ClockBlock" clockblockcell -1 -1 0
+set_location "\ADC_DelSig:DEC\" decimatorcell -1 -1 0
+set_io "\LCD:LCDPort(6)\" iocell 2 6
+set_io "\LCD:LCDPort(5)\" iocell 2 5
+set_io "\LCD:LCDPort(3)\" iocell 2 3
+set_io "P_S(0)" iocell 6 3
+set_io "\LCD:LCDPort(4)\" iocell 2 4
+set_location "\USBUART:sof_int\" interrupt -1 -1 21
+set_io "Dedicated_Output" iocell 3 7
+set_location "\ADC_DelSig:DSM\" dsmodcell -1 -1 0
+set_location "\VDAC_TIA:viDAC8\" vidaccell -1 -1 3
+set_location "\VDAC_Poise:viDAC8\" vidaccell -1 -1 1
+set_location "\IDAC_calibrate:viDAC8\" vidaccell -1 -1 2
+set_location "\PWM_S:PWMUDB:genblk1:ctrlreg\" controlcell 1 4 6 
+set_location "\PWM_M:PWMUDB:genblk1:ctrlreg\" controlcell 0 4 6 
+set_location "isr_adc_reset" interrupt -1 -1 4
+set_location "\USBUART:arb_int\" interrupt -1 -1 22
+set_location "\Opamp_Aux:ABuf\" abufcell -1 -1 3
+# Note: port 15 is the logical name for port 8
+set_io "\USBUART:Dp(0)\" iocell 15 6
+set_location "\USBUART:Dp\" logicalport -1 -1 8
+set_io "P_M(0)" iocell 6 2
+set_location "\USBUART:ord_int\" interrupt -1 -1 25
+set_location "\USBUART:ep_1\" interrupt -1 -1 0
+set_location "\USBUART:ep_2\" interrupt -1 -1 1
+set_location "\USBUART:ep_0\" interrupt -1 -1 24
+set_location "\USBUART:ep_3\" interrupt -1 -1 2
+set_location "\USBUART:dp_int\" interrupt -1 -1 12
+set_location "isr_adc" interrupt -1 -1 3
+set_location "\ADC_DelSig:IRQ\" interrupt -1 -1 29
+set_location "\USBUART:USB\" usbcell -1 -1 0
+set_location "\TIA:SC\" sccell -1 -1 3
+set_io "Counter_Electrode(0)" iocell 6 6
+set_io "Working_Electrode(0)" iocell 0 0
+set_io "Reference_Electrode(0)" iocell 6 0
+# Note: port 15 is the logical name for port 8
+set_io "\USBUART:Dm(0)\" iocell 15 7
+set_io "\LCD:LCDPort(0)\" iocell 2 0
+set_io "\LCD:LCDPort(2)\" iocell 2 2
+set_io "\LCD:LCDPort(1)\" iocell 2 1

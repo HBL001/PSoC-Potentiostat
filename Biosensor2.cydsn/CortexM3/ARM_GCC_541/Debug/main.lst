@@ -1,0 +1,1857 @@
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.comm	buffer,64,4
+  20              		.comm	calibrate_array,20,4
+  21              		.syntax unified
+  22              		.global _printf_float
+  23              		.thumb
+  24              		.syntax unified
+  25              		.comm	RX_Data,64,4
+  26              		.comm	TX_Data,64,4
+  27              		.comm	LCD_str_top,16,4
+  28              		.comm	LCD_str_bot,16,4
+  29              		.comm	TIA_resistor_value_index,1,1
+  30              		.comm	ADC_buffer_index,1,1
+  31              		.comm	ADC_config,1,1
+  32              		.comm	voltage,2,2
+  33              		.comm	current,8,8
+  34              		.comm	dac_Volts,1,1
+  35              		.comm	conversionCount,1,1
+  36              		.comm	dataReady,1,1
+  37              		.comm	measureADC,8,8
+  38              		.comm	adcValue,4,4
+  39              		.comm	signedValue,4,4
+  40              		.section	.text.ADC_ISR_RESET,"ax",%progbits
+  41              		.align	2
+  42              		.global	ADC_ISR_RESET
+  43              		.thumb
+  44              		.thumb_func
+  45              		.type	ADC_ISR_RESET, %function
+  46              	ADC_ISR_RESET:
+  47              	.LFB64:
+  48              		.file 1 "main.c"
+   1:main.c        **** /*********************************************************************************
+   2:main.c        **** * File Name: main.c
+   3:main.c        **** * Version 1
+   4:main.c        **** *
+   5:main.c        **** * Description: Updated version for chronoamperometric testing
+   6:main.c        **** *
+   7:main.c        **** **********************************************************************************
+   8:main.c        **** * Some parts Copyright Highland Biosciences Ltd., Scotland
+   9:main.c        **** * Some parts Copyright Naresuan University, Phitsanulok Thailand
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 2
+
+
+  10:main.c        **** * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
+  11:main.c        **** *
+  12:main.c        **** * Refactored Aug 8, 2024
+  13:main.c        **** *
+  14:main.c        **** * PSoC-Potentiostat Commands
+  15:main.c        **** * The following are the inputs commands the device will take, all inputs are inputted as ASCII stri
+  16:main.c        **** * 'I' - Identifies the device, will respond through the USB
+  17:main.c        **** * "L|X" - Set electrode configuration to 2 or 3 electrodes. X=0 is 2 electrodes, 1=3 electrodes
+  18:main.c        **** * "M|XXXX|YYYY" - Run an amperometry experiment. You need to start to read the data the device will
+  19:main.c        **** * 'B' - Calibrate the ADC and TIA signal chain.
+  20:main.c        **** * "T|XXXXX" - set the period value of the PWM used as a timer that starts the isrs to change the DA
+  21:main.c        **** * "C|XXXXX" - set the compare value of the PWM used as a timer that sets when the DAC changes compa
+  22:main.c        **** * 'X' - Reset the device. Disable all isrs and put the hardware to sleep.
+  23:main.c        **** * "D|XXX" - Set the voltage control 8 bit DAC. XXX is the value to put in the DAC
+  24:main.c        **** * 'H' - Wake up all the hardware, enable All
+  25:main.c        **** *********************************************************************************/
+  26:main.c        **** 
+  27:main.c        **** #include <main.h>
+  28:main.c        **** #include <helper_functions.h>
+  29:main.c        **** 
+  30:main.c        **** 
+  31:main.c        **** #if defined (__GNUC__)
+  32:main.c        ****     /* Add an explicit reference to the floating point printf library */
+  33:main.c        ****     /* to allow usage of the floating point conversion specifiers. */
+  34:main.c        ****     /* This is not linked in by default with the newlib-nano library. */
+  35:main.c        ****     asm (".global _printf_float");
+  36:main.c        **** #endif
+  37:main.c        **** 
+  38:main.c        **** 
+  39:main.c        **** uint8_t RX_Data[USBUART_BUFFER_SIZE];
+  40:main.c        **** uint8_t TX_Data[USBUART_BUFFER_SIZE];
+  41:main.c        **** 
+  42:main.c        **** uint8_t  LCD_str_top[MAX_LCD_BYTES];                       // buffer for LCD screen, make it extra 
+  43:main.c        **** uint8_t  LCD_str_bot[MAX_LCD_BYTES];  
+  44:main.c        **** 
+  45:main.c        **** uint8_t TIA_resistor_value_index;
+  46:main.c        **** uint8_t ADC_buffer_index;
+  47:main.c        **** uint8_t ADC_config;
+  48:main.c        **** 
+  49:main.c        **** 
+  50:main.c        **** int16_t voltage;
+  51:main.c        **** double current;
+  52:main.c        **** uint8_t dac_Volts;
+  53:main.c        **** uint8_t conversionCount;
+  54:main.c        **** uint8_t dataReady;
+  55:main.c        **** 
+  56:main.c        **** double  measureADC;
+  57:main.c        **** uint32_t adcValue;
+  58:main.c        **** int32_t  signedValue;
+  59:main.c        **** 
+  60:main.c        **** 
+  61:main.c        **** // so this is called by PWM1 every 250mS
+  62:main.c        **** CY_ISR(ADC_ISR_RESET)
+  63:main.c        **** {
+  49              		.loc 1 63 0
+  50              		.cfi_startproc
+  51              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 3
+
+
+  52              		@ frame_needed = 1, uses_anonymous_args = 0
+  53              		@ link register save eliminated.
+  54 0000 90B4     		push	{r4, r7}
+  55              		.cfi_def_cfa_offset 8
+  56              		.cfi_offset 4, -8
+  57              		.cfi_offset 7, -4
+  58 0002 00AF     		add	r7, sp, #0
+  59              		.cfi_def_cfa_register 7
+  64:main.c        ****     conversionCount = 0;
+  60              		.loc 1 64 0
+  61 0004 064B     		ldr	r3, .L2
+  62 0006 0022     		movs	r2, #0
+  63 0008 1A70     		strb	r2, [r3]
+  65:main.c        ****     measureADC = 0;
+  64              		.loc 1 65 0
+  65 000a 064A     		ldr	r2, .L2+4
+  66 000c 4FF00003 		mov	r3, #0
+  67 0010 4FF00004 		mov	r4, #0
+  68 0014 C2E90034 		strd	r3, [r2]
+  66:main.c        **** }
+  69              		.loc 1 66 0
+  70 0018 00BF     		nop
+  71 001a BD46     		mov	sp, r7
+  72              		.cfi_def_cfa_register 13
+  73              		@ sp needed
+  74 001c 90BC     		pop	{r4, r7}
+  75              		.cfi_restore 7
+  76              		.cfi_restore 4
+  77              		.cfi_def_cfa_offset 0
+  78 001e 7047     		bx	lr
+  79              	.L3:
+  80              		.align	2
+  81              	.L2:
+  82 0020 00000000 		.word	conversionCount
+  83 0024 00000000 		.word	measureADC
+  84              		.cfi_endproc
+  85              	.LFE64:
+  86              		.size	ADC_ISR_RESET, .-ADC_ISR_RESET
+  87              		.global	__aeabi_i2d
+  88              		.global	__aeabi_ddiv
+  89              		.global	__aeabi_dadd
+  90              		.section	.text.ADC_ISR,"ax",%progbits
+  91              		.align	2
+  92              		.global	ADC_ISR
+  93              		.thumb
+  94              		.thumb_func
+  95              		.type	ADC_ISR, %function
+  96              	ADC_ISR:
+  97              	.LFB65:
+  67:main.c        **** 
+  68:main.c        **** CY_ISR(ADC_ISR)
+  69:main.c        **** {
+  98              		.loc 1 69 0
+  99              		.cfi_startproc
+ 100              		@ args = 0, pretend = 0, frame = 0
+ 101              		@ frame_needed = 1, uses_anonymous_args = 0
+ 102 0000 98B5     		push	{r3, r4, r7, lr}
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 4
+
+
+ 103              		.cfi_def_cfa_offset 16
+ 104              		.cfi_offset 3, -16
+ 105              		.cfi_offset 4, -12
+ 106              		.cfi_offset 7, -8
+ 107              		.cfi_offset 14, -4
+ 108 0002 00AF     		add	r7, sp, #0
+ 109              		.cfi_def_cfa_register 7
+  70:main.c        ****     if (conversionCount < NUM_CONVERSIONS)    
+ 110              		.loc 1 70 0
+ 111 0004 264B     		ldr	r3, .L11
+ 112 0006 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 113 0008 032B     		cmp	r3, #3
+ 114 000a 3AD8     		bhi	.L5
+  71:main.c        ****     {
+  72:main.c        ****         if (ADC_DelSig_IsEndConversion(ADC_DelSig_RETURN_STATUS))
+ 115              		.loc 1 72 0
+ 116 000c 0120     		movs	r0, #1
+ 117 000e FFF7FEFF 		bl	ADC_DelSig_IsEndConversion
+ 118 0012 0346     		mov	r3, r0
+ 119 0014 002B     		cmp	r3, #0
+ 120 0016 41D0     		beq	.L10
+  73:main.c        ****         {
+  74:main.c        ****             adcValue =  ADC_DelSig_GetResult32();
+ 121              		.loc 1 74 0
+ 122 0018 FFF7FEFF 		bl	ADC_DelSig_GetResult32
+ 123 001c 0346     		mov	r3, r0
+ 124 001e 1A46     		mov	r2, r3
+ 125 0020 204B     		ldr	r3, .L11+4
+ 126 0022 1A60     		str	r2, [r3]
+  75:main.c        ****                                    
+  76:main.c        ****             if (adcValue & 0x80000000) 
+ 127              		.loc 1 76 0
+ 128 0024 1F4B     		ldr	r3, .L11+4
+ 129 0026 1B68     		ldr	r3, [r3]
+ 130 0028 002B     		cmp	r3, #0
+ 131 002a 05DA     		bge	.L7
+  77:main.c        ****             {
+  78:main.c        ****                 signedValue = (int32_t)(adcValue - 0xFFFFFFFF - 1);
+ 132              		.loc 1 78 0
+ 133 002c 1D4B     		ldr	r3, .L11+4
+ 134 002e 1B68     		ldr	r3, [r3]
+ 135 0030 1A46     		mov	r2, r3
+ 136 0032 1D4B     		ldr	r3, .L11+8
+ 137 0034 1A60     		str	r2, [r3]
+ 138 0036 04E0     		b	.L8
+ 139              	.L7:
+  79:main.c        ****             } 
+  80:main.c        ****             else 
+  81:main.c        ****             {
+  82:main.c        ****                 signedValue = (int32_t)adcValue;
+ 140              		.loc 1 82 0
+ 141 0038 1A4B     		ldr	r3, .L11+4
+ 142 003a 1B68     		ldr	r3, [r3]
+ 143 003c 1A46     		mov	r2, r3
+ 144 003e 1A4B     		ldr	r3, .L11+8
+ 145 0040 1A60     		str	r2, [r3]
+ 146              	.L8:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 5
+
+
+  83:main.c        ****             }
+  84:main.c        ****             
+  85:main.c        ****             measureADC = measureADC + ((double)(signedValue))/4;      
+ 147              		.loc 1 85 0
+ 148 0042 194B     		ldr	r3, .L11+8
+ 149 0044 1B68     		ldr	r3, [r3]
+ 150 0046 1846     		mov	r0, r3
+ 151 0048 FFF7FEFF 		bl	__aeabi_i2d
+ 152 004c 4FF00002 		mov	r2, #0
+ 153 0050 164B     		ldr	r3, .L11+12
+ 154 0052 FFF7FEFF 		bl	__aeabi_ddiv
+ 155 0056 0346     		mov	r3, r0
+ 156 0058 0C46     		mov	r4, r1
+ 157 005a 1846     		mov	r0, r3
+ 158 005c 2146     		mov	r1, r4
+ 159 005e 144B     		ldr	r3, .L11+16
+ 160 0060 18CB     		ldmia	r3, {r3-r4}
+ 161 0062 1A46     		mov	r2, r3
+ 162 0064 2346     		mov	r3, r4
+ 163 0066 FFF7FEFF 		bl	__aeabi_dadd
+ 164 006a 0346     		mov	r3, r0
+ 165 006c 0C46     		mov	r4, r1
+ 166 006e 104A     		ldr	r2, .L11+16
+ 167 0070 C2E90034 		strd	r3, [r2]
+  86:main.c        ****         
+  87:main.c        ****             conversionCount++;
+ 168              		.loc 1 87 0
+ 169 0074 0A4B     		ldr	r3, .L11
+ 170 0076 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 171 0078 0133     		adds	r3, r3, #1
+ 172 007a DAB2     		uxtb	r2, r3
+ 173 007c 084B     		ldr	r3, .L11
+ 174 007e 1A70     		strb	r2, [r3]
+  88:main.c        ****         }
+  89:main.c        ****     }
+  90:main.c        ****     else
+  91:main.c        ****     {
+  92:main.c        ****         if (conversionCount == NUM_CONVERSIONS)
+  93:main.c        ****         {           
+  94:main.c        ****             dataReady = 1;
+  95:main.c        ****             conversionCount++;
+  96:main.c        ****         }
+  97:main.c        ****         else
+  98:main.c        ****         {
+  99:main.c        ****             /* do nothing */    
+ 100:main.c        ****         }          
+ 101:main.c        ****     }    
+ 102:main.c        **** }
+ 175              		.loc 1 102 0
+ 176 0080 0CE0     		b	.L10
+ 177              	.L5:
+  92:main.c        ****         {           
+ 178              		.loc 1 92 0
+ 179 0082 074B     		ldr	r3, .L11
+ 180 0084 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 181 0086 042B     		cmp	r3, #4
+ 182 0088 08D1     		bne	.L10
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 6
+
+
+  94:main.c        ****             conversionCount++;
+ 183              		.loc 1 94 0
+ 184 008a 0A4B     		ldr	r3, .L11+20
+ 185 008c 0122     		movs	r2, #1
+ 186 008e 1A70     		strb	r2, [r3]
+  95:main.c        ****         }
+ 187              		.loc 1 95 0
+ 188 0090 034B     		ldr	r3, .L11
+ 189 0092 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 190 0094 0133     		adds	r3, r3, #1
+ 191 0096 DAB2     		uxtb	r2, r3
+ 192 0098 014B     		ldr	r3, .L11
+ 193 009a 1A70     		strb	r2, [r3]
+ 194              	.L10:
+ 195              		.loc 1 102 0
+ 196 009c 00BF     		nop
+ 197 009e 98BD     		pop	{r3, r4, r7, pc}
+ 198              	.L12:
+ 199              		.align	2
+ 200              	.L11:
+ 201 00a0 00000000 		.word	conversionCount
+ 202 00a4 00000000 		.word	adcValue
+ 203 00a8 00000000 		.word	signedValue
+ 204 00ac 00001040 		.word	1074790400
+ 205 00b0 00000000 		.word	measureADC
+ 206 00b4 00000000 		.word	dataReady
+ 207              		.cfi_endproc
+ 208              	.LFE65:
+ 209              		.size	ADC_ISR, .-ADC_ISR
+ 210              		.section	.rodata
+ 211              		.align	2
+ 212              	.LC0:
+ 213 0000 566F6C74 		.ascii	"Voltage= %u mV\000"
+ 213      6167653D 
+ 213      20257520 
+ 213      6D5600
+ 214              		.global	__aeabi_d2iz
+ 215 000f 00       		.align	2
+ 216              	.LC1:
+ 217 0010 4164633D 		.ascii	"Adc= %u A\000"
+ 217      20257520 
+ 217      4100
+ 218 001a 0000     		.align	2
+ 219              	.LC2:
+ 220 001c 566F6C74 		.ascii	"Voltage= %u  mV ADC= %u mA\000"
+ 220      6167653D 
+ 220      20257520 
+ 220      206D5620 
+ 220      4144433D 
+ 221              		.section	.text.main,"ax",%progbits
+ 222              		.align	2
+ 223              		.global	main
+ 224              		.thumb
+ 225              		.thumb_func
+ 226              		.type	main, %function
+ 227              	main:
+ 228              	.LFB66:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 7
+
+
+ 103:main.c        ****    
+ 104:main.c        **** 
+ 105:main.c        **** int main() {
+ 229              		.loc 1 105 0
+ 230              		.cfi_startproc
+ 231              		@ args = 0, pretend = 0, frame = 8
+ 232              		@ frame_needed = 1, uses_anonymous_args = 0
+ 233 0000 B0B5     		push	{r4, r5, r7, lr}
+ 234              		.cfi_def_cfa_offset 16
+ 235              		.cfi_offset 4, -16
+ 236              		.cfi_offset 5, -12
+ 237              		.cfi_offset 7, -8
+ 238              		.cfi_offset 14, -4
+ 239 0002 84B0     		sub	sp, sp, #16
+ 240              		.cfi_def_cfa_offset 32
+ 241 0004 02AF     		add	r7, sp, #8
+ 242              		.cfi_def_cfa 7, 24
+ 106:main.c        ****        
+ 107:main.c        ****     LCD_Start();
+ 243              		.loc 1 107 0
+ 244 0006 FFF7FEFF 		bl	LCD_Start
+ 108:main.c        ****     
+ 109:main.c        ****     // Enable global interrupts
+ 110:main.c        ****     CyGlobalIntEnable;   
+ 245              		.loc 1 110 0
+ 246              		.syntax unified
+ 247              	@ 110 "main.c" 1
+ 248 000a 62B6     		CPSIE   i
+ 249              	@ 0 "" 2
+ 111:main.c        ****      
+ 112:main.c        ****     /* Start USBFS operation with 5-V operation. */
+ 113:main.c        ****     USBUART_Start(USBFS_DEVICE, USBUART_5V_OPERATION);
+ 250              		.loc 1 113 0
+ 251              		.thumb
+ 252              		.syntax unified
+ 253 000c 0121     		movs	r1, #1
+ 254 000e 0020     		movs	r0, #0
+ 255 0010 FFF7FEFF 		bl	USBUART_Start
+ 114:main.c        ****     
+ 115:main.c        ****     /* initialise the system */
+ 116:main.c        ****     helper_HardwareInit();  
+ 256              		.loc 1 116 0
+ 257 0014 FFF7FEFF 		bl	helper_HardwareInit
+ 117:main.c        ****     
+ 118:main.c        ****     /* Safe Default Settings */
+ 119:main.c        ****     AMux_electrode_Start();
+ 258              		.loc 1 119 0
+ 259 0018 FFF7FEFF 		bl	AMux_electrode_Start
+ 120:main.c        ****     AMux_electrode_Select(TWO_ELECTRODE_CONFIG);  
+ 260              		.loc 1 120 0
+ 261 001c 0020     		movs	r0, #0
+ 262 001e FFF7FEFF 		bl	AMux_electrode_FastSelect
+ 121:main.c        ****         
+ 122:main.c        ****     AMux_TIA_input_Start();
+ 263              		.loc 1 122 0
+ 264 0022 FFF7FEFF 		bl	AMux_TIA_input_Start
+ 123:main.c        ****     AMux_TIA_input_Select(AMux_TIA_working_electrode_ch);   
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 8
+
+
+ 265              		.loc 1 123 0
+ 266 0026 0120     		movs	r0, #1
+ 267 0028 FFF7FEFF 		bl	AMux_TIA_input_FastSelect
+ 124:main.c        ****     
+ 125:main.c        ****     ADC_buffer_index = 1;
+ 268              		.loc 1 125 0
+ 269 002c 8C4B     		ldr	r3, .L35
+ 270 002e 0122     		movs	r2, #1
+ 271 0030 1A70     		strb	r2, [r3]
+ 126:main.c        ****     ADC_config = 1;
+ 272              		.loc 1 126 0
+ 273 0032 8C4B     		ldr	r3, .L35+4
+ 274 0034 0122     		movs	r2, #1
+ 275 0036 1A70     		strb	r2, [r3]
+ 127:main.c        ****     TIA_resistor_value_index = 0;
+ 276              		.loc 1 127 0
+ 277 0038 8B4B     		ldr	r3, .L35+8
+ 278 003a 0022     		movs	r2, #0
+ 279 003c 1A70     		strb	r2, [r3]
+ 128:main.c        ****     TIA_SetResFB(TIA_resistor_value_index);
+ 280              		.loc 1 128 0
+ 281 003e 8A4B     		ldr	r3, .L35+8
+ 282 0040 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 283 0042 1846     		mov	r0, r3
+ 284 0044 FFF7FEFF 		bl	TIA_SetResFB
+ 129:main.c        ****         
+ 130:main.c        ****     dac_Volts = VIRTUAL_GROUND;
+ 285              		.loc 1 130 0
+ 286 0048 884B     		ldr	r3, .L35+12
+ 287 004a 8022     		movs	r2, #128
+ 288 004c 1A70     		strb	r2, [r3]
+ 131:main.c        ****     dac_Setvalue(dac_Volts); 
+ 289              		.loc 1 131 0
+ 290 004e 874B     		ldr	r3, .L35+12
+ 291 0050 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 292 0052 1846     		mov	r0, r3
+ 293 0054 FFF7FEFF 		bl	dac_Setvalue
+ 132:main.c        ****     
+ 133:main.c        ****     voltage = 0;
+ 294              		.loc 1 133 0
+ 295 0058 854B     		ldr	r3, .L35+16
+ 296 005a 0022     		movs	r2, #0
+ 297 005c 1A80     		strh	r2, [r3]	@ movhi
+ 134:main.c        ****     
+ 135:main.c        ****     /* enable the system ready to begin measurements */
+ 136:main.c        ****     helper_HardwareEnable();  
+ 298              		.loc 1 136 0
+ 299 005e FFF7FEFF 		bl	helper_HardwareEnable
+ 137:main.c        ****     
+ 138:main.c        ****     isr_adc_reset_StartEx(ADC_ISR_RESET);
+ 300              		.loc 1 138 0
+ 301 0062 8448     		ldr	r0, .L35+20
+ 302 0064 FFF7FEFF 		bl	isr_adc_reset_StartEx
+ 139:main.c        ****     isr_adc_StartEx(ADC_ISR);
+ 303              		.loc 1 139 0
+ 304 0068 8348     		ldr	r0, .L35+24
+ 305 006a FFF7FEFF 		bl	isr_adc_StartEx
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 9
+
+
+ 140:main.c        ****     
+ 141:main.c        ****   
+ 142:main.c        ****     ADC_DelSig_StartConvert(); // Start continuous conversions
+ 306              		.loc 1 142 0
+ 307 006e FFF7FEFF 		bl	ADC_DelSig_StartConvert
+ 308              	.L33:
+ 143:main.c        ****     
+ 144:main.c        ****     for(;;) 
+ 145:main.c        ****     {
+ 146:main.c        ****      
+ 147:main.c        ****         /* Host can send double SET_INTERFACE request. */
+ 148:main.c        ****         if (0u != USBUART_IsConfigurationChanged())
+ 309              		.loc 1 148 0
+ 310 0072 FFF7FEFF 		bl	USBUART_IsConfigurationChanged
+ 311 0076 0346     		mov	r3, r0
+ 312 0078 002B     		cmp	r3, #0
+ 313 007a 06D0     		beq	.L14
+ 149:main.c        ****         {
+ 150:main.c        ****             /* Initialize IN endpoints when device is configured. */
+ 151:main.c        ****             if (0u != USBUART_GetConfiguration())
+ 314              		.loc 1 151 0
+ 315 007c FFF7FEFF 		bl	USBUART_GetConfiguration
+ 316 0080 0346     		mov	r3, r0
+ 317 0082 002B     		cmp	r3, #0
+ 318 0084 01D0     		beq	.L14
+ 152:main.c        ****             {
+ 153:main.c        ****                 /* Enumeration is done, enable OUT endpoint to receive data from host. */
+ 154:main.c        ****                 USBUART_CDC_Init();
+ 319              		.loc 1 154 0
+ 320 0086 FFF7FEFF 		bl	USBUART_CDC_Init
+ 321              	.L14:
+ 155:main.c        ****             }
+ 156:main.c        ****         }
+ 157:main.c        ****         
+ 158:main.c        ****         
+ 159:main.c        ****         
+ 160:main.c        ****         /* Only service USB CDC when device is connected. */
+ 161:main.c        ****         if (0u != USBUART_GetConfiguration())
+ 322              		.loc 1 161 0
+ 323 008a FFF7FEFF 		bl	USBUART_GetConfiguration
+ 324 008e 0346     		mov	r3, r0
+ 325 0090 002B     		cmp	r3, #0
+ 326 0092 EED0     		beq	.L33
+ 162:main.c        ****         {
+ 163:main.c        ****             /* Check for input data to process. */
+ 164:main.c        ****             if (0u != USBUART_DataIsReady())
+ 327              		.loc 1 164 0
+ 328 0094 FFF7FEFF 		bl	USBUART_DataIsReady
+ 329 0098 0346     		mov	r3, r0
+ 330 009a 002B     		cmp	r3, #0
+ 331 009c 00F09880 		beq	.L16
+ 332              	.LBB2:
+ 165:main.c        ****             {
+ 166:main.c        ****                 /* Read data into the buffer and re-enable OUT endpoint. */        
+ 167:main.c        ****                 helper_ClrRx();
+ 333              		.loc 1 167 0
+ 334 00a0 FFF7FEFF 		bl	helper_ClrRx
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 10
+
+
+ 168:main.c        ****                 
+ 169:main.c        ****                 uint16 count = USBUART_GetAll(RX_Data);              
+ 335              		.loc 1 169 0
+ 336 00a4 7548     		ldr	r0, .L35+28
+ 337 00a6 FFF7FEFF 		bl	USBUART_GetAll
+ 338 00aa 0346     		mov	r3, r0
+ 339 00ac FB80     		strh	r3, [r7, #6]	@ movhi
+ 170:main.c        ****                                                
+ 171:main.c        ****                 if (0u != count) 
+ 340              		.loc 1 171 0
+ 341 00ae FB88     		ldrh	r3, [r7, #6]
+ 342 00b0 002B     		cmp	r3, #0
+ 343 00b2 DED0     		beq	.L33
+ 172:main.c        ****                 {  
+ 173:main.c        ****                     /* Wait until component is ready to send data to host. */
+ 174:main.c        ****                     while (0u == USBUART_CDCIsReady())
+ 344              		.loc 1 174 0
+ 345 00b4 00BF     		nop
+ 346              	.L18:
+ 347              		.loc 1 174 0 is_stmt 0 discriminator 1
+ 348 00b6 FFF7FEFF 		bl	USBUART_CDCIsReady
+ 349 00ba 0346     		mov	r3, r0
+ 350 00bc 002B     		cmp	r3, #0
+ 351 00be FAD0     		beq	.L18
+ 175:main.c        ****                     {
+ 176:main.c        ****                     }
+ 177:main.c        ****                                        
+ 178:main.c        ****                     /* Echo back */
+ 179:main.c        ****                     USBUART_PutData(RX_Data, count);
+ 352              		.loc 1 179 0 is_stmt 1
+ 353 00c0 FB88     		ldrh	r3, [r7, #6]
+ 354 00c2 1946     		mov	r1, r3
+ 355 00c4 6D48     		ldr	r0, .L35+28
+ 356 00c6 FFF7FEFF 		bl	USBUART_PutData
+ 180:main.c        ****                   
+ 181:main.c        ****                      /* Terminate with Null */
+ 182:main.c        ****                     if (USBUART_BUFFER_SIZE == count)
+ 357              		.loc 1 182 0
+ 358 00ca FB88     		ldrh	r3, [r7, #6]
+ 359 00cc 402B     		cmp	r3, #64
+ 360 00ce 09D1     		bne	.L34
+ 183:main.c        ****                     {
+ 184:main.c        ****                         /* Wait until component is ready to send data to PC. */
+ 185:main.c        ****                         while (0u == USBUART_CDCIsReady())
+ 361              		.loc 1 185 0
+ 362 00d0 00BF     		nop
+ 363              	.L20:
+ 364              		.loc 1 185 0 is_stmt 0 discriminator 1
+ 365 00d2 FFF7FEFF 		bl	USBUART_CDCIsReady
+ 366 00d6 0346     		mov	r3, r0
+ 367 00d8 002B     		cmp	r3, #0
+ 368 00da FAD0     		beq	.L20
+ 186:main.c        ****                         {
+ 187:main.c        ****                         }
+ 188:main.c        **** 
+ 189:main.c        ****                         /* Send zero-length packet to PC. */
+ 190:main.c        ****                         USBUART_PutData(NULL, 0u);
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 11
+
+
+ 369              		.loc 1 190 0 is_stmt 1
+ 370 00dc 0021     		movs	r1, #0
+ 371 00de 0020     		movs	r0, #0
+ 372 00e0 FFF7FEFF 		bl	USBUART_PutData
+ 373              	.L34:
+ 191:main.c        ****                     }
+ 192:main.c        ****                     
+ 193:main.c        ****                     /* Wait until component is ready to send data to PC. */
+ 194:main.c        ****                     while (0u == USBUART_CDCIsReady())
+ 374              		.loc 1 194 0
+ 375 00e4 00BF     		nop
+ 376              	.L21:
+ 377              		.loc 1 194 0 is_stmt 0 discriminator 1
+ 378 00e6 FFF7FEFF 		bl	USBUART_CDCIsReady
+ 379 00ea 0346     		mov	r3, r0
+ 380 00ec 002B     		cmp	r3, #0
+ 381 00ee FAD0     		beq	.L21
+ 195:main.c        ****                     {
+ 196:main.c        ****                     }
+ 197:main.c        ****                         
+ 198:main.c        ****                     USBUART_PutCRLF();
+ 382              		.loc 1 198 0 is_stmt 1
+ 383 00f0 FFF7FEFF 		bl	USBUART_PutCRLF
+ 199:main.c        ****                    
+ 200:main.c        ****                    switch (RX_Data[0]) {                    // select case based upon the first 'L'
+ 384              		.loc 1 200 0
+ 385 00f4 614B     		ldr	r3, .L35+28
+ 386 00f6 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 387 00f8 423B     		subs	r3, r3, #66
+ 388 00fa 162B     		cmp	r3, #22
+ 389 00fc B9D8     		bhi	.L33
+ 390 00fe 01A2     		adr	r2, .L23
+ 391 0100 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 392              		.p2align 2
+ 393              	.L23:
+ 394 0104 61010000 		.word	.L22+1
+ 395 0108 73000000 		.word	.L33+1
+ 396 010c 93010000 		.word	.L24+1
+ 397 0110 67010000 		.word	.L25+1
+ 398 0114 6F010000 		.word	.L26+1
+ 399 0118 77010000 		.word	.L27+1
+ 400 011c C9010000 		.word	.L28+1
+ 401 0120 85010000 		.word	.L29+1
+ 402 0124 73000000 		.word	.L33+1
+ 403 0128 73000000 		.word	.L33+1
+ 404 012c 8B010000 		.word	.L30+1
+ 405 0130 C3010000 		.word	.L31+1
+ 406 0134 73000000 		.word	.L33+1
+ 407 0138 73000000 		.word	.L33+1
+ 408 013c 73000000 		.word	.L33+1
+ 409 0140 73000000 		.word	.L33+1
+ 410 0144 73000000 		.word	.L33+1
+ 411 0148 73000000 		.word	.L33+1
+ 412 014c 73000000 		.word	.L33+1
+ 413 0150 73000000 		.word	.L33+1
+ 414 0154 73000000 		.word	.L33+1
+ 415 0158 73000000 		.word	.L33+1
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 12
+
+
+ 416 015c 7F010000 		.word	.L32+1
+ 417              		.p2align 1
+ 418              	.L22:
+ 201:main.c        ****                 
+ 202:main.c        ****                     case CALIBRATE_TIA_ADC: ;               // 'B' calibrate the TIA / ADC current 
+ 203:main.c        ****                         calibrate_TIA();
+ 419              		.loc 1 203 0
+ 420 0160 FFF7FEFF 		bl	calibrate_TIA
+ 204:main.c        ****                         break;
+ 421              		.loc 1 204 0
+ 422 0164 7BE0     		b	.L15
+ 423              	.L25:
+ 205:main.c        ****                                
+ 206:main.c        ****                     case SET_ADC_CONFIG: ;                  // 'E' select one of the preset-configs
+ 207:main.c        ****                         user_setup_ADC_CONFIG(RX_Data);
+ 424              		.loc 1 207 0
+ 425 0166 4548     		ldr	r0, .L35+28
+ 426 0168 FFF7FEFF 		bl	user_setup_ADC_CONFIG
+ 208:main.c        ****                         break;
+ 427              		.loc 1 208 0
+ 428 016c 77E0     		b	.L15
+ 429              	.L26:
+ 209:main.c        ****                         
+ 210:main.c        ****                     case TIA_RESISTOR: ;                    //  'F' select the TIA resistor value (
+ 211:main.c        ****                         user_setup_TIA_RESISTOR(RX_Data);
+ 430              		.loc 1 211 0
+ 431 016e 4348     		ldr	r0, .L35+28
+ 432 0170 FFF7FEFF 		bl	user_setup_TIA_RESISTOR
+ 212:main.c        ****                         break;
+ 433              		.loc 1 212 0
+ 434 0174 73E0     		b	.L15
+ 435              	.L27:
+ 213:main.c        ****                                                 
+ 214:main.c        ****                     case ADC_BUFFER_GAIN: ;                 //  'G'  
+ 215:main.c        ****                         user_setup_ADC_BUFFER_GAIN(RX_Data);      
+ 436              		.loc 1 215 0
+ 437 0176 4148     		ldr	r0, .L35+28
+ 438 0178 FFF7FEFF 		bl	user_setup_ADC_BUFFER_GAIN
+ 216:main.c        ****                         break;
+ 439              		.loc 1 216 0
+ 440 017c 6FE0     		b	.L15
+ 441              	.L32:
+ 217:main.c        **** 
+ 218:main.c        ****                     case RESET_DEVICE: ;                    // 'X' reset the device by disableing i
+ 219:main.c        ****                         user_reset_device();
+ 442              		.loc 1 219 0
+ 443 017e FFF7FEFF 		bl	user_reset_device
+ 220:main.c        ****                         break;
+ 444              		.loc 1 220 0
+ 445 0182 6CE0     		b	.L15
+ 446              	.L29:
+ 221:main.c        ****                 
+ 222:main.c        ****                     case DEVICE_IDENTIFY: ;                 // 'I' identify the device 
+ 223:main.c        ****                         user_identify();
+ 447              		.loc 1 223 0
+ 448 0184 FFF7FEFF 		bl	user_identify
+ 224:main.c        ****                         break;
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 13
+
+
+ 449              		.loc 1 224 0
+ 450 0188 69E0     		b	.L15
+ 451              	.L30:
+ 225:main.c        ****                 
+ 226:main.c        ****                     case CHANGE_NUMBER_ELECTRODES: ;        // 'L' User wants to change the electro
+ 227:main.c        ****                         user_setup_electrode(RX_Data);
+ 452              		.loc 1 227 0
+ 453 018a 3C48     		ldr	r0, .L35+28
+ 454 018c FFF7FEFF 		bl	user_setup_electrode
+ 228:main.c        ****                         break;
+ 455              		.loc 1 228 0
+ 456 0190 65E0     		b	.L15
+ 457              	.L24:
+ 229:main.c        ****             
+ 230:main.c        ****                     case SET_DAC_VALUE: ;                   // 'D' set the dac value, based on the 
+ 231:main.c        ****                         dac_Volts = dac_Volts2adc(RX_Data);
+ 458              		.loc 1 231 0
+ 459 0192 3A48     		ldr	r0, .L35+28
+ 460 0194 FFF7FEFF 		bl	dac_Volts2adc
+ 461 0198 0346     		mov	r3, r0
+ 462 019a 1A46     		mov	r2, r3
+ 463 019c 334B     		ldr	r3, .L35+12
+ 464 019e 1A70     		strb	r2, [r3]
+ 232:main.c        ****                         dac_Setvalue(dac_Volts);   
+ 465              		.loc 1 232 0
+ 466 01a0 324B     		ldr	r3, .L35+12
+ 467 01a2 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 468 01a4 1846     		mov	r0, r3
+ 469 01a6 FFF7FEFF 		bl	dac_Setvalue
+ 233:main.c        ****                         voltage = (int16_t)(dac_Volts-DAC_OFFSET)*DAC_RESOLUTION;           
+ 470              		.loc 1 233 0
+ 471 01aa 304B     		ldr	r3, .L35+12
+ 472 01ac 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 473 01ae 9BB2     		uxth	r3, r3
+ 474 01b0 03F57863 		add	r3, r3, #3968
+ 475 01b4 9BB2     		uxth	r3, r3
+ 476 01b6 1B01     		lsls	r3, r3, #4
+ 477 01b8 9BB2     		uxth	r3, r3
+ 478 01ba 1AB2     		sxth	r2, r3
+ 479 01bc 2C4B     		ldr	r3, .L35+16
+ 480 01be 1A80     		strh	r2, [r3]	@ movhi
+ 234:main.c        ****                         break;
+ 481              		.loc 1 234 0
+ 482 01c0 4DE0     		b	.L15
+ 483              	.L31:
+ 235:main.c        ****                 
+ 236:main.c        ****                     case STOP_HARDWARE: ;                   // 'M' stop data acquisition
+ 237:main.c        ****                         helper_HardwareSleep();                 // Sleep the hardware
+ 484              		.loc 1 237 0
+ 485 01c2 FFF7FEFF 		bl	helper_HardwareSleep
+ 238:main.c        ****                         break;
+ 486              		.loc 1 238 0
+ 487 01c6 4AE0     		b	.L15
+ 488              	.L28:
+ 239:main.c        ****                 
+ 240:main.c        ****                     case START_HARDWARE: ;                  // 'H' Start taking measurements from t
+ 241:main.c        ****                         helper_HardwareWakeup();                // wake the hardware
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 14
+
+
+ 489              		.loc 1 241 0
+ 490 01c8 FFF7FEFF 		bl	helper_HardwareWakeup
+ 242:main.c        ****                         break;
+ 491              		.loc 1 242 0
+ 492 01cc 00BF     		nop
+ 493 01ce 46E0     		b	.L15
+ 494              	.L16:
+ 495              	.LBE2:
+ 243:main.c        ****                     }    
+ 244:main.c        ****                                       // end of switch statment                }
+ 245:main.c        ****                 }
+ 246:main.c        ****             }
+ 247:main.c        ****             else
+ 248:main.c        ****             {   
+ 249:main.c        ****                 if (dataReady ==1) 
+ 496              		.loc 1 249 0
+ 497 01d0 2B4B     		ldr	r3, .L35+32
+ 498 01d2 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 499 01d4 012B     		cmp	r3, #1
+ 500 01d6 7FF44CAF 		bne	.L33
+ 250:main.c        ****                 {
+ 251:main.c        ****                     /* update the LCD display */
+ 252:main.c        ****                     LCD_ClearDisplay();
+ 501              		.loc 1 252 0
+ 502 01da 0120     		movs	r0, #1
+ 503 01dc FFF7FEFF 		bl	LCD_WriteControl
+ 253:main.c        ****                     helper_WipeLCD();
+ 504              		.loc 1 253 0
+ 505 01e0 FFF7FEFF 		bl	helper_WipeLCD
+ 254:main.c        ****                     
+ 255:main.c        ****                     /* update line 1 */
+ 256:main.c        ****                     LCD_Position(0u, 0u);
+ 506              		.loc 1 256 0
+ 507 01e4 0021     		movs	r1, #0
+ 508 01e6 0020     		movs	r0, #0
+ 509 01e8 FFF7FEFF 		bl	LCD_Position
+ 257:main.c        ****                     snprintf((char *)LCD_str_top,MAX_LCD_BYTES, "Voltage= %u mV", (int)voltage);
+ 510              		.loc 1 257 0
+ 511 01ec 204B     		ldr	r3, .L35+16
+ 512 01ee B3F90030 		ldrsh	r3, [r3]
+ 513 01f2 244A     		ldr	r2, .L35+36
+ 514 01f4 1021     		movs	r1, #16
+ 515 01f6 2448     		ldr	r0, .L35+40
+ 516 01f8 FFF7FEFF 		bl	snprintf
+ 258:main.c        ****                     LCD_PrintString((const char*)LCD_str_top);                                     
+ 517              		.loc 1 258 0
+ 518 01fc 2248     		ldr	r0, .L35+40
+ 519 01fe FFF7FEFF 		bl	LCD_PrintString
+ 259:main.c        ****                  
+ 260:main.c        ****                     /* update line 2 */
+ 261:main.c        ****                     LCD_Position(1u, 0u);
+ 520              		.loc 1 261 0
+ 521 0202 0021     		movs	r1, #0
+ 522 0204 0120     		movs	r0, #1
+ 523 0206 FFF7FEFF 		bl	LCD_Position
+ 262:main.c        ****                     snprintf((char *)LCD_str_bot,MAX_LCD_BYTES, "Adc= %u A", (int) measureADC);
+ 524              		.loc 1 262 0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 15
+
+
+ 525 020a 204B     		ldr	r3, .L35+44
+ 526 020c 18CB     		ldmia	r3, {r3-r4}
+ 527 020e 1846     		mov	r0, r3
+ 528 0210 2146     		mov	r1, r4
+ 529 0212 FFF7FEFF 		bl	__aeabi_d2iz
+ 530 0216 0346     		mov	r3, r0
+ 531 0218 1D4A     		ldr	r2, .L35+48
+ 532 021a 1021     		movs	r1, #16
+ 533 021c 1D48     		ldr	r0, .L35+52
+ 534 021e FFF7FEFF 		bl	snprintf
+ 263:main.c        ****                     LCD_PrintString((const char*)LCD_str_bot);
+ 535              		.loc 1 263 0
+ 536 0222 1C48     		ldr	r0, .L35+52
+ 537 0224 FFF7FEFF 		bl	LCD_PrintString
+ 264:main.c        ****                                        
+ 265:main.c        ****                     /* Send out results to the USB Serial */
+ 266:main.c        ****                     helper_ClrTx();
+ 538              		.loc 1 266 0
+ 539 0228 FFF7FEFF 		bl	helper_ClrTx
+ 267:main.c        ****                     snprintf((char *)TX_Data, USBUART_BUFFER_SIZE, "Voltage= %u  mV ADC= %u mA",(in
+ 540              		.loc 1 267 0
+ 541 022c 104B     		ldr	r3, .L35+16
+ 542 022e B3F90030 		ldrsh	r3, [r3]
+ 543 0232 1D46     		mov	r5, r3
+ 544 0234 154B     		ldr	r3, .L35+44
+ 545 0236 18CB     		ldmia	r3, {r3-r4}
+ 546 0238 1846     		mov	r0, r3
+ 547 023a 2146     		mov	r1, r4
+ 548 023c FFF7FEFF 		bl	__aeabi_d2iz
+ 549 0240 0346     		mov	r3, r0
+ 550 0242 0093     		str	r3, [sp]
+ 551 0244 2B46     		mov	r3, r5
+ 552 0246 144A     		ldr	r2, .L35+56
+ 553 0248 4021     		movs	r1, #64
+ 554 024a 1448     		ldr	r0, .L35+60
+ 555 024c FFF7FEFF 		bl	snprintf
+ 268:main.c        ****                     USB_send (TX_Data, USBUART_BUFFER_SIZE ) ;
+ 556              		.loc 1 268 0
+ 557 0250 4021     		movs	r1, #64
+ 558 0252 1248     		ldr	r0, .L35+60
+ 559 0254 FFF7FEFF 		bl	USB_send
+ 269:main.c        ****                     
+ 270:main.c        ****                     dataReady =0;
+ 560              		.loc 1 270 0
+ 561 0258 094B     		ldr	r3, .L35+32
+ 562 025a 0022     		movs	r2, #0
+ 563 025c 1A70     		strb	r2, [r3]
+ 564              	.L15:
+ 271:main.c        ****                 }        
+ 272:main.c        ****             }
+ 273:main.c        ****         }
+ 274:main.c        ****     }                                                  
+ 565              		.loc 1 274 0 discriminator 1
+ 566 025e 08E7     		b	.L33
+ 567              	.L36:
+ 568              		.align	2
+ 569              	.L35:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 16
+
+
+ 570 0260 00000000 		.word	ADC_buffer_index
+ 571 0264 00000000 		.word	ADC_config
+ 572 0268 00000000 		.word	TIA_resistor_value_index
+ 573 026c 00000000 		.word	dac_Volts
+ 574 0270 00000000 		.word	voltage
+ 575 0274 00000000 		.word	ADC_ISR_RESET
+ 576 0278 00000000 		.word	ADC_ISR
+ 577 027c 00000000 		.word	RX_Data
+ 578 0280 00000000 		.word	dataReady
+ 579 0284 00000000 		.word	.LC0
+ 580 0288 00000000 		.word	LCD_str_top
+ 581 028c 00000000 		.word	measureADC
+ 582 0290 10000000 		.word	.LC1
+ 583 0294 00000000 		.word	LCD_str_bot
+ 584 0298 1C000000 		.word	.LC2
+ 585 029c 00000000 		.word	TX_Data
+ 586              		.cfi_endproc
+ 587              	.LFE66:
+ 588              		.size	main, .-main
+ 589              		.text
+ 590              	.Letext0:
+ 591              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 592              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 593              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 594              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 595              		.file 6 "./globals.h"
+ 596              		.file 7 "./calibrate.h"
+ 597              		.section	.debug_info,"",%progbits
+ 598              	.Ldebug_info0:
+ 599 0000 F4020000 		.4byte	0x2f4
+ 600 0004 0400     		.2byte	0x4
+ 601 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 602 000a 04       		.byte	0x4
+ 603 000b 01       		.uleb128 0x1
+ 604 000c FC010000 		.4byte	.LASF45
+ 605 0010 0C       		.byte	0xc
+ 606 0011 D5010000 		.4byte	.LASF46
+ 607 0015 90000000 		.4byte	.LASF47
+ 608 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 609 001d 00000000 		.4byte	0
+ 610 0021 00000000 		.4byte	.Ldebug_line0
+ 611 0025 02       		.uleb128 0x2
+ 612 0026 01       		.byte	0x1
+ 613 0027 06       		.byte	0x6
+ 614 0028 EA020000 		.4byte	.LASF0
+ 615 002c 03       		.uleb128 0x3
+ 616 002d 10000000 		.4byte	.LASF2
+ 617 0031 02       		.byte	0x2
+ 618 0032 1D       		.byte	0x1d
+ 619 0033 37000000 		.4byte	0x37
+ 620 0037 02       		.uleb128 0x2
+ 621 0038 01       		.byte	0x1
+ 622 0039 08       		.byte	0x8
+ 623 003a 67000000 		.4byte	.LASF1
+ 624 003e 03       		.uleb128 0x3
+ 625 003f 24000000 		.4byte	.LASF3
+ 626 0043 02       		.byte	0x2
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 17
+
+
+ 627 0044 29       		.byte	0x29
+ 628 0045 49000000 		.4byte	0x49
+ 629 0049 02       		.uleb128 0x2
+ 630 004a 02       		.byte	0x2
+ 631 004b 05       		.byte	0x5
+ 632 004c 44000000 		.4byte	.LASF4
+ 633 0050 02       		.uleb128 0x2
+ 634 0051 02       		.byte	0x2
+ 635 0052 07       		.byte	0x7
+ 636 0053 E2000000 		.4byte	.LASF5
+ 637 0057 03       		.uleb128 0x3
+ 638 0058 2E000000 		.4byte	.LASF6
+ 639 005c 02       		.byte	0x2
+ 640 005d 3F       		.byte	0x3f
+ 641 005e 62000000 		.4byte	0x62
+ 642 0062 02       		.uleb128 0x2
+ 643 0063 04       		.byte	0x4
+ 644 0064 05       		.byte	0x5
+ 645 0065 B3020000 		.4byte	.LASF7
+ 646 0069 03       		.uleb128 0x3
+ 647 006a 85000000 		.4byte	.LASF8
+ 648 006e 02       		.byte	0x2
+ 649 006f 41       		.byte	0x41
+ 650 0070 74000000 		.4byte	0x74
+ 651 0074 02       		.uleb128 0x2
+ 652 0075 04       		.byte	0x4
+ 653 0076 07       		.byte	0x7
+ 654 0077 D0000000 		.4byte	.LASF9
+ 655 007b 02       		.uleb128 0x2
+ 656 007c 08       		.byte	0x8
+ 657 007d 05       		.byte	0x5
+ 658 007e C7010000 		.4byte	.LASF10
+ 659 0082 02       		.uleb128 0x2
+ 660 0083 08       		.byte	0x8
+ 661 0084 07       		.byte	0x7
+ 662 0085 7F010000 		.4byte	.LASF11
+ 663 0089 04       		.uleb128 0x4
+ 664 008a 04       		.byte	0x4
+ 665 008b 05       		.byte	0x5
+ 666 008c 696E7400 		.ascii	"int\000"
+ 667 0090 02       		.uleb128 0x2
+ 668 0091 04       		.byte	0x4
+ 669 0092 07       		.byte	0x7
+ 670 0093 72010000 		.4byte	.LASF12
+ 671 0097 03       		.uleb128 0x3
+ 672 0098 96010000 		.4byte	.LASF13
+ 673 009c 03       		.byte	0x3
+ 674 009d 18       		.byte	0x18
+ 675 009e 2C000000 		.4byte	0x2c
+ 676 00a2 03       		.uleb128 0x3
+ 677 00a3 A6010000 		.4byte	.LASF14
+ 678 00a7 03       		.byte	0x3
+ 679 00a8 20       		.byte	0x20
+ 680 00a9 3E000000 		.4byte	0x3e
+ 681 00ad 03       		.uleb128 0x3
+ 682 00ae B6010000 		.4byte	.LASF15
+ 683 00b2 03       		.byte	0x3
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 18
+
+
+ 684 00b3 2C       		.byte	0x2c
+ 685 00b4 57000000 		.4byte	0x57
+ 686 00b8 03       		.uleb128 0x3
+ 687 00b9 AA020000 		.4byte	.LASF16
+ 688 00bd 03       		.byte	0x3
+ 689 00be 30       		.byte	0x30
+ 690 00bf 69000000 		.4byte	0x69
+ 691 00c3 05       		.uleb128 0x5
+ 692 00c4 9C020000 		.4byte	.LASF17
+ 693 00c8 04       		.byte	0x4
+ 694 00c9 E901     		.2byte	0x1e9
+ 695 00cb 37000000 		.4byte	0x37
+ 696 00cf 05       		.uleb128 0x5
+ 697 00d0 66010000 		.4byte	.LASF18
+ 698 00d4 04       		.byte	0x4
+ 699 00d5 EA01     		.2byte	0x1ea
+ 700 00d7 50000000 		.4byte	0x50
+ 701 00db 02       		.uleb128 0x2
+ 702 00dc 04       		.byte	0x4
+ 703 00dd 04       		.byte	0x4
+ 704 00de 5C000000 		.4byte	.LASF19
+ 705 00e2 02       		.uleb128 0x2
+ 706 00e3 08       		.byte	0x8
+ 707 00e4 04       		.byte	0x4
+ 708 00e5 42010000 		.4byte	.LASF20
+ 709 00e9 02       		.uleb128 0x2
+ 710 00ea 01       		.byte	0x1
+ 711 00eb 08       		.byte	0x8
+ 712 00ec DC010000 		.4byte	.LASF21
+ 713 00f0 02       		.uleb128 0x2
+ 714 00f1 04       		.byte	0x4
+ 715 00f2 07       		.byte	0x7
+ 716 00f3 BE010000 		.4byte	.LASF22
+ 717 00f7 02       		.uleb128 0x2
+ 718 00f8 08       		.byte	0x8
+ 719 00f9 04       		.byte	0x4
+ 720 00fa DE020000 		.4byte	.LASF23
+ 721 00fe 06       		.uleb128 0x6
+ 722 00ff 01010000 		.4byte	.LASF48
+ 723 0103 14       		.byte	0x14
+ 724 0104 07       		.byte	0x7
+ 725 0105 1D       		.byte	0x1d
+ 726 0106 21010000 		.4byte	0x121
+ 727 010a 07       		.uleb128 0x7
+ 728 010b 75736200 		.ascii	"usb\000"
+ 729 010f 07       		.byte	0x7
+ 730 0110 1E       		.byte	0x1e
+ 731 0111 21010000 		.4byte	0x121
+ 732 0115 08       		.uleb128 0x8
+ 733 0116 62000000 		.4byte	.LASF24
+ 734 011a 07       		.byte	0x7
+ 735 011b 1F       		.byte	0x1f
+ 736 011c 31010000 		.4byte	0x131
+ 737 0120 00       		.byte	0
+ 738 0121 09       		.uleb128 0x9
+ 739 0122 97000000 		.4byte	0x97
+ 740 0126 31010000 		.4byte	0x131
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 19
+
+
+ 741 012a 0A       		.uleb128 0xa
+ 742 012b F0000000 		.4byte	0xf0
+ 743 012f 13       		.byte	0x13
+ 744 0130 00       		.byte	0
+ 745 0131 09       		.uleb128 0x9
+ 746 0132 A2000000 		.4byte	0xa2
+ 747 0136 41010000 		.4byte	0x141
+ 748 013a 0A       		.uleb128 0xa
+ 749 013b F0000000 		.4byte	0xf0
+ 750 013f 09       		.byte	0x9
+ 751 0140 00       		.byte	0
+ 752 0141 0B       		.uleb128 0xb
+ 753 0142 4E000000 		.4byte	.LASF25
+ 754 0146 01       		.byte	0x1
+ 755 0147 3E       		.byte	0x3e
+ 756 0148 00000000 		.4byte	.LFB64
+ 757 014c 28000000 		.4byte	.LFE64-.LFB64
+ 758 0150 01       		.uleb128 0x1
+ 759 0151 9C       		.byte	0x9c
+ 760 0152 0C       		.uleb128 0xc
+ 761 0153 AE010000 		.4byte	.LASF26
+ 762 0157 01       		.byte	0x1
+ 763 0158 44       		.byte	0x44
+ 764 0159 00000000 		.4byte	.LFB65
+ 765 015d B8000000 		.4byte	.LFE65-.LFB65
+ 766 0161 01       		.uleb128 0x1
+ 767 0162 9C       		.byte	0x9c
+ 768 0163 0D       		.uleb128 0xd
+ 769 0164 6D010000 		.4byte	.LASF49
+ 770 0168 01       		.byte	0x1
+ 771 0169 69       		.byte	0x69
+ 772 016a 89000000 		.4byte	0x89
+ 773 016e 00000000 		.4byte	.LFB66
+ 774 0172 A0020000 		.4byte	.LFE66-.LFB66
+ 775 0176 01       		.uleb128 0x1
+ 776 0177 9C       		.byte	0x9c
+ 777 0178 95010000 		.4byte	0x195
+ 778 017c 0E       		.uleb128 0xe
+ 779 017d A0000000 		.4byte	.LBB2
+ 780 0181 30010000 		.4byte	.LBE2-.LBB2
+ 781 0185 0F       		.uleb128 0xf
+ 782 0186 EC010000 		.4byte	.LASF50
+ 783 018a 01       		.byte	0x1
+ 784 018b A9       		.byte	0xa9
+ 785 018c CF000000 		.4byte	0xcf
+ 786 0190 02       		.uleb128 0x2
+ 787 0191 91       		.byte	0x91
+ 788 0192 6E       		.sleb128 -18
+ 789 0193 00       		.byte	0
+ 790 0194 00       		.byte	0
+ 791 0195 10       		.uleb128 0x10
+ 792 0196 22010000 		.4byte	.LASF27
+ 793 019a 05       		.byte	0x5
+ 794 019b 1207     		.2byte	0x712
+ 795 019d A1010000 		.4byte	0x1a1
+ 796 01a1 11       		.uleb128 0x11
+ 797 01a2 AD000000 		.4byte	0xad
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 20
+
+
+ 798 01a6 09       		.uleb128 0x9
+ 799 01a7 C3000000 		.4byte	0xc3
+ 800 01ab B6010000 		.4byte	0x1b6
+ 801 01af 0A       		.uleb128 0xa
+ 802 01b0 F0000000 		.4byte	0xf0
+ 803 01b4 3F       		.byte	0x3f
+ 804 01b5 00       		.byte	0
+ 805 01b6 12       		.uleb128 0x12
+ 806 01b7 95020000 		.4byte	.LASF28
+ 807 01bb 06       		.byte	0x6
+ 808 01bc 50       		.byte	0x50
+ 809 01bd A6010000 		.4byte	0x1a6
+ 810 01c1 05       		.uleb128 0x5
+ 811 01c2 03       		.byte	0x3
+ 812 01c3 00000000 		.4byte	buffer
+ 813 01c7 12       		.uleb128 0x12
+ 814 01c8 1A010000 		.4byte	.LASF29
+ 815 01cc 01       		.byte	0x1
+ 816 01cd 32       		.byte	0x32
+ 817 01ce A2000000 		.4byte	0xa2
+ 818 01d2 05       		.uleb128 0x5
+ 819 01d3 03       		.byte	0x3
+ 820 01d4 00000000 		.4byte	voltage
+ 821 01d8 12       		.uleb128 0x12
+ 822 01d9 A2020000 		.4byte	.LASF30
+ 823 01dd 01       		.byte	0x1
+ 824 01de 33       		.byte	0x33
+ 825 01df E2000000 		.4byte	0xe2
+ 826 01e3 05       		.uleb128 0x5
+ 827 01e4 03       		.byte	0x3
+ 828 01e5 00000000 		.4byte	current
+ 829 01e9 12       		.uleb128 0x12
+ 830 01ea 49010000 		.4byte	.LASF31
+ 831 01ee 01       		.byte	0x1
+ 832 01ef 2E       		.byte	0x2e
+ 833 01f0 97000000 		.4byte	0x97
+ 834 01f4 05       		.uleb128 0x5
+ 835 01f5 03       		.byte	0x3
+ 836 01f6 00000000 		.4byte	ADC_buffer_index
+ 837 01fa 12       		.uleb128 0x12
+ 838 01fb E1010000 		.4byte	.LASF32
+ 839 01ff 01       		.byte	0x1
+ 840 0200 2F       		.byte	0x2f
+ 841 0201 97000000 		.4byte	0x97
+ 842 0205 05       		.uleb128 0x5
+ 843 0206 03       		.byte	0x3
+ 844 0207 00000000 		.4byte	ADC_config
+ 845 020b 12       		.uleb128 0x12
+ 846 020c 75000000 		.4byte	.LASF33
+ 847 0210 07       		.byte	0x7
+ 848 0211 21       		.byte	0x21
+ 849 0212 FE000000 		.4byte	0xfe
+ 850 0216 05       		.uleb128 0x5
+ 851 0217 03       		.byte	0x3
+ 852 0218 00000000 		.4byte	calibrate_array
+ 853 021c 12       		.uleb128 0x12
+ 854 021d C5020000 		.4byte	.LASF34
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 21
+
+
+ 855 0221 01       		.byte	0x1
+ 856 0222 2D       		.byte	0x2d
+ 857 0223 97000000 		.4byte	0x97
+ 858 0227 05       		.uleb128 0x5
+ 859 0228 03       		.byte	0x3
+ 860 0229 00000000 		.4byte	TIA_resistor_value_index
+ 861 022d 09       		.uleb128 0x9
+ 862 022e 97000000 		.4byte	0x97
+ 863 0232 3D020000 		.4byte	0x23d
+ 864 0236 0A       		.uleb128 0xa
+ 865 0237 F0000000 		.4byte	0xf0
+ 866 023b 0F       		.byte	0xf
+ 867 023c 00       		.byte	0
+ 868 023d 12       		.uleb128 0x12
+ 869 023e 5A010000 		.4byte	.LASF35
+ 870 0242 01       		.byte	0x1
+ 871 0243 2A       		.byte	0x2a
+ 872 0244 2D020000 		.4byte	0x22d
+ 873 0248 05       		.uleb128 0x5
+ 874 0249 03       		.byte	0x3
+ 875 024a 00000000 		.4byte	LCD_str_top
+ 876 024e 12       		.uleb128 0x12
+ 877 024f 38000000 		.4byte	.LASF36
+ 878 0253 01       		.byte	0x1
+ 879 0254 2B       		.byte	0x2b
+ 880 0255 2D020000 		.4byte	0x22d
+ 881 0259 05       		.uleb128 0x5
+ 882 025a 03       		.byte	0x3
+ 883 025b 00000000 		.4byte	LCD_str_bot
+ 884 025f 09       		.uleb128 0x9
+ 885 0260 97000000 		.4byte	0x97
+ 886 0264 6F020000 		.4byte	0x26f
+ 887 0268 0A       		.uleb128 0xa
+ 888 0269 F0000000 		.4byte	0xf0
+ 889 026d 3F       		.byte	0x3f
+ 890 026e 00       		.byte	0
+ 891 026f 12       		.uleb128 0x12
+ 892 0270 2F010000 		.4byte	.LASF37
+ 893 0274 01       		.byte	0x1
+ 894 0275 27       		.byte	0x27
+ 895 0276 5F020000 		.4byte	0x25f
+ 896 027a 05       		.uleb128 0x5
+ 897 027b 03       		.byte	0x3
+ 898 027c 00000000 		.4byte	RX_Data
+ 899 0280 12       		.uleb128 0x12
+ 900 0281 9E010000 		.4byte	.LASF38
+ 901 0285 01       		.byte	0x1
+ 902 0286 28       		.byte	0x28
+ 903 0287 5F020000 		.4byte	0x25f
+ 904 028b 05       		.uleb128 0x5
+ 905 028c 03       		.byte	0x3
+ 906 028d 00000000 		.4byte	TX_Data
+ 907 0291 12       		.uleb128 0x12
+ 908 0292 1A000000 		.4byte	.LASF39
+ 909 0296 01       		.byte	0x1
+ 910 0297 34       		.byte	0x34
+ 911 0298 97000000 		.4byte	0x97
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 22
+
+
+ 912 029c 05       		.uleb128 0x5
+ 913 029d 03       		.byte	0x3
+ 914 029e 00000000 		.4byte	dac_Volts
+ 915 02a2 12       		.uleb128 0x12
+ 916 02a3 00000000 		.4byte	.LASF40
+ 917 02a7 01       		.byte	0x1
+ 918 02a8 35       		.byte	0x35
+ 919 02a9 97000000 		.4byte	0x97
+ 920 02ad 05       		.uleb128 0x5
+ 921 02ae 03       		.byte	0x3
+ 922 02af 00000000 		.4byte	conversionCount
+ 923 02b3 12       		.uleb128 0x12
+ 924 02b4 F2010000 		.4byte	.LASF41
+ 925 02b8 01       		.byte	0x1
+ 926 02b9 36       		.byte	0x36
+ 927 02ba 97000000 		.4byte	0x97
+ 928 02be 05       		.uleb128 0x5
+ 929 02bf 03       		.byte	0x3
+ 930 02c0 00000000 		.4byte	dataReady
+ 931 02c4 12       		.uleb128 0x12
+ 932 02c5 37010000 		.4byte	.LASF42
+ 933 02c9 01       		.byte	0x1
+ 934 02ca 38       		.byte	0x38
+ 935 02cb E2000000 		.4byte	0xe2
+ 936 02cf 05       		.uleb128 0x5
+ 937 02d0 03       		.byte	0x3
+ 938 02d1 00000000 		.4byte	measureADC
+ 939 02d5 12       		.uleb128 0x12
+ 940 02d6 BC020000 		.4byte	.LASF43
+ 941 02da 01       		.byte	0x1
+ 942 02db 39       		.byte	0x39
+ 943 02dc B8000000 		.4byte	0xb8
+ 944 02e0 05       		.uleb128 0x5
+ 945 02e1 03       		.byte	0x3
+ 946 02e2 00000000 		.4byte	adcValue
+ 947 02e6 12       		.uleb128 0x12
+ 948 02e7 F5000000 		.4byte	.LASF44
+ 949 02eb 01       		.byte	0x1
+ 950 02ec 3A       		.byte	0x3a
+ 951 02ed AD000000 		.4byte	0xad
+ 952 02f1 05       		.uleb128 0x5
+ 953 02f2 03       		.byte	0x3
+ 954 02f3 00000000 		.4byte	signedValue
+ 955 02f7 00       		.byte	0
+ 956              		.section	.debug_abbrev,"",%progbits
+ 957              	.Ldebug_abbrev0:
+ 958 0000 01       		.uleb128 0x1
+ 959 0001 11       		.uleb128 0x11
+ 960 0002 01       		.byte	0x1
+ 961 0003 25       		.uleb128 0x25
+ 962 0004 0E       		.uleb128 0xe
+ 963 0005 13       		.uleb128 0x13
+ 964 0006 0B       		.uleb128 0xb
+ 965 0007 03       		.uleb128 0x3
+ 966 0008 0E       		.uleb128 0xe
+ 967 0009 1B       		.uleb128 0x1b
+ 968 000a 0E       		.uleb128 0xe
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 23
+
+
+ 969 000b 55       		.uleb128 0x55
+ 970 000c 17       		.uleb128 0x17
+ 971 000d 11       		.uleb128 0x11
+ 972 000e 01       		.uleb128 0x1
+ 973 000f 10       		.uleb128 0x10
+ 974 0010 17       		.uleb128 0x17
+ 975 0011 00       		.byte	0
+ 976 0012 00       		.byte	0
+ 977 0013 02       		.uleb128 0x2
+ 978 0014 24       		.uleb128 0x24
+ 979 0015 00       		.byte	0
+ 980 0016 0B       		.uleb128 0xb
+ 981 0017 0B       		.uleb128 0xb
+ 982 0018 3E       		.uleb128 0x3e
+ 983 0019 0B       		.uleb128 0xb
+ 984 001a 03       		.uleb128 0x3
+ 985 001b 0E       		.uleb128 0xe
+ 986 001c 00       		.byte	0
+ 987 001d 00       		.byte	0
+ 988 001e 03       		.uleb128 0x3
+ 989 001f 16       		.uleb128 0x16
+ 990 0020 00       		.byte	0
+ 991 0021 03       		.uleb128 0x3
+ 992 0022 0E       		.uleb128 0xe
+ 993 0023 3A       		.uleb128 0x3a
+ 994 0024 0B       		.uleb128 0xb
+ 995 0025 3B       		.uleb128 0x3b
+ 996 0026 0B       		.uleb128 0xb
+ 997 0027 49       		.uleb128 0x49
+ 998 0028 13       		.uleb128 0x13
+ 999 0029 00       		.byte	0
+ 1000 002a 00       		.byte	0
+ 1001 002b 04       		.uleb128 0x4
+ 1002 002c 24       		.uleb128 0x24
+ 1003 002d 00       		.byte	0
+ 1004 002e 0B       		.uleb128 0xb
+ 1005 002f 0B       		.uleb128 0xb
+ 1006 0030 3E       		.uleb128 0x3e
+ 1007 0031 0B       		.uleb128 0xb
+ 1008 0032 03       		.uleb128 0x3
+ 1009 0033 08       		.uleb128 0x8
+ 1010 0034 00       		.byte	0
+ 1011 0035 00       		.byte	0
+ 1012 0036 05       		.uleb128 0x5
+ 1013 0037 16       		.uleb128 0x16
+ 1014 0038 00       		.byte	0
+ 1015 0039 03       		.uleb128 0x3
+ 1016 003a 0E       		.uleb128 0xe
+ 1017 003b 3A       		.uleb128 0x3a
+ 1018 003c 0B       		.uleb128 0xb
+ 1019 003d 3B       		.uleb128 0x3b
+ 1020 003e 05       		.uleb128 0x5
+ 1021 003f 49       		.uleb128 0x49
+ 1022 0040 13       		.uleb128 0x13
+ 1023 0041 00       		.byte	0
+ 1024 0042 00       		.byte	0
+ 1025 0043 06       		.uleb128 0x6
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 24
+
+
+ 1026 0044 17       		.uleb128 0x17
+ 1027 0045 01       		.byte	0x1
+ 1028 0046 03       		.uleb128 0x3
+ 1029 0047 0E       		.uleb128 0xe
+ 1030 0048 0B       		.uleb128 0xb
+ 1031 0049 0B       		.uleb128 0xb
+ 1032 004a 3A       		.uleb128 0x3a
+ 1033 004b 0B       		.uleb128 0xb
+ 1034 004c 3B       		.uleb128 0x3b
+ 1035 004d 0B       		.uleb128 0xb
+ 1036 004e 01       		.uleb128 0x1
+ 1037 004f 13       		.uleb128 0x13
+ 1038 0050 00       		.byte	0
+ 1039 0051 00       		.byte	0
+ 1040 0052 07       		.uleb128 0x7
+ 1041 0053 0D       		.uleb128 0xd
+ 1042 0054 00       		.byte	0
+ 1043 0055 03       		.uleb128 0x3
+ 1044 0056 08       		.uleb128 0x8
+ 1045 0057 3A       		.uleb128 0x3a
+ 1046 0058 0B       		.uleb128 0xb
+ 1047 0059 3B       		.uleb128 0x3b
+ 1048 005a 0B       		.uleb128 0xb
+ 1049 005b 49       		.uleb128 0x49
+ 1050 005c 13       		.uleb128 0x13
+ 1051 005d 00       		.byte	0
+ 1052 005e 00       		.byte	0
+ 1053 005f 08       		.uleb128 0x8
+ 1054 0060 0D       		.uleb128 0xd
+ 1055 0061 00       		.byte	0
+ 1056 0062 03       		.uleb128 0x3
+ 1057 0063 0E       		.uleb128 0xe
+ 1058 0064 3A       		.uleb128 0x3a
+ 1059 0065 0B       		.uleb128 0xb
+ 1060 0066 3B       		.uleb128 0x3b
+ 1061 0067 0B       		.uleb128 0xb
+ 1062 0068 49       		.uleb128 0x49
+ 1063 0069 13       		.uleb128 0x13
+ 1064 006a 00       		.byte	0
+ 1065 006b 00       		.byte	0
+ 1066 006c 09       		.uleb128 0x9
+ 1067 006d 01       		.uleb128 0x1
+ 1068 006e 01       		.byte	0x1
+ 1069 006f 49       		.uleb128 0x49
+ 1070 0070 13       		.uleb128 0x13
+ 1071 0071 01       		.uleb128 0x1
+ 1072 0072 13       		.uleb128 0x13
+ 1073 0073 00       		.byte	0
+ 1074 0074 00       		.byte	0
+ 1075 0075 0A       		.uleb128 0xa
+ 1076 0076 21       		.uleb128 0x21
+ 1077 0077 00       		.byte	0
+ 1078 0078 49       		.uleb128 0x49
+ 1079 0079 13       		.uleb128 0x13
+ 1080 007a 2F       		.uleb128 0x2f
+ 1081 007b 0B       		.uleb128 0xb
+ 1082 007c 00       		.byte	0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 25
+
+
+ 1083 007d 00       		.byte	0
+ 1084 007e 0B       		.uleb128 0xb
+ 1085 007f 2E       		.uleb128 0x2e
+ 1086 0080 00       		.byte	0
+ 1087 0081 3F       		.uleb128 0x3f
+ 1088 0082 19       		.uleb128 0x19
+ 1089 0083 03       		.uleb128 0x3
+ 1090 0084 0E       		.uleb128 0xe
+ 1091 0085 3A       		.uleb128 0x3a
+ 1092 0086 0B       		.uleb128 0xb
+ 1093 0087 3B       		.uleb128 0x3b
+ 1094 0088 0B       		.uleb128 0xb
+ 1095 0089 27       		.uleb128 0x27
+ 1096 008a 19       		.uleb128 0x19
+ 1097 008b 11       		.uleb128 0x11
+ 1098 008c 01       		.uleb128 0x1
+ 1099 008d 12       		.uleb128 0x12
+ 1100 008e 06       		.uleb128 0x6
+ 1101 008f 40       		.uleb128 0x40
+ 1102 0090 18       		.uleb128 0x18
+ 1103 0091 9742     		.uleb128 0x2117
+ 1104 0093 19       		.uleb128 0x19
+ 1105 0094 00       		.byte	0
+ 1106 0095 00       		.byte	0
+ 1107 0096 0C       		.uleb128 0xc
+ 1108 0097 2E       		.uleb128 0x2e
+ 1109 0098 00       		.byte	0
+ 1110 0099 3F       		.uleb128 0x3f
+ 1111 009a 19       		.uleb128 0x19
+ 1112 009b 03       		.uleb128 0x3
+ 1113 009c 0E       		.uleb128 0xe
+ 1114 009d 3A       		.uleb128 0x3a
+ 1115 009e 0B       		.uleb128 0xb
+ 1116 009f 3B       		.uleb128 0x3b
+ 1117 00a0 0B       		.uleb128 0xb
+ 1118 00a1 27       		.uleb128 0x27
+ 1119 00a2 19       		.uleb128 0x19
+ 1120 00a3 11       		.uleb128 0x11
+ 1121 00a4 01       		.uleb128 0x1
+ 1122 00a5 12       		.uleb128 0x12
+ 1123 00a6 06       		.uleb128 0x6
+ 1124 00a7 40       		.uleb128 0x40
+ 1125 00a8 18       		.uleb128 0x18
+ 1126 00a9 9642     		.uleb128 0x2116
+ 1127 00ab 19       		.uleb128 0x19
+ 1128 00ac 00       		.byte	0
+ 1129 00ad 00       		.byte	0
+ 1130 00ae 0D       		.uleb128 0xd
+ 1131 00af 2E       		.uleb128 0x2e
+ 1132 00b0 01       		.byte	0x1
+ 1133 00b1 3F       		.uleb128 0x3f
+ 1134 00b2 19       		.uleb128 0x19
+ 1135 00b3 03       		.uleb128 0x3
+ 1136 00b4 0E       		.uleb128 0xe
+ 1137 00b5 3A       		.uleb128 0x3a
+ 1138 00b6 0B       		.uleb128 0xb
+ 1139 00b7 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 26
+
+
+ 1140 00b8 0B       		.uleb128 0xb
+ 1141 00b9 49       		.uleb128 0x49
+ 1142 00ba 13       		.uleb128 0x13
+ 1143 00bb 11       		.uleb128 0x11
+ 1144 00bc 01       		.uleb128 0x1
+ 1145 00bd 12       		.uleb128 0x12
+ 1146 00be 06       		.uleb128 0x6
+ 1147 00bf 40       		.uleb128 0x40
+ 1148 00c0 18       		.uleb128 0x18
+ 1149 00c1 9642     		.uleb128 0x2116
+ 1150 00c3 19       		.uleb128 0x19
+ 1151 00c4 01       		.uleb128 0x1
+ 1152 00c5 13       		.uleb128 0x13
+ 1153 00c6 00       		.byte	0
+ 1154 00c7 00       		.byte	0
+ 1155 00c8 0E       		.uleb128 0xe
+ 1156 00c9 0B       		.uleb128 0xb
+ 1157 00ca 01       		.byte	0x1
+ 1158 00cb 11       		.uleb128 0x11
+ 1159 00cc 01       		.uleb128 0x1
+ 1160 00cd 12       		.uleb128 0x12
+ 1161 00ce 06       		.uleb128 0x6
+ 1162 00cf 00       		.byte	0
+ 1163 00d0 00       		.byte	0
+ 1164 00d1 0F       		.uleb128 0xf
+ 1165 00d2 34       		.uleb128 0x34
+ 1166 00d3 00       		.byte	0
+ 1167 00d4 03       		.uleb128 0x3
+ 1168 00d5 0E       		.uleb128 0xe
+ 1169 00d6 3A       		.uleb128 0x3a
+ 1170 00d7 0B       		.uleb128 0xb
+ 1171 00d8 3B       		.uleb128 0x3b
+ 1172 00d9 0B       		.uleb128 0xb
+ 1173 00da 49       		.uleb128 0x49
+ 1174 00db 13       		.uleb128 0x13
+ 1175 00dc 02       		.uleb128 0x2
+ 1176 00dd 18       		.uleb128 0x18
+ 1177 00de 00       		.byte	0
+ 1178 00df 00       		.byte	0
+ 1179 00e0 10       		.uleb128 0x10
+ 1180 00e1 34       		.uleb128 0x34
+ 1181 00e2 00       		.byte	0
+ 1182 00e3 03       		.uleb128 0x3
+ 1183 00e4 0E       		.uleb128 0xe
+ 1184 00e5 3A       		.uleb128 0x3a
+ 1185 00e6 0B       		.uleb128 0xb
+ 1186 00e7 3B       		.uleb128 0x3b
+ 1187 00e8 05       		.uleb128 0x5
+ 1188 00e9 49       		.uleb128 0x49
+ 1189 00ea 13       		.uleb128 0x13
+ 1190 00eb 3F       		.uleb128 0x3f
+ 1191 00ec 19       		.uleb128 0x19
+ 1192 00ed 3C       		.uleb128 0x3c
+ 1193 00ee 19       		.uleb128 0x19
+ 1194 00ef 00       		.byte	0
+ 1195 00f0 00       		.byte	0
+ 1196 00f1 11       		.uleb128 0x11
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 27
+
+
+ 1197 00f2 35       		.uleb128 0x35
+ 1198 00f3 00       		.byte	0
+ 1199 00f4 49       		.uleb128 0x49
+ 1200 00f5 13       		.uleb128 0x13
+ 1201 00f6 00       		.byte	0
+ 1202 00f7 00       		.byte	0
+ 1203 00f8 12       		.uleb128 0x12
+ 1204 00f9 34       		.uleb128 0x34
+ 1205 00fa 00       		.byte	0
+ 1206 00fb 03       		.uleb128 0x3
+ 1207 00fc 0E       		.uleb128 0xe
+ 1208 00fd 3A       		.uleb128 0x3a
+ 1209 00fe 0B       		.uleb128 0xb
+ 1210 00ff 3B       		.uleb128 0x3b
+ 1211 0100 0B       		.uleb128 0xb
+ 1212 0101 49       		.uleb128 0x49
+ 1213 0102 13       		.uleb128 0x13
+ 1214 0103 3F       		.uleb128 0x3f
+ 1215 0104 19       		.uleb128 0x19
+ 1216 0105 02       		.uleb128 0x2
+ 1217 0106 18       		.uleb128 0x18
+ 1218 0107 00       		.byte	0
+ 1219 0108 00       		.byte	0
+ 1220 0109 00       		.byte	0
+ 1221              		.section	.debug_aranges,"",%progbits
+ 1222 0000 2C000000 		.4byte	0x2c
+ 1223 0004 0200     		.2byte	0x2
+ 1224 0006 00000000 		.4byte	.Ldebug_info0
+ 1225 000a 04       		.byte	0x4
+ 1226 000b 00       		.byte	0
+ 1227 000c 0000     		.2byte	0
+ 1228 000e 0000     		.2byte	0
+ 1229 0010 00000000 		.4byte	.LFB64
+ 1230 0014 28000000 		.4byte	.LFE64-.LFB64
+ 1231 0018 00000000 		.4byte	.LFB65
+ 1232 001c B8000000 		.4byte	.LFE65-.LFB65
+ 1233 0020 00000000 		.4byte	.LFB66
+ 1234 0024 A0020000 		.4byte	.LFE66-.LFB66
+ 1235 0028 00000000 		.4byte	0
+ 1236 002c 00000000 		.4byte	0
+ 1237              		.section	.debug_ranges,"",%progbits
+ 1238              	.Ldebug_ranges0:
+ 1239 0000 00000000 		.4byte	.LFB64
+ 1240 0004 28000000 		.4byte	.LFE64
+ 1241 0008 00000000 		.4byte	.LFB65
+ 1242 000c B8000000 		.4byte	.LFE65
+ 1243 0010 00000000 		.4byte	.LFB66
+ 1244 0014 A0020000 		.4byte	.LFE66
+ 1245 0018 00000000 		.4byte	0
+ 1246 001c 00000000 		.4byte	0
+ 1247              		.section	.debug_line,"",%progbits
+ 1248              	.Ldebug_line0:
+ 1249 0000 19020000 		.section	.debug_str,"MS",%progbits,1
+ 1249      02006C01 
+ 1249      00000201 
+ 1249      FB0E0D00 
+ 1249      01010101 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 28
+
+
+ 1250              	.LASF40:
+ 1251 0000 636F6E76 		.ascii	"conversionCount\000"
+ 1251      65727369 
+ 1251      6F6E436F 
+ 1251      756E7400 
+ 1252              	.LASF2:
+ 1253 0010 5F5F7569 		.ascii	"__uint8_t\000"
+ 1253      6E74385F 
+ 1253      7400
+ 1254              	.LASF39:
+ 1255 001a 6461635F 		.ascii	"dac_Volts\000"
+ 1255      566F6C74 
+ 1255      7300
+ 1256              	.LASF3:
+ 1257 0024 5F5F696E 		.ascii	"__int16_t\000"
+ 1257      7431365F 
+ 1257      7400
+ 1258              	.LASF6:
+ 1259 002e 5F5F696E 		.ascii	"__int32_t\000"
+ 1259      7433325F 
+ 1259      7400
+ 1260              	.LASF36:
+ 1261 0038 4C43445F 		.ascii	"LCD_str_bot\000"
+ 1261      7374725F 
+ 1261      626F7400 
+ 1262              	.LASF4:
+ 1263 0044 73686F72 		.ascii	"short int\000"
+ 1263      7420696E 
+ 1263      7400
+ 1264              	.LASF25:
+ 1265 004e 4144435F 		.ascii	"ADC_ISR_RESET\000"
+ 1265      4953525F 
+ 1265      52455345 
+ 1265      5400
+ 1266              	.LASF19:
+ 1267 005c 666C6F61 		.ascii	"float\000"
+ 1267      7400
+ 1268              	.LASF24:
+ 1269 0062 64617461 		.ascii	"data\000"
+ 1269      00
+ 1270              	.LASF1:
+ 1271 0067 756E7369 		.ascii	"unsigned char\000"
+ 1271      676E6564 
+ 1271      20636861 
+ 1271      7200
+ 1272              	.LASF33:
+ 1273 0075 63616C69 		.ascii	"calibrate_array\000"
+ 1273      62726174 
+ 1273      655F6172 
+ 1273      72617900 
+ 1274              	.LASF8:
+ 1275 0085 5F5F7569 		.ascii	"__uint32_t\000"
+ 1275      6E743332 
+ 1275      5F7400
+ 1276              	.LASF47:
+ 1277 0090 433A5C55 		.ascii	"C:\\Users\\User\\Dropbox\\67 PSOC\\PSoC-Potentiosta"
+ 1277      73657273 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 29
+
+
+ 1277      5C557365 
+ 1277      725C4472 
+ 1277      6F70626F 
+ 1278 00be 745C4269 		.ascii	"t\\Biosensor.cydsn\000"
+ 1278      6F73656E 
+ 1278      736F722E 
+ 1278      63796473 
+ 1278      6E00
+ 1279              	.LASF9:
+ 1280 00d0 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1280      20756E73 
+ 1280      69676E65 
+ 1280      6420696E 
+ 1280      7400
+ 1281              	.LASF5:
+ 1282 00e2 73686F72 		.ascii	"short unsigned int\000"
+ 1282      7420756E 
+ 1282      7369676E 
+ 1282      65642069 
+ 1282      6E7400
+ 1283              	.LASF44:
+ 1284 00f5 7369676E 		.ascii	"signedValue\000"
+ 1284      65645661 
+ 1284      6C756500 
+ 1285              	.LASF48:
+ 1286 0101 63616C69 		.ascii	"calibrate_data_usb_union\000"
+ 1286      62726174 
+ 1286      655F6461 
+ 1286      74615F75 
+ 1286      73625F75 
+ 1287              	.LASF29:
+ 1288 011a 766F6C74 		.ascii	"voltage\000"
+ 1288      61676500 
+ 1289              	.LASF27:
+ 1290 0122 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1290      52784275 
+ 1290      66666572 
+ 1290      00
+ 1291              	.LASF37:
+ 1292 012f 52585F44 		.ascii	"RX_Data\000"
+ 1292      61746100 
+ 1293              	.LASF42:
+ 1294 0137 6D656173 		.ascii	"measureADC\000"
+ 1294      75726541 
+ 1294      444300
+ 1295              	.LASF20:
+ 1296 0142 646F7562 		.ascii	"double\000"
+ 1296      6C6500
+ 1297              	.LASF31:
+ 1298 0149 4144435F 		.ascii	"ADC_buffer_index\000"
+ 1298      62756666 
+ 1298      65725F69 
+ 1298      6E646578 
+ 1298      00
+ 1299              	.LASF35:
+ 1300 015a 4C43445F 		.ascii	"LCD_str_top\000"
+ 1300      7374725F 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 30
+
+
+ 1300      746F7000 
+ 1301              	.LASF18:
+ 1302 0166 75696E74 		.ascii	"uint16\000"
+ 1302      313600
+ 1303              	.LASF49:
+ 1304 016d 6D61696E 		.ascii	"main\000"
+ 1304      00
+ 1305              	.LASF12:
+ 1306 0172 756E7369 		.ascii	"unsigned int\000"
+ 1306      676E6564 
+ 1306      20696E74 
+ 1306      00
+ 1307              	.LASF11:
+ 1308 017f 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1308      206C6F6E 
+ 1308      6720756E 
+ 1308      7369676E 
+ 1308      65642069 
+ 1309              	.LASF13:
+ 1310 0196 75696E74 		.ascii	"uint8_t\000"
+ 1310      385F7400 
+ 1311              	.LASF38:
+ 1312 019e 54585F44 		.ascii	"TX_Data\000"
+ 1312      61746100 
+ 1313              	.LASF14:
+ 1314 01a6 696E7431 		.ascii	"int16_t\000"
+ 1314      365F7400 
+ 1315              	.LASF26:
+ 1316 01ae 4144435F 		.ascii	"ADC_ISR\000"
+ 1316      49535200 
+ 1317              	.LASF15:
+ 1318 01b6 696E7433 		.ascii	"int32_t\000"
+ 1318      325F7400 
+ 1319              	.LASF22:
+ 1320 01be 73697A65 		.ascii	"sizetype\000"
+ 1320      74797065 
+ 1320      00
+ 1321              	.LASF10:
+ 1322 01c7 6C6F6E67 		.ascii	"long long int\000"
+ 1322      206C6F6E 
+ 1322      6720696E 
+ 1322      7400
+ 1323              	.LASF46:
+ 1324 01d5 6D61696E 		.ascii	"main.c\000"
+ 1324      2E6300
+ 1325              	.LASF21:
+ 1326 01dc 63686172 		.ascii	"char\000"
+ 1326      00
+ 1327              	.LASF32:
+ 1328 01e1 4144435F 		.ascii	"ADC_config\000"
+ 1328      636F6E66 
+ 1328      696700
+ 1329              	.LASF50:
+ 1330 01ec 636F756E 		.ascii	"count\000"
+ 1330      7400
+ 1331              	.LASF41:
+ 1332 01f2 64617461 		.ascii	"dataReady\000"
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccSfKNUp.s 			page 31
+
+
+ 1332      52656164 
+ 1332      7900
+ 1333              	.LASF45:
+ 1334 01fc 474E5520 		.ascii	"GNU C99 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1334      43393920 
+ 1334      352E342E 
+ 1334      31203230 
+ 1334      31363036 
+ 1335 022f 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1335      20726576 
+ 1335      6973696F 
+ 1335      6E203233 
+ 1335      37373135 
+ 1336 0262 30202D73 		.ascii	"0 -std=gnu99 -ffunction-sections -ffat-lto-objects\000"
+ 1336      74643D67 
+ 1336      6E753939 
+ 1336      202D6666 
+ 1336      756E6374 
+ 1337              	.LASF28:
+ 1338 0295 62756666 		.ascii	"buffer\000"
+ 1338      657200
+ 1339              	.LASF17:
+ 1340 029c 75696E74 		.ascii	"uint8\000"
+ 1340      3800
+ 1341              	.LASF30:
+ 1342 02a2 63757272 		.ascii	"current\000"
+ 1342      656E7400 
+ 1343              	.LASF16:
+ 1344 02aa 75696E74 		.ascii	"uint32_t\000"
+ 1344      33325F74 
+ 1344      00
+ 1345              	.LASF7:
+ 1346 02b3 6C6F6E67 		.ascii	"long int\000"
+ 1346      20696E74 
+ 1346      00
+ 1347              	.LASF43:
+ 1348 02bc 61646356 		.ascii	"adcValue\000"
+ 1348      616C7565 
+ 1348      00
+ 1349              	.LASF34:
+ 1350 02c5 5449415F 		.ascii	"TIA_resistor_value_index\000"
+ 1350      72657369 
+ 1350      73746F72 
+ 1350      5F76616C 
+ 1350      75655F69 
+ 1351              	.LASF23:
+ 1352 02de 6C6F6E67 		.ascii	"long double\000"
+ 1352      20646F75 
+ 1352      626C6500 
+ 1353              	.LASF0:
+ 1354 02ea 7369676E 		.ascii	"signed char\000"
+ 1354      65642063 
+ 1354      68617200 
+ 1355              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

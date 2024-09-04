@@ -1,0 +1,1460 @@
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"calibrate.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.comm	buffer,64,4
+  20              		.comm	calibrate_array,20,4
+  21              		.global	calibrate_TIA_resistor_list
+  22              		.data
+  23              		.align	2
+  24              		.type	calibrate_TIA_resistor_list, %object
+  25              		.size	calibrate_TIA_resistor_list, 32
+  26              	calibrate_TIA_resistor_list:
+  27 0000 14000000 		.word	20
+  28 0004 1E000000 		.word	30
+  29 0008 28000000 		.word	40
+  30 000c 50000000 		.word	80
+  31 0010 78000000 		.word	120
+  32 0014 FA000000 		.word	250
+  33 0018 F4010000 		.word	500
+  34 001c E8030000 		.word	1000
+  35              		.comm	TIA_resistor_value_index,1,1
+  36              		.global	__aeabi_ui2d
+  37              		.global	__aeabi_d2uiz
+  38              		.global	__aeabi_i2d
+  39              		.global	__aeabi_ddiv
+  40              		.global	__aeabi_d2f
+  41              		.global	__aeabi_f2iz
+  42              		.section	.text.calibrate_TIA,"ax",%progbits
+  43              		.align	2
+  44              		.global	calibrate_TIA
+  45              		.thumb
+  46              		.thumb_func
+  47              		.type	calibrate_TIA, %function
+  48              	calibrate_TIA:
+  49              	.LFB64:
+  50              		.file 1 "calibrate.c"
+   1:calibrate.c   **** /*******************************************************************************
+   2:calibrate.c   **** * File Name: calibrate.c
+   3:calibrate.c   **** *
+   4:calibrate.c   **** * Description:
+   5:calibrate.c   **** *  Protocols to calibrate the current measuring circuitry i.e. TIA / delta sigma ADC with an IDAC
+   6:calibrate.c   **** *
+   7:calibrate.c   **** **********************************************************************************
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 2
+
+
+   8:calibrate.c   ****  * Copyright Kyle Vitautas Lopin, Naresuan University, Phitsanulok Thailand
+   9:calibrate.c   ****  * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
+  10:calibrate.c   **** *********************************************************************************/
+  11:calibrate.c   **** 
+  12:calibrate.c   **** #include <project.h>
+  13:calibrate.c   **** #include <calibrate.h>
+  14:calibrate.c   **** #include <main.h>
+  15:calibrate.c   **** 
+  16:calibrate.c   **** /***************************************
+  17:calibrate.c   **** * Calibration Resistors
+  18:calibrate.c   **** ***************************************/
+  19:calibrate.c   **** int calibrate_TIA_resistor_list[8] = {20, 30, 40, 80, 120, 250, 500, 1000};
+  20:calibrate.c   **** uint8_t   TIA_resistor_value_index;
+  21:calibrate.c   **** 
+  22:calibrate.c   **** /******************************************************************************
+  23:calibrate.c   **** * Function Name: calibrate_TIA
+  24:calibrate.c   **** *******************************************************************************
+  25:calibrate.c   **** *
+  26:calibrate.c   **** * Summary:
+  27:calibrate.c   **** *  Calibrate the TIA circuit each time the current gain settings are changed
+  28:calibrate.c   **** *
+  29:calibrate.c   **** * Global variables:
+  30:calibrate.c   **** *  uint8 TIA_resistor_value_index: index of whick TIA resistor to use, Supplied by USB input
+  31:calibrate.c   **** *  uint8 ADC_buffer_index: which ADC buffer is used, gain = 2**ADC_buffer_index
+  32:calibrate.c   **** *
+  33:calibrate.c   **** * Return:
+  34:calibrate.c   **** *  array of 20 bytes is loaded into the USB IN ENDPOINT (into the computer)
+  35:calibrate.c   **** *
+  36:calibrate.c   **** *******************************************************************************/
+  37:calibrate.c   **** 
+  38:calibrate.c   **** 
+  39:calibrate.c   **** 
+  40:calibrate.c   **** //void calibrate_TIA(uint8 TIA_resistor_value_index, uint8 ADC_buffer_index) {
+  41:calibrate.c   **** void calibrate_TIA(void) {
+  51              		.loc 1 41 0
+  52              		.cfi_startproc
+  53              		@ args = 0, pretend = 0, frame = 24
+  54              		@ frame_needed = 1, uses_anonymous_args = 0
+  55 0000 B0B5     		push	{r4, r5, r7, lr}
+  56              		.cfi_def_cfa_offset 16
+  57              		.cfi_offset 4, -16
+  58              		.cfi_offset 5, -12
+  59              		.cfi_offset 7, -8
+  60              		.cfi_offset 14, -4
+  61 0002 86B0     		sub	sp, sp, #24
+  62              		.cfi_def_cfa_offset 40
+  63 0004 00AF     		add	r7, sp, #0
+  64              		.cfi_def_cfa_register 7
+  42:calibrate.c   ****     
+  43:calibrate.c   ****     // The IDAC only 
+  44:calibrate.c   ****     IDAC_calibrate_Start();
+  65              		.loc 1 44 0
+  66 0006 FFF7FEFF 		bl	IDAC_calibrate_Start
+  45:calibrate.c   ****     IDAC_calibrate_SetValue(0);
+  67              		.loc 1 45 0
+  68 000a 0020     		movs	r0, #0
+  69 000c FFF7FEFF 		bl	IDAC_calibrate_SetValue
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 3
+
+
+  46:calibrate.c   ****     // start the hardware required
+  47:calibrate.c   ****     Calibrate_Hardware_Wakeup();
+  70              		.loc 1 47 0
+  71 0010 FFF7FEFF 		bl	Calibrate_Hardware_Wakeup
+  48:calibrate.c   ****     CyDelay(100);
+  72              		.loc 1 48 0
+  73 0014 6420     		movs	r0, #100
+  74 0016 FFF7FEFF 		bl	CyDelay
+  49:calibrate.c   ****     
+  50:calibrate.c   ****     // decide what currents to use based on TIA resistor and ADC buffer settings
+  51:calibrate.c   ****     uint16_t resistor_value = calibrate_TIA_resistor_list[TIA_resistor_value_index];
+  75              		.loc 1 51 0
+  76 001a 3E4B     		ldr	r3, .L3
+  77 001c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  78 001e 1A46     		mov	r2, r3
+  79 0020 3D4B     		ldr	r3, .L3+4
+  80 0022 53F82230 		ldr	r3, [r3, r2, lsl #2]
+  81 0026 7B82     		strh	r3, [r7, #18]	@ movhi
+  52:calibrate.c   ****     uint var = 2;
+  82              		.loc 1 52 0
+  83 0028 0223     		movs	r3, #2
+  84 002a FB60     		str	r3, [r7, #12]
+  53:calibrate.c   ****     uint16_t IDAC_setting = 0;
+  85              		.loc 1 53 0
+  86 002c 0023     		movs	r3, #0
+  87 002e 7B81     		strh	r3, [r7, #10]	@ movhi
+  54:calibrate.c   ****     uint8 ADC_buffer_value = pow(var, ADC_buffer_index);
+  88              		.loc 1 54 0
+  89 0030 F868     		ldr	r0, [r7, #12]
+  90 0032 FFF7FEFF 		bl	__aeabi_ui2d
+  91 0036 0446     		mov	r4, r0
+  92 0038 0D46     		mov	r5, r1
+  93 003a 384B     		ldr	r3, .L3+8
+  94 003c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  95 003e 1846     		mov	r0, r3
+  96 0040 FFF7FEFF 		bl	__aeabi_ui2d
+  97 0044 0246     		mov	r2, r0
+  98 0046 0B46     		mov	r3, r1
+  99 0048 2046     		mov	r0, r4
+ 100 004a 2946     		mov	r1, r5
+ 101 004c FFF7FEFF 		bl	pow
+ 102 0050 0346     		mov	r3, r0
+ 103 0052 0C46     		mov	r4, r1
+ 104 0054 1846     		mov	r0, r3
+ 105 0056 2146     		mov	r1, r4
+ 106 0058 FFF7FEFF 		bl	__aeabi_d2uiz
+ 107 005c 0346     		mov	r3, r0
+ 108 005e 7B72     		strb	r3, [r7, #9]
+  55:calibrate.c   ****     // set input current to zero and read ADC
+  56:calibrate.c   ****     ADC_DelSig_StartConvert();
+ 109              		.loc 1 56 0
+ 110 0060 FFF7FEFF 		bl	ADC_DelSig_StartConvert
+  57:calibrate.c   ****     calibrate_step(IDAC_setting, 2);
+ 111              		.loc 1 57 0
+ 112 0064 7B89     		ldrh	r3, [r7, #10]
+ 113 0066 0221     		movs	r1, #2
+ 114 0068 1846     		mov	r0, r3
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 4
+
+
+ 115 006a FFF7FEFF 		bl	calibrate_step
+  58:calibrate.c   ****     // calculate the IDAC value needed to get a 1 Volt in the ADC
+  59:calibrate.c   ****     // the 8000 is because the IDAC has a 1/8 uA per bit and 8000=1000mV/(1/8 uA per bit)
+  60:calibrate.c   ****     float32 transfer = 8000./(ADC_buffer_value*resistor_value);
+ 116              		.loc 1 60 0
+ 117 006e 7B7A     		ldrb	r3, [r7, #9]	@ zero_extendqisi2
+ 118 0070 7A8A     		ldrh	r2, [r7, #18]
+ 119 0072 02FB03F3 		mul	r3, r2, r3
+ 120 0076 1846     		mov	r0, r3
+ 121 0078 FFF7FEFF 		bl	__aeabi_i2d
+ 122 007c 0346     		mov	r3, r0
+ 123 007e 0C46     		mov	r4, r1
+ 124 0080 1A46     		mov	r2, r3
+ 125 0082 2346     		mov	r3, r4
+ 126 0084 4FF00000 		mov	r0, #0
+ 127 0088 2549     		ldr	r1, .L3+12
+ 128 008a FFF7FEFF 		bl	__aeabi_ddiv
+ 129 008e 0346     		mov	r3, r0
+ 130 0090 0C46     		mov	r4, r1
+ 131 0092 1846     		mov	r0, r3
+ 132 0094 2146     		mov	r1, r4
+ 133 0096 FFF7FEFF 		bl	__aeabi_d2f
+ 134 009a 0346     		mov	r3, r0
+ 135 009c 7B60     		str	r3, [r7, #4]	@ float
+  61:calibrate.c   ****     int transfer_int = (int) transfer;
+ 136              		.loc 1 61 0
+ 137 009e 7868     		ldr	r0, [r7, #4]	@ float
+ 138 00a0 FFF7FEFF 		bl	__aeabi_f2iz
+ 139 00a4 0346     		mov	r3, r0
+ 140 00a6 7B61     		str	r3, [r7, #20]
+  62:calibrate.c   ****     
+  63:calibrate.c   ****     if (transfer_int > 250) 
+ 141              		.loc 1 63 0
+ 142 00a8 7B69     		ldr	r3, [r7, #20]
+ 143 00aa FA2B     		cmp	r3, #250
+ 144 00ac 04DD     		ble	.L2
+  64:calibrate.c   ****         {  // the TIA needs too much current, reduce needs by half.  Is needed for the 20k resistor
+  65:calibrate.c   ****         transfer_int /= 2;
+ 145              		.loc 1 65 0
+ 146 00ae 7B69     		ldr	r3, [r7, #20]
+ 147 00b0 DA0F     		lsrs	r2, r3, #31
+ 148 00b2 1344     		add	r3, r3, r2
+ 149 00b4 5B10     		asrs	r3, r3, #1
+ 150 00b6 7B61     		str	r3, [r7, #20]
+ 151              	.L2:
+  66:calibrate.c   ****         }
+  67:calibrate.c   ****   
+  68:calibrate.c   ****  
+  69:calibrate.c   ****     // is not DRY but not sure how to fix
+  70:calibrate.c   ****     IDAC_calibrate_SetPolarity(IDAC_calibrate_SINK);
+ 152              		.loc 1 70 0
+ 153 00b8 0420     		movs	r0, #4
+ 154 00ba FFF7FEFF 		bl	IDAC_calibrate_SetPolarity
+  71:calibrate.c   ****     calibrate_step(transfer_int, 0);
+ 155              		.loc 1 71 0
+ 156 00be 7B69     		ldr	r3, [r7, #20]
+ 157 00c0 9BB2     		uxth	r3, r3
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 5
+
+
+ 158 00c2 0021     		movs	r1, #0
+ 159 00c4 1846     		mov	r0, r3
+ 160 00c6 FFF7FEFF 		bl	calibrate_step
+  72:calibrate.c   ****     calibrate_step(transfer_int/2, 1);
+ 161              		.loc 1 72 0
+ 162 00ca 7B69     		ldr	r3, [r7, #20]
+ 163 00cc DA0F     		lsrs	r2, r3, #31
+ 164 00ce 1344     		add	r3, r3, r2
+ 165 00d0 5B10     		asrs	r3, r3, #1
+ 166 00d2 9BB2     		uxth	r3, r3
+ 167 00d4 0121     		movs	r1, #1
+ 168 00d6 1846     		mov	r0, r3
+ 169 00d8 FFF7FEFF 		bl	calibrate_step
+  73:calibrate.c   ****     IDAC_calibrate_SetPolarity(IDAC_calibrate_SOURCE);
+ 170              		.loc 1 73 0
+ 171 00dc 0020     		movs	r0, #0
+ 172 00de FFF7FEFF 		bl	IDAC_calibrate_SetPolarity
+  74:calibrate.c   ****     calibrate_step(transfer_int/2, 3);
+ 173              		.loc 1 74 0
+ 174 00e2 7B69     		ldr	r3, [r7, #20]
+ 175 00e4 DA0F     		lsrs	r2, r3, #31
+ 176 00e6 1344     		add	r3, r3, r2
+ 177 00e8 5B10     		asrs	r3, r3, #1
+ 178 00ea 9BB2     		uxth	r3, r3
+ 179 00ec 0321     		movs	r1, #3
+ 180 00ee 1846     		mov	r0, r3
+ 181 00f0 FFF7FEFF 		bl	calibrate_step
+  75:calibrate.c   ****     calibrate_step(transfer_int, 4);
+ 182              		.loc 1 75 0
+ 183 00f4 7B69     		ldr	r3, [r7, #20]
+ 184 00f6 9BB2     		uxth	r3, r3
+ 185 00f8 0421     		movs	r1, #4
+ 186 00fa 1846     		mov	r0, r3
+ 187 00fc FFF7FEFF 		bl	calibrate_step
+  76:calibrate.c   ****     IDAC_calibrate_SetValue(0);
+ 188              		.loc 1 76 0
+ 189 0100 0020     		movs	r0, #0
+ 190 0102 FFF7FEFF 		bl	IDAC_calibrate_SetValue
+  77:calibrate.c   ****  
+  78:calibrate.c   ****     Calibrate_Hardware_Sleep();
+ 191              		.loc 1 78 0
+ 192 0106 FFF7FEFF 		bl	Calibrate_Hardware_Sleep
+  79:calibrate.c   ****     
+  80:calibrate.c   ****     //    helper_WipeIN();
+  81:calibrate.c   ****      
+  82:calibrate.c   ****     // sprintf(IN_Data_Buffer, "IDAC VALUE %d %d %d %d %d", 
+  83:calibrate.c   ****     // calibrate_array.data[0],
+  84:calibrate.c   ****     // calibrate_array.data[1],
+  85:calibrate.c   ****     // calibrate_array.data[2],
+  86:calibrate.c   ****     // calibrate_array.data[3],
+  87:calibrate.c   ****     // calibrate_array.data[4]);
+  88:calibrate.c   **** 
+  89:calibrate.c   ****     // USB_Export_Data(IN_Data_Buffer);
+  90:calibrate.c   ****     
+  91:calibrate.c   ****     
+  92:calibrate.c   ****     //IN_Data_Buffer[0] = '\0';
+  93:calibrate.c   ****     
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 6
+
+
+  94:calibrate.c   ****     //sprintf(IN_Data_Buffer, "ADC VALUE  %d %d %d %d %d", 
+  95:calibrate.c   ****     //calibrate_array.data[5],
+  96:calibrate.c   ****     //calibrate_array.data[6],
+  97:calibrate.c   ****     //calibrate_array.data[7],
+  98:calibrate.c   ****     //calibrate_array.data[8],
+  99:calibrate.c   ****     //calibrate_array.data[9]);
+ 100:calibrate.c   ****    
+ 101:calibrate.c   ****     // USB_Export_Data(IN_Data_Buffer);
+ 102:calibrate.c   ****     // IN_Data_Buffer[0] = '\0';
+ 103:calibrate.c   **** }
+ 193              		.loc 1 103 0
+ 194 010a 00BF     		nop
+ 195 010c 1837     		adds	r7, r7, #24
+ 196              		.cfi_def_cfa_offset 16
+ 197 010e BD46     		mov	sp, r7
+ 198              		.cfi_def_cfa_register 13
+ 199              		@ sp needed
+ 200 0110 B0BD     		pop	{r4, r5, r7, pc}
+ 201              	.L4:
+ 202 0112 00BF     		.align	2
+ 203              	.L3:
+ 204 0114 00000000 		.word	TIA_resistor_value_index
+ 205 0118 00000000 		.word	calibrate_TIA_resistor_list
+ 206 011c 00000000 		.word	ADC_buffer_index
+ 207 0120 0040BF40 		.word	1086275584
+ 208              		.cfi_endproc
+ 209              	.LFE64:
+ 210              		.size	calibrate_TIA, .-calibrate_TIA
+ 211              		.section	.text.calibrate_step,"ax",%progbits
+ 212              		.align	2
+ 213              		.global	calibrate_step
+ 214              		.thumb
+ 215              		.thumb_func
+ 216              		.type	calibrate_step, %function
+ 217              	calibrate_step:
+ 218              	.LFB65:
+ 104:calibrate.c   **** 
+ 105:calibrate.c   **** /******************************************************************************
+ 106:calibrate.c   **** * Function Name: calibrate_step
+ 107:calibrate.c   **** *******************************************************************************
+ 108:calibrate.c   **** *
+ 109:calibrate.c   **** * Summary:
+ 110:calibrate.c   **** *  Gets a single calibration data point by setting the calibration IDAC and reading
+ 111:calibrate.c   **** *  the ADC count and saving them in the calibration_array
+ 112:calibrate.c   **** *
+ 113:calibrate.c   **** * Parameters:
+ 114:calibrate.c   **** *  uint16_t IDAC_value: value to set the calibration  IDAC to before measuring with the ADC
+ 115:calibrate.c   **** *  uint8 IDAC_index: index of where in calibration_array to save the IDAC and ADC data
+ 116:calibrate.c   **** *
+ 117:calibrate.c   **** * Global variables:
+ 118:calibrate.c   **** *  calibration_array: array of saved IDAC and ADC values
+ 119:calibrate.c   **** *
+ 120:calibrate.c   **** *******************************************************************************/
+ 121:calibrate.c   **** 
+ 122:calibrate.c   **** void calibrate_step(uint16_t IDAC_value, uint8_t IDAC_index) {
+ 219              		.loc 1 122 0
+ 220              		.cfi_startproc
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 7
+
+
+ 221              		@ args = 0, pretend = 0, frame = 16
+ 222              		@ frame_needed = 1, uses_anonymous_args = 0
+ 223 0000 80B5     		push	{r7, lr}
+ 224              		.cfi_def_cfa_offset 8
+ 225              		.cfi_offset 7, -8
+ 226              		.cfi_offset 14, -4
+ 227 0002 84B0     		sub	sp, sp, #16
+ 228              		.cfi_def_cfa_offset 24
+ 229 0004 00AF     		add	r7, sp, #0
+ 230              		.cfi_def_cfa_register 7
+ 231 0006 0346     		mov	r3, r0
+ 232 0008 0A46     		mov	r2, r1
+ 233 000a FB80     		strh	r3, [r7, #6]	@ movhi
+ 234 000c 1346     		mov	r3, r2
+ 235 000e 7B71     		strb	r3, [r7, #5]
+ 123:calibrate.c   ****     IDAC_calibrate_SetValue(IDAC_value);
+ 236              		.loc 1 123 0
+ 237 0010 FB88     		ldrh	r3, [r7, #6]	@ movhi
+ 238 0012 DBB2     		uxtb	r3, r3
+ 239 0014 1846     		mov	r0, r3
+ 240 0016 FFF7FEFF 		bl	IDAC_calibrate_SetValue
+ 124:calibrate.c   ****     CyDelay(100);  // allow the ADC to settle
+ 241              		.loc 1 124 0
+ 242 001a 6420     		movs	r0, #100
+ 243 001c FFF7FEFF 		bl	CyDelay
+ 125:calibrate.c   ****     uint16_t ADC_value = ADC_DelSig_GetResult16();
+ 244              		.loc 1 125 0
+ 245 0020 FFF7FEFF 		bl	ADC_DelSig_GetResult16
+ 246 0024 0346     		mov	r3, r0
+ 247 0026 FB81     		strh	r3, [r7, #14]	@ movhi
+ 126:calibrate.c   ****     calibrate_array.data[IDAC_index] = IDAC_value;
+ 248              		.loc 1 126 0
+ 249 0028 7B79     		ldrb	r3, [r7, #5]	@ zero_extendqisi2
+ 250 002a B7F90610 		ldrsh	r1, [r7, #6]
+ 251 002e 074A     		ldr	r2, .L6
+ 252 0030 22F81310 		strh	r1, [r2, r3, lsl #1]	@ movhi
+ 127:calibrate.c   ****     calibrate_array.data[IDAC_index+5] = ADC_value;  // 5 because of the way the array is set up
+ 253              		.loc 1 127 0
+ 254 0034 7B79     		ldrb	r3, [r7, #5]	@ zero_extendqisi2
+ 255 0036 0533     		adds	r3, r3, #5
+ 256 0038 B7F90E10 		ldrsh	r1, [r7, #14]
+ 257 003c 034A     		ldr	r2, .L6
+ 258 003e 22F81310 		strh	r1, [r2, r3, lsl #1]	@ movhi
+ 128:calibrate.c   **** }
+ 259              		.loc 1 128 0
+ 260 0042 00BF     		nop
+ 261 0044 1037     		adds	r7, r7, #16
+ 262              		.cfi_def_cfa_offset 8
+ 263 0046 BD46     		mov	sp, r7
+ 264              		.cfi_def_cfa_register 13
+ 265              		@ sp needed
+ 266 0048 80BD     		pop	{r7, pc}
+ 267              	.L7:
+ 268 004a 00BF     		.align	2
+ 269              	.L6:
+ 270 004c 00000000 		.word	calibrate_array
+ 271              		.cfi_endproc
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 8
+
+
+ 272              	.LFE65:
+ 273              		.size	calibrate_step, .-calibrate_step
+ 274              		.section	.text.Calibrate_Hardware_Wakeup,"ax",%progbits
+ 275              		.align	2
+ 276              		.global	Calibrate_Hardware_Wakeup
+ 277              		.thumb
+ 278              		.thumb_func
+ 279              		.type	Calibrate_Hardware_Wakeup, %function
+ 280              	Calibrate_Hardware_Wakeup:
+ 281              	.LFB66:
+ 129:calibrate.c   **** 
+ 130:calibrate.c   **** /******************************************************************************
+ 131:calibrate.c   **** * Function Name: Calibrate_Hardware_Wakeup
+ 132:calibrate.c   **** *******************************************************************************
+ 133:calibrate.c   **** *
+ 134:calibrate.c   **** * Summary:
+ 135:calibrate.c   **** *  Wakeup all the hardware needed for the calibration routine and set the AMux to 
+ 136:calibrate.c   **** *  the correct channel
+ 137:calibrate.c   **** *
+ 138:calibrate.c   **** *******************************************************************************/
+ 139:calibrate.c   **** 
+ 140:calibrate.c   **** void Calibrate_Hardware_Wakeup(void) {
+ 282              		.loc 1 140 0
+ 283              		.cfi_startproc
+ 284              		@ args = 0, pretend = 0, frame = 0
+ 285              		@ frame_needed = 1, uses_anonymous_args = 0
+ 286 0000 80B5     		push	{r7, lr}
+ 287              		.cfi_def_cfa_offset 8
+ 288              		.cfi_offset 7, -8
+ 289              		.cfi_offset 14, -4
+ 290 0002 00AF     		add	r7, sp, #0
+ 291              		.cfi_def_cfa_register 7
+ 141:calibrate.c   ****     AMux_TIA_input_Select(AMux_TIA_calibrat_ch);
+ 292              		.loc 1 141 0
+ 293 0004 0020     		movs	r0, #0
+ 294 0006 FFF7FEFF 		bl	AMux_TIA_input_FastSelect
+ 142:calibrate.c   ****     TIA_Wakeup();
+ 295              		.loc 1 142 0
+ 296 000a FFF7FEFF 		bl	TIA_Wakeup
+ 143:calibrate.c   ****     VDAC_TIA_Wakeup();
+ 297              		.loc 1 143 0
+ 298 000e FFF7FEFF 		bl	VDAC_TIA_Wakeup
+ 144:calibrate.c   ****   //   ADC_DelSig_Wakeup();
+ 145:calibrate.c   **** }
+ 299              		.loc 1 145 0
+ 300 0012 00BF     		nop
+ 301 0014 80BD     		pop	{r7, pc}
+ 302              		.cfi_endproc
+ 303              	.LFE66:
+ 304              		.size	Calibrate_Hardware_Wakeup, .-Calibrate_Hardware_Wakeup
+ 305 0016 00BF     		.section	.text.Calibrate_Hardware_Sleep,"ax",%progbits
+ 306              		.align	2
+ 307              		.global	Calibrate_Hardware_Sleep
+ 308              		.thumb
+ 309              		.thumb_func
+ 310              		.type	Calibrate_Hardware_Sleep, %function
+ 311              	Calibrate_Hardware_Sleep:
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 9
+
+
+ 312              	.LFB67:
+ 146:calibrate.c   **** 
+ 147:calibrate.c   **** /******************************************************************************
+ 148:calibrate.c   **** * Function Name: Calibrate_Hardware_Sleep
+ 149:calibrate.c   **** *******************************************************************************
+ 150:calibrate.c   **** *
+ 151:calibrate.c   **** * Summary:
+ 152:calibrate.c   **** *  Put to sleep all the hardware needed for the calibration routine, stop  
+ 153:calibrate.c   **** *  the IDAC, and set the AMux to the correct channel
+ 154:calibrate.c   **** *
+ 155:calibrate.c   **** *******************************************************************************/
+ 156:calibrate.c   **** 
+ 157:calibrate.c   **** void Calibrate_Hardware_Sleep(void) {
+ 313              		.loc 1 157 0
+ 314              		.cfi_startproc
+ 315              		@ args = 0, pretend = 0, frame = 0
+ 316              		@ frame_needed = 1, uses_anonymous_args = 0
+ 317 0000 80B5     		push	{r7, lr}
+ 318              		.cfi_def_cfa_offset 8
+ 319              		.cfi_offset 7, -8
+ 320              		.cfi_offset 14, -4
+ 321 0002 00AF     		add	r7, sp, #0
+ 322              		.cfi_def_cfa_register 7
+ 158:calibrate.c   ****     AMux_TIA_input_Select(AMux_TIA_measure_ch);
+ 323              		.loc 1 158 0
+ 324 0004 0120     		movs	r0, #1
+ 325 0006 FFF7FEFF 		bl	AMux_TIA_input_FastSelect
+ 159:calibrate.c   ****     TIA_Sleep();
+ 326              		.loc 1 159 0
+ 327 000a FFF7FEFF 		bl	TIA_Sleep
+ 160:calibrate.c   ****     VDAC_TIA_Sleep();
+ 328              		.loc 1 160 0
+ 329 000e FFF7FEFF 		bl	VDAC_TIA_Sleep
+ 161:calibrate.c   ****   //  ADC_DelSig_Sleep();
+ 162:calibrate.c   ****     IDAC_calibrate_Stop();
+ 330              		.loc 1 162 0
+ 331 0012 FFF7FEFF 		bl	IDAC_calibrate_Stop
+ 163:calibrate.c   **** }
+ 332              		.loc 1 163 0
+ 333 0016 00BF     		nop
+ 334 0018 80BD     		pop	{r7, pc}
+ 335              		.cfi_endproc
+ 336              	.LFE67:
+ 337              		.size	Calibrate_Hardware_Sleep, .-Calibrate_Hardware_Sleep
+ 338 001a 00BF     		.text
+ 339              	.Letext0:
+ 340              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 341              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 342              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 343              		.file 5 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 344              		.file 6 "Generated_Source\\PSoC5/core_cm3.h"
+ 345              		.file 7 "./globals.h"
+ 346              		.file 8 "./calibrate.h"
+ 347              		.file 9 "./adc.h"
+ 348              		.section	.debug_info,"",%progbits
+ 349              	.Ldebug_info0:
+ 350 0000 95020000 		.4byte	0x295
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 10
+
+
+ 351 0004 0400     		.2byte	0x4
+ 352 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 353 000a 04       		.byte	0x4
+ 354 000b 01       		.uleb128 0x1
+ 355 000c 2A020000 		.4byte	.LASF44
+ 356 0010 0C       		.byte	0xc
+ 357 0011 CA010000 		.4byte	.LASF45
+ 358 0015 C4000000 		.4byte	.LASF46
+ 359 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 360 001d 00000000 		.4byte	0
+ 361 0021 00000000 		.4byte	.Ldebug_line0
+ 362 0025 02       		.uleb128 0x2
+ 363 0026 01       		.byte	0x1
+ 364 0027 06       		.byte	0x6
+ 365 0028 0B030000 		.4byte	.LASF0
+ 366 002c 03       		.uleb128 0x3
+ 367 002d 1A000000 		.4byte	.LASF2
+ 368 0031 02       		.byte	0x2
+ 369 0032 1D       		.byte	0x1d
+ 370 0033 37000000 		.4byte	0x37
+ 371 0037 02       		.uleb128 0x2
+ 372 0038 01       		.byte	0x1
+ 373 0039 08       		.byte	0x8
+ 374 003a B6000000 		.4byte	.LASF1
+ 375 003e 03       		.uleb128 0x3
+ 376 003f 24000000 		.4byte	.LASF3
+ 377 0043 02       		.byte	0x2
+ 378 0044 29       		.byte	0x29
+ 379 0045 49000000 		.4byte	0x49
+ 380 0049 02       		.uleb128 0x2
+ 381 004a 02       		.byte	0x2
+ 382 004b 05       		.byte	0x5
+ 383 004c D3020000 		.4byte	.LASF4
+ 384 0050 03       		.uleb128 0x3
+ 385 0051 67010000 		.4byte	.LASF5
+ 386 0055 02       		.byte	0x2
+ 387 0056 2B       		.byte	0x2b
+ 388 0057 5B000000 		.4byte	0x5b
+ 389 005b 02       		.uleb128 0x2
+ 390 005c 02       		.byte	0x2
+ 391 005d 07       		.byte	0x7
+ 392 005e 16010000 		.4byte	.LASF6
+ 393 0062 03       		.uleb128 0x3
+ 394 0063 37000000 		.4byte	.LASF7
+ 395 0067 02       		.byte	0x2
+ 396 0068 3F       		.byte	0x3f
+ 397 0069 6D000000 		.4byte	0x6d
+ 398 006d 02       		.uleb128 0x2
+ 399 006e 04       		.byte	0x4
+ 400 006f 05       		.byte	0x5
+ 401 0070 DD020000 		.4byte	.LASF8
+ 402 0074 02       		.uleb128 0x2
+ 403 0075 04       		.byte	0x4
+ 404 0076 07       		.byte	0x7
+ 405 0077 04010000 		.4byte	.LASF9
+ 406 007b 02       		.uleb128 0x2
+ 407 007c 08       		.byte	0x8
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 11
+
+
+ 408 007d 05       		.byte	0x5
+ 409 007e FA010000 		.4byte	.LASF10
+ 410 0082 02       		.uleb128 0x2
+ 411 0083 08       		.byte	0x8
+ 412 0084 07       		.byte	0x7
+ 413 0085 86000000 		.4byte	.LASF11
+ 414 0089 04       		.uleb128 0x4
+ 415 008a 04       		.byte	0x4
+ 416 008b 05       		.byte	0x5
+ 417 008c 696E7400 		.ascii	"int\000"
+ 418 0090 02       		.uleb128 0x2
+ 419 0091 04       		.byte	0x4
+ 420 0092 07       		.byte	0x7
+ 421 0093 97010000 		.4byte	.LASF12
+ 422 0097 03       		.uleb128 0x3
+ 423 0098 C2010000 		.4byte	.LASF13
+ 424 009c 03       		.byte	0x3
+ 425 009d 18       		.byte	0x18
+ 426 009e 2C000000 		.4byte	0x2c
+ 427 00a2 03       		.uleb128 0x3
+ 428 00a3 D6010000 		.4byte	.LASF14
+ 429 00a7 03       		.byte	0x3
+ 430 00a8 20       		.byte	0x20
+ 431 00a9 3E000000 		.4byte	0x3e
+ 432 00ad 03       		.uleb128 0x3
+ 433 00ae CA020000 		.4byte	.LASF15
+ 434 00b2 03       		.byte	0x3
+ 435 00b3 24       		.byte	0x24
+ 436 00b4 50000000 		.4byte	0x50
+ 437 00b8 03       		.uleb128 0x3
+ 438 00b9 DE010000 		.4byte	.LASF16
+ 439 00bd 03       		.byte	0x3
+ 440 00be 2C       		.byte	0x2c
+ 441 00bf 62000000 		.4byte	0x62
+ 442 00c3 05       		.uleb128 0x5
+ 443 00c4 4E000000 		.4byte	.LASF17
+ 444 00c8 04       		.byte	0x4
+ 445 00c9 E901     		.2byte	0x1e9
+ 446 00cb 37000000 		.4byte	0x37
+ 447 00cf 05       		.uleb128 0x5
+ 448 00d0 8A010000 		.4byte	.LASF18
+ 449 00d4 04       		.byte	0x4
+ 450 00d5 EF01     		.2byte	0x1ef
+ 451 00d7 DB000000 		.4byte	0xdb
+ 452 00db 02       		.uleb128 0x2
+ 453 00dc 04       		.byte	0x4
+ 454 00dd 04       		.byte	0x4
+ 455 00de 7B000000 		.4byte	.LASF19
+ 456 00e2 02       		.uleb128 0x2
+ 457 00e3 08       		.byte	0x8
+ 458 00e4 04       		.byte	0x4
+ 459 00e5 72010000 		.4byte	.LASF20
+ 460 00e9 02       		.uleb128 0x2
+ 461 00ea 01       		.byte	0x1
+ 462 00eb 08       		.byte	0x8
+ 463 00ec 08020000 		.4byte	.LASF21
+ 464 00f0 02       		.uleb128 0x2
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 12
+
+
+ 465 00f1 04       		.byte	0x4
+ 466 00f2 07       		.byte	0x7
+ 467 00f3 E6010000 		.4byte	.LASF22
+ 468 00f7 03       		.uleb128 0x3
+ 469 00f8 92010000 		.4byte	.LASF23
+ 470 00fc 05       		.byte	0x5
+ 471 00fd 6C       		.byte	0x6c
+ 472 00fe 90000000 		.4byte	0x90
+ 473 0102 02       		.uleb128 0x2
+ 474 0103 08       		.byte	0x8
+ 475 0104 04       		.byte	0x4
+ 476 0105 FF020000 		.4byte	.LASF24
+ 477 0109 06       		.uleb128 0x6
+ 478 010a 29010000 		.4byte	.LASF47
+ 479 010e 14       		.byte	0x14
+ 480 010f 08       		.byte	0x8
+ 481 0110 1D       		.byte	0x1d
+ 482 0111 2C010000 		.4byte	0x12c
+ 483 0115 07       		.uleb128 0x7
+ 484 0116 75736200 		.ascii	"usb\000"
+ 485 011a 08       		.byte	0x8
+ 486 011b 1E       		.byte	0x1e
+ 487 011c 2C010000 		.4byte	0x12c
+ 488 0120 08       		.uleb128 0x8
+ 489 0121 81000000 		.4byte	.LASF25
+ 490 0125 08       		.byte	0x8
+ 491 0126 1F       		.byte	0x1f
+ 492 0127 3C010000 		.4byte	0x13c
+ 493 012b 00       		.byte	0
+ 494 012c 09       		.uleb128 0x9
+ 495 012d 97000000 		.4byte	0x97
+ 496 0131 3C010000 		.4byte	0x13c
+ 497 0135 0A       		.uleb128 0xa
+ 498 0136 F0000000 		.4byte	0xf0
+ 499 013a 13       		.byte	0x13
+ 500 013b 00       		.byte	0
+ 501 013c 09       		.uleb128 0x9
+ 502 013d A2000000 		.4byte	0xa2
+ 503 0141 4C010000 		.4byte	0x14c
+ 504 0145 0A       		.uleb128 0xa
+ 505 0146 F0000000 		.4byte	0xf0
+ 506 014a 09       		.byte	0x9
+ 507 014b 00       		.byte	0
+ 508 014c 0B       		.uleb128 0xb
+ 509 014d 42010000 		.4byte	.LASF31
+ 510 0151 01       		.byte	0x1
+ 511 0152 29       		.byte	0x29
+ 512 0153 00000000 		.4byte	.LFB64
+ 513 0157 24010000 		.4byte	.LFE64-.LFB64
+ 514 015b 01       		.uleb128 0x1
+ 515 015c 9C       		.byte	0x9c
+ 516 015d B6010000 		.4byte	0x1b6
+ 517 0161 0C       		.uleb128 0xc
+ 518 0162 A4010000 		.4byte	.LASF26
+ 519 0166 01       		.byte	0x1
+ 520 0167 33       		.byte	0x33
+ 521 0168 AD000000 		.4byte	0xad
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 13
+
+
+ 522 016c 02       		.uleb128 0x2
+ 523 016d 91       		.byte	0x91
+ 524 016e 6A       		.sleb128 -22
+ 525 016f 0D       		.uleb128 0xd
+ 526 0170 76617200 		.ascii	"var\000"
+ 527 0174 01       		.byte	0x1
+ 528 0175 34       		.byte	0x34
+ 529 0176 F7000000 		.4byte	0xf7
+ 530 017a 02       		.uleb128 0x2
+ 531 017b 91       		.byte	0x91
+ 532 017c 64       		.sleb128 -28
+ 533 017d 0C       		.uleb128 0xc
+ 534 017e 1D020000 		.4byte	.LASF27
+ 535 0182 01       		.byte	0x1
+ 536 0183 35       		.byte	0x35
+ 537 0184 AD000000 		.4byte	0xad
+ 538 0188 02       		.uleb128 0x2
+ 539 0189 91       		.byte	0x91
+ 540 018a 62       		.sleb128 -30
+ 541 018b 0C       		.uleb128 0xc
+ 542 018c 17030000 		.4byte	.LASF28
+ 543 0190 01       		.byte	0x1
+ 544 0191 36       		.byte	0x36
+ 545 0192 C3000000 		.4byte	0xc3
+ 546 0196 02       		.uleb128 0x2
+ 547 0197 91       		.byte	0x91
+ 548 0198 61       		.sleb128 -31
+ 549 0199 0C       		.uleb128 0xc
+ 550 019a 2E000000 		.4byte	.LASF29
+ 551 019e 01       		.byte	0x1
+ 552 019f 3C       		.byte	0x3c
+ 553 01a0 CF000000 		.4byte	0xcf
+ 554 01a4 02       		.uleb128 0x2
+ 555 01a5 91       		.byte	0x91
+ 556 01a6 5C       		.sleb128 -36
+ 557 01a7 0C       		.uleb128 0xc
+ 558 01a8 41000000 		.4byte	.LASF30
+ 559 01ac 01       		.byte	0x1
+ 560 01ad 3D       		.byte	0x3d
+ 561 01ae 89000000 		.4byte	0x89
+ 562 01b2 02       		.uleb128 0x2
+ 563 01b3 91       		.byte	0x91
+ 564 01b4 6C       		.sleb128 -20
+ 565 01b5 00       		.byte	0
+ 566 01b6 0B       		.uleb128 0xb
+ 567 01b7 B3010000 		.4byte	.LASF32
+ 568 01bb 01       		.byte	0x1
+ 569 01bc 7A       		.byte	0x7a
+ 570 01bd 00000000 		.4byte	.LFB65
+ 571 01c1 50000000 		.4byte	.LFE65-.LFB65
+ 572 01c5 01       		.uleb128 0x1
+ 573 01c6 9C       		.byte	0x9c
+ 574 01c7 F6010000 		.4byte	0x1f6
+ 575 01cb 0E       		.uleb128 0xe
+ 576 01cc EF010000 		.4byte	.LASF33
+ 577 01d0 01       		.byte	0x1
+ 578 01d1 7A       		.byte	0x7a
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 14
+
+
+ 579 01d2 AD000000 		.4byte	0xad
+ 580 01d6 02       		.uleb128 0x2
+ 581 01d7 91       		.byte	0x91
+ 582 01d8 6E       		.sleb128 -18
+ 583 01d9 0E       		.uleb128 0xe
+ 584 01da 70000000 		.4byte	.LASF34
+ 585 01de 01       		.byte	0x1
+ 586 01df 7A       		.byte	0x7a
+ 587 01e0 97000000 		.4byte	0x97
+ 588 01e4 02       		.uleb128 0x2
+ 589 01e5 91       		.byte	0x91
+ 590 01e6 6D       		.sleb128 -19
+ 591 01e7 0C       		.uleb128 0xc
+ 592 01e8 5D010000 		.4byte	.LASF35
+ 593 01ec 01       		.byte	0x1
+ 594 01ed 7D       		.byte	0x7d
+ 595 01ee AD000000 		.4byte	0xad
+ 596 01f2 02       		.uleb128 0x2
+ 597 01f3 91       		.byte	0x91
+ 598 01f4 76       		.sleb128 -10
+ 599 01f5 00       		.byte	0
+ 600 01f6 0F       		.uleb128 0xf
+ 601 01f7 00000000 		.4byte	.LASF36
+ 602 01fb 01       		.byte	0x1
+ 603 01fc 8C       		.byte	0x8c
+ 604 01fd 00000000 		.4byte	.LFB66
+ 605 0201 16000000 		.4byte	.LFE66-.LFB66
+ 606 0205 01       		.uleb128 0x1
+ 607 0206 9C       		.byte	0x9c
+ 608 0207 0F       		.uleb128 0xf
+ 609 0208 9D000000 		.4byte	.LASF37
+ 610 020c 01       		.byte	0x1
+ 611 020d 9D       		.byte	0x9d
+ 612 020e 00000000 		.4byte	.LFB67
+ 613 0212 1A000000 		.4byte	.LFE67-.LFB67
+ 614 0216 01       		.uleb128 0x1
+ 615 0217 9C       		.byte	0x9c
+ 616 0218 10       		.uleb128 0x10
+ 617 0219 50010000 		.4byte	.LASF38
+ 618 021d 06       		.byte	0x6
+ 619 021e 1207     		.2byte	0x712
+ 620 0220 24020000 		.4byte	0x224
+ 621 0224 11       		.uleb128 0x11
+ 622 0225 B8000000 		.4byte	0xb8
+ 623 0229 09       		.uleb128 0x9
+ 624 022a C3000000 		.4byte	0xc3
+ 625 022e 39020000 		.4byte	0x239
+ 626 0232 0A       		.uleb128 0xa
+ 627 0233 F0000000 		.4byte	0xf0
+ 628 0237 3F       		.byte	0x3f
+ 629 0238 00       		.byte	0
+ 630 0239 12       		.uleb128 0x12
+ 631 023a C3020000 		.4byte	.LASF39
+ 632 023e 07       		.byte	0x7
+ 633 023f 50       		.byte	0x50
+ 634 0240 29020000 		.4byte	0x229
+ 635 0244 05       		.uleb128 0x5
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 15
+
+
+ 636 0245 03       		.byte	0x3
+ 637 0246 00000000 		.4byte	buffer
+ 638 024a 12       		.uleb128 0x12
+ 639 024b 0D020000 		.4byte	.LASF40
+ 640 024f 08       		.byte	0x8
+ 641 0250 21       		.byte	0x21
+ 642 0251 09010000 		.4byte	0x109
+ 643 0255 05       		.uleb128 0x5
+ 644 0256 03       		.byte	0x3
+ 645 0257 00000000 		.4byte	calibrate_array
+ 646 025b 09       		.uleb128 0x9
+ 647 025c 89000000 		.4byte	0x89
+ 648 0260 6B020000 		.4byte	0x26b
+ 649 0264 0A       		.uleb128 0xa
+ 650 0265 F0000000 		.4byte	0xf0
+ 651 0269 07       		.byte	0x7
+ 652 026a 00       		.byte	0
+ 653 026b 12       		.uleb128 0x12
+ 654 026c 54000000 		.4byte	.LASF41
+ 655 0270 01       		.byte	0x1
+ 656 0271 13       		.byte	0x13
+ 657 0272 5B020000 		.4byte	0x25b
+ 658 0276 05       		.uleb128 0x5
+ 659 0277 03       		.byte	0x3
+ 660 0278 00000000 		.4byte	calibrate_TIA_resistor_list
+ 661 027c 12       		.uleb128 0x12
+ 662 027d E6020000 		.4byte	.LASF42
+ 663 0281 01       		.byte	0x1
+ 664 0282 14       		.byte	0x14
+ 665 0283 97000000 		.4byte	0x97
+ 666 0287 05       		.uleb128 0x5
+ 667 0288 03       		.byte	0x3
+ 668 0289 00000000 		.4byte	TIA_resistor_value_index
+ 669 028d 13       		.uleb128 0x13
+ 670 028e 79010000 		.4byte	.LASF43
+ 671 0292 09       		.byte	0x9
+ 672 0293 14       		.byte	0x14
+ 673 0294 97000000 		.4byte	0x97
+ 674 0298 00       		.byte	0
+ 675              		.section	.debug_abbrev,"",%progbits
+ 676              	.Ldebug_abbrev0:
+ 677 0000 01       		.uleb128 0x1
+ 678 0001 11       		.uleb128 0x11
+ 679 0002 01       		.byte	0x1
+ 680 0003 25       		.uleb128 0x25
+ 681 0004 0E       		.uleb128 0xe
+ 682 0005 13       		.uleb128 0x13
+ 683 0006 0B       		.uleb128 0xb
+ 684 0007 03       		.uleb128 0x3
+ 685 0008 0E       		.uleb128 0xe
+ 686 0009 1B       		.uleb128 0x1b
+ 687 000a 0E       		.uleb128 0xe
+ 688 000b 55       		.uleb128 0x55
+ 689 000c 17       		.uleb128 0x17
+ 690 000d 11       		.uleb128 0x11
+ 691 000e 01       		.uleb128 0x1
+ 692 000f 10       		.uleb128 0x10
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 16
+
+
+ 693 0010 17       		.uleb128 0x17
+ 694 0011 00       		.byte	0
+ 695 0012 00       		.byte	0
+ 696 0013 02       		.uleb128 0x2
+ 697 0014 24       		.uleb128 0x24
+ 698 0015 00       		.byte	0
+ 699 0016 0B       		.uleb128 0xb
+ 700 0017 0B       		.uleb128 0xb
+ 701 0018 3E       		.uleb128 0x3e
+ 702 0019 0B       		.uleb128 0xb
+ 703 001a 03       		.uleb128 0x3
+ 704 001b 0E       		.uleb128 0xe
+ 705 001c 00       		.byte	0
+ 706 001d 00       		.byte	0
+ 707 001e 03       		.uleb128 0x3
+ 708 001f 16       		.uleb128 0x16
+ 709 0020 00       		.byte	0
+ 710 0021 03       		.uleb128 0x3
+ 711 0022 0E       		.uleb128 0xe
+ 712 0023 3A       		.uleb128 0x3a
+ 713 0024 0B       		.uleb128 0xb
+ 714 0025 3B       		.uleb128 0x3b
+ 715 0026 0B       		.uleb128 0xb
+ 716 0027 49       		.uleb128 0x49
+ 717 0028 13       		.uleb128 0x13
+ 718 0029 00       		.byte	0
+ 719 002a 00       		.byte	0
+ 720 002b 04       		.uleb128 0x4
+ 721 002c 24       		.uleb128 0x24
+ 722 002d 00       		.byte	0
+ 723 002e 0B       		.uleb128 0xb
+ 724 002f 0B       		.uleb128 0xb
+ 725 0030 3E       		.uleb128 0x3e
+ 726 0031 0B       		.uleb128 0xb
+ 727 0032 03       		.uleb128 0x3
+ 728 0033 08       		.uleb128 0x8
+ 729 0034 00       		.byte	0
+ 730 0035 00       		.byte	0
+ 731 0036 05       		.uleb128 0x5
+ 732 0037 16       		.uleb128 0x16
+ 733 0038 00       		.byte	0
+ 734 0039 03       		.uleb128 0x3
+ 735 003a 0E       		.uleb128 0xe
+ 736 003b 3A       		.uleb128 0x3a
+ 737 003c 0B       		.uleb128 0xb
+ 738 003d 3B       		.uleb128 0x3b
+ 739 003e 05       		.uleb128 0x5
+ 740 003f 49       		.uleb128 0x49
+ 741 0040 13       		.uleb128 0x13
+ 742 0041 00       		.byte	0
+ 743 0042 00       		.byte	0
+ 744 0043 06       		.uleb128 0x6
+ 745 0044 17       		.uleb128 0x17
+ 746 0045 01       		.byte	0x1
+ 747 0046 03       		.uleb128 0x3
+ 748 0047 0E       		.uleb128 0xe
+ 749 0048 0B       		.uleb128 0xb
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 17
+
+
+ 750 0049 0B       		.uleb128 0xb
+ 751 004a 3A       		.uleb128 0x3a
+ 752 004b 0B       		.uleb128 0xb
+ 753 004c 3B       		.uleb128 0x3b
+ 754 004d 0B       		.uleb128 0xb
+ 755 004e 01       		.uleb128 0x1
+ 756 004f 13       		.uleb128 0x13
+ 757 0050 00       		.byte	0
+ 758 0051 00       		.byte	0
+ 759 0052 07       		.uleb128 0x7
+ 760 0053 0D       		.uleb128 0xd
+ 761 0054 00       		.byte	0
+ 762 0055 03       		.uleb128 0x3
+ 763 0056 08       		.uleb128 0x8
+ 764 0057 3A       		.uleb128 0x3a
+ 765 0058 0B       		.uleb128 0xb
+ 766 0059 3B       		.uleb128 0x3b
+ 767 005a 0B       		.uleb128 0xb
+ 768 005b 49       		.uleb128 0x49
+ 769 005c 13       		.uleb128 0x13
+ 770 005d 00       		.byte	0
+ 771 005e 00       		.byte	0
+ 772 005f 08       		.uleb128 0x8
+ 773 0060 0D       		.uleb128 0xd
+ 774 0061 00       		.byte	0
+ 775 0062 03       		.uleb128 0x3
+ 776 0063 0E       		.uleb128 0xe
+ 777 0064 3A       		.uleb128 0x3a
+ 778 0065 0B       		.uleb128 0xb
+ 779 0066 3B       		.uleb128 0x3b
+ 780 0067 0B       		.uleb128 0xb
+ 781 0068 49       		.uleb128 0x49
+ 782 0069 13       		.uleb128 0x13
+ 783 006a 00       		.byte	0
+ 784 006b 00       		.byte	0
+ 785 006c 09       		.uleb128 0x9
+ 786 006d 01       		.uleb128 0x1
+ 787 006e 01       		.byte	0x1
+ 788 006f 49       		.uleb128 0x49
+ 789 0070 13       		.uleb128 0x13
+ 790 0071 01       		.uleb128 0x1
+ 791 0072 13       		.uleb128 0x13
+ 792 0073 00       		.byte	0
+ 793 0074 00       		.byte	0
+ 794 0075 0A       		.uleb128 0xa
+ 795 0076 21       		.uleb128 0x21
+ 796 0077 00       		.byte	0
+ 797 0078 49       		.uleb128 0x49
+ 798 0079 13       		.uleb128 0x13
+ 799 007a 2F       		.uleb128 0x2f
+ 800 007b 0B       		.uleb128 0xb
+ 801 007c 00       		.byte	0
+ 802 007d 00       		.byte	0
+ 803 007e 0B       		.uleb128 0xb
+ 804 007f 2E       		.uleb128 0x2e
+ 805 0080 01       		.byte	0x1
+ 806 0081 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 18
+
+
+ 807 0082 19       		.uleb128 0x19
+ 808 0083 03       		.uleb128 0x3
+ 809 0084 0E       		.uleb128 0xe
+ 810 0085 3A       		.uleb128 0x3a
+ 811 0086 0B       		.uleb128 0xb
+ 812 0087 3B       		.uleb128 0x3b
+ 813 0088 0B       		.uleb128 0xb
+ 814 0089 27       		.uleb128 0x27
+ 815 008a 19       		.uleb128 0x19
+ 816 008b 11       		.uleb128 0x11
+ 817 008c 01       		.uleb128 0x1
+ 818 008d 12       		.uleb128 0x12
+ 819 008e 06       		.uleb128 0x6
+ 820 008f 40       		.uleb128 0x40
+ 821 0090 18       		.uleb128 0x18
+ 822 0091 9642     		.uleb128 0x2116
+ 823 0093 19       		.uleb128 0x19
+ 824 0094 01       		.uleb128 0x1
+ 825 0095 13       		.uleb128 0x13
+ 826 0096 00       		.byte	0
+ 827 0097 00       		.byte	0
+ 828 0098 0C       		.uleb128 0xc
+ 829 0099 34       		.uleb128 0x34
+ 830 009a 00       		.byte	0
+ 831 009b 03       		.uleb128 0x3
+ 832 009c 0E       		.uleb128 0xe
+ 833 009d 3A       		.uleb128 0x3a
+ 834 009e 0B       		.uleb128 0xb
+ 835 009f 3B       		.uleb128 0x3b
+ 836 00a0 0B       		.uleb128 0xb
+ 837 00a1 49       		.uleb128 0x49
+ 838 00a2 13       		.uleb128 0x13
+ 839 00a3 02       		.uleb128 0x2
+ 840 00a4 18       		.uleb128 0x18
+ 841 00a5 00       		.byte	0
+ 842 00a6 00       		.byte	0
+ 843 00a7 0D       		.uleb128 0xd
+ 844 00a8 34       		.uleb128 0x34
+ 845 00a9 00       		.byte	0
+ 846 00aa 03       		.uleb128 0x3
+ 847 00ab 08       		.uleb128 0x8
+ 848 00ac 3A       		.uleb128 0x3a
+ 849 00ad 0B       		.uleb128 0xb
+ 850 00ae 3B       		.uleb128 0x3b
+ 851 00af 0B       		.uleb128 0xb
+ 852 00b0 49       		.uleb128 0x49
+ 853 00b1 13       		.uleb128 0x13
+ 854 00b2 02       		.uleb128 0x2
+ 855 00b3 18       		.uleb128 0x18
+ 856 00b4 00       		.byte	0
+ 857 00b5 00       		.byte	0
+ 858 00b6 0E       		.uleb128 0xe
+ 859 00b7 05       		.uleb128 0x5
+ 860 00b8 00       		.byte	0
+ 861 00b9 03       		.uleb128 0x3
+ 862 00ba 0E       		.uleb128 0xe
+ 863 00bb 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 19
+
+
+ 864 00bc 0B       		.uleb128 0xb
+ 865 00bd 3B       		.uleb128 0x3b
+ 866 00be 0B       		.uleb128 0xb
+ 867 00bf 49       		.uleb128 0x49
+ 868 00c0 13       		.uleb128 0x13
+ 869 00c1 02       		.uleb128 0x2
+ 870 00c2 18       		.uleb128 0x18
+ 871 00c3 00       		.byte	0
+ 872 00c4 00       		.byte	0
+ 873 00c5 0F       		.uleb128 0xf
+ 874 00c6 2E       		.uleb128 0x2e
+ 875 00c7 00       		.byte	0
+ 876 00c8 3F       		.uleb128 0x3f
+ 877 00c9 19       		.uleb128 0x19
+ 878 00ca 03       		.uleb128 0x3
+ 879 00cb 0E       		.uleb128 0xe
+ 880 00cc 3A       		.uleb128 0x3a
+ 881 00cd 0B       		.uleb128 0xb
+ 882 00ce 3B       		.uleb128 0x3b
+ 883 00cf 0B       		.uleb128 0xb
+ 884 00d0 27       		.uleb128 0x27
+ 885 00d1 19       		.uleb128 0x19
+ 886 00d2 11       		.uleb128 0x11
+ 887 00d3 01       		.uleb128 0x1
+ 888 00d4 12       		.uleb128 0x12
+ 889 00d5 06       		.uleb128 0x6
+ 890 00d6 40       		.uleb128 0x40
+ 891 00d7 18       		.uleb128 0x18
+ 892 00d8 9642     		.uleb128 0x2116
+ 893 00da 19       		.uleb128 0x19
+ 894 00db 00       		.byte	0
+ 895 00dc 00       		.byte	0
+ 896 00dd 10       		.uleb128 0x10
+ 897 00de 34       		.uleb128 0x34
+ 898 00df 00       		.byte	0
+ 899 00e0 03       		.uleb128 0x3
+ 900 00e1 0E       		.uleb128 0xe
+ 901 00e2 3A       		.uleb128 0x3a
+ 902 00e3 0B       		.uleb128 0xb
+ 903 00e4 3B       		.uleb128 0x3b
+ 904 00e5 05       		.uleb128 0x5
+ 905 00e6 49       		.uleb128 0x49
+ 906 00e7 13       		.uleb128 0x13
+ 907 00e8 3F       		.uleb128 0x3f
+ 908 00e9 19       		.uleb128 0x19
+ 909 00ea 3C       		.uleb128 0x3c
+ 910 00eb 19       		.uleb128 0x19
+ 911 00ec 00       		.byte	0
+ 912 00ed 00       		.byte	0
+ 913 00ee 11       		.uleb128 0x11
+ 914 00ef 35       		.uleb128 0x35
+ 915 00f0 00       		.byte	0
+ 916 00f1 49       		.uleb128 0x49
+ 917 00f2 13       		.uleb128 0x13
+ 918 00f3 00       		.byte	0
+ 919 00f4 00       		.byte	0
+ 920 00f5 12       		.uleb128 0x12
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 20
+
+
+ 921 00f6 34       		.uleb128 0x34
+ 922 00f7 00       		.byte	0
+ 923 00f8 03       		.uleb128 0x3
+ 924 00f9 0E       		.uleb128 0xe
+ 925 00fa 3A       		.uleb128 0x3a
+ 926 00fb 0B       		.uleb128 0xb
+ 927 00fc 3B       		.uleb128 0x3b
+ 928 00fd 0B       		.uleb128 0xb
+ 929 00fe 49       		.uleb128 0x49
+ 930 00ff 13       		.uleb128 0x13
+ 931 0100 3F       		.uleb128 0x3f
+ 932 0101 19       		.uleb128 0x19
+ 933 0102 02       		.uleb128 0x2
+ 934 0103 18       		.uleb128 0x18
+ 935 0104 00       		.byte	0
+ 936 0105 00       		.byte	0
+ 937 0106 13       		.uleb128 0x13
+ 938 0107 34       		.uleb128 0x34
+ 939 0108 00       		.byte	0
+ 940 0109 03       		.uleb128 0x3
+ 941 010a 0E       		.uleb128 0xe
+ 942 010b 3A       		.uleb128 0x3a
+ 943 010c 0B       		.uleb128 0xb
+ 944 010d 3B       		.uleb128 0x3b
+ 945 010e 0B       		.uleb128 0xb
+ 946 010f 49       		.uleb128 0x49
+ 947 0110 13       		.uleb128 0x13
+ 948 0111 3F       		.uleb128 0x3f
+ 949 0112 19       		.uleb128 0x19
+ 950 0113 3C       		.uleb128 0x3c
+ 951 0114 19       		.uleb128 0x19
+ 952 0115 00       		.byte	0
+ 953 0116 00       		.byte	0
+ 954 0117 00       		.byte	0
+ 955              		.section	.debug_aranges,"",%progbits
+ 956 0000 34000000 		.4byte	0x34
+ 957 0004 0200     		.2byte	0x2
+ 958 0006 00000000 		.4byte	.Ldebug_info0
+ 959 000a 04       		.byte	0x4
+ 960 000b 00       		.byte	0
+ 961 000c 0000     		.2byte	0
+ 962 000e 0000     		.2byte	0
+ 963 0010 00000000 		.4byte	.LFB64
+ 964 0014 24010000 		.4byte	.LFE64-.LFB64
+ 965 0018 00000000 		.4byte	.LFB65
+ 966 001c 50000000 		.4byte	.LFE65-.LFB65
+ 967 0020 00000000 		.4byte	.LFB66
+ 968 0024 16000000 		.4byte	.LFE66-.LFB66
+ 969 0028 00000000 		.4byte	.LFB67
+ 970 002c 1A000000 		.4byte	.LFE67-.LFB67
+ 971 0030 00000000 		.4byte	0
+ 972 0034 00000000 		.4byte	0
+ 973              		.section	.debug_ranges,"",%progbits
+ 974              	.Ldebug_ranges0:
+ 975 0000 00000000 		.4byte	.LFB64
+ 976 0004 24010000 		.4byte	.LFE64
+ 977 0008 00000000 		.4byte	.LFB65
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 21
+
+
+ 978 000c 50000000 		.4byte	.LFE65
+ 979 0010 00000000 		.4byte	.LFB66
+ 980 0014 16000000 		.4byte	.LFE66
+ 981 0018 00000000 		.4byte	.LFB67
+ 982 001c 1A000000 		.4byte	.LFE67
+ 983 0020 00000000 		.4byte	0
+ 984 0024 00000000 		.4byte	0
+ 985              		.section	.debug_line,"",%progbits
+ 986              	.Ldebug_line0:
+ 987 0000 F6010000 		.section	.debug_str,"MS",%progbits,1
+ 987      02008701 
+ 987      00000201 
+ 987      FB0E0D00 
+ 987      01010101 
+ 988              	.LASF36:
+ 989 0000 43616C69 		.ascii	"Calibrate_Hardware_Wakeup\000"
+ 989      62726174 
+ 989      655F4861 
+ 989      72647761 
+ 989      72655F57 
+ 990              	.LASF2:
+ 991 001a 5F5F7569 		.ascii	"__uint8_t\000"
+ 991      6E74385F 
+ 991      7400
+ 992              	.LASF3:
+ 993 0024 5F5F696E 		.ascii	"__int16_t\000"
+ 993      7431365F 
+ 993      7400
+ 994              	.LASF29:
+ 995 002e 7472616E 		.ascii	"transfer\000"
+ 995      73666572 
+ 995      00
+ 996              	.LASF7:
+ 997 0037 5F5F696E 		.ascii	"__int32_t\000"
+ 997      7433325F 
+ 997      7400
+ 998              	.LASF30:
+ 999 0041 7472616E 		.ascii	"transfer_int\000"
+ 999      73666572 
+ 999      5F696E74 
+ 999      00
+ 1000              	.LASF17:
+ 1001 004e 75696E74 		.ascii	"uint8\000"
+ 1001      3800
+ 1002              	.LASF41:
+ 1003 0054 63616C69 		.ascii	"calibrate_TIA_resistor_list\000"
+ 1003      62726174 
+ 1003      655F5449 
+ 1003      415F7265 
+ 1003      73697374 
+ 1004              	.LASF34:
+ 1005 0070 49444143 		.ascii	"IDAC_index\000"
+ 1005      5F696E64 
+ 1005      657800
+ 1006              	.LASF19:
+ 1007 007b 666C6F61 		.ascii	"float\000"
+ 1007      7400
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 22
+
+
+ 1008              	.LASF25:
+ 1009 0081 64617461 		.ascii	"data\000"
+ 1009      00
+ 1010              	.LASF11:
+ 1011 0086 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1011      206C6F6E 
+ 1011      6720756E 
+ 1011      7369676E 
+ 1011      65642069 
+ 1012              	.LASF37:
+ 1013 009d 43616C69 		.ascii	"Calibrate_Hardware_Sleep\000"
+ 1013      62726174 
+ 1013      655F4861 
+ 1013      72647761 
+ 1013      72655F53 
+ 1014              	.LASF1:
+ 1015 00b6 756E7369 		.ascii	"unsigned char\000"
+ 1015      676E6564 
+ 1015      20636861 
+ 1015      7200
+ 1016              	.LASF46:
+ 1017 00c4 433A5C55 		.ascii	"C:\\Users\\User\\Dropbox\\67 PSOC\\PSoC-Potentiosta"
+ 1017      73657273 
+ 1017      5C557365 
+ 1017      725C4472 
+ 1017      6F70626F 
+ 1018 00f2 745C4269 		.ascii	"t\\Biosensor.cydsn\000"
+ 1018      6F73656E 
+ 1018      736F722E 
+ 1018      63796473 
+ 1018      6E00
+ 1019              	.LASF9:
+ 1020 0104 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1020      20756E73 
+ 1020      69676E65 
+ 1020      6420696E 
+ 1020      7400
+ 1021              	.LASF6:
+ 1022 0116 73686F72 		.ascii	"short unsigned int\000"
+ 1022      7420756E 
+ 1022      7369676E 
+ 1022      65642069 
+ 1022      6E7400
+ 1023              	.LASF47:
+ 1024 0129 63616C69 		.ascii	"calibrate_data_usb_union\000"
+ 1024      62726174 
+ 1024      655F6461 
+ 1024      74615F75 
+ 1024      73625F75 
+ 1025              	.LASF31:
+ 1026 0142 63616C69 		.ascii	"calibrate_TIA\000"
+ 1026      62726174 
+ 1026      655F5449 
+ 1026      4100
+ 1027              	.LASF38:
+ 1028 0150 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1028      52784275 
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 23
+
+
+ 1028      66666572 
+ 1028      00
+ 1029              	.LASF35:
+ 1030 015d 4144435F 		.ascii	"ADC_value\000"
+ 1030      76616C75 
+ 1030      6500
+ 1031              	.LASF5:
+ 1032 0167 5F5F7569 		.ascii	"__uint16_t\000"
+ 1032      6E743136 
+ 1032      5F7400
+ 1033              	.LASF20:
+ 1034 0172 646F7562 		.ascii	"double\000"
+ 1034      6C6500
+ 1035              	.LASF43:
+ 1036 0179 4144435F 		.ascii	"ADC_buffer_index\000"
+ 1036      62756666 
+ 1036      65725F69 
+ 1036      6E646578 
+ 1036      00
+ 1037              	.LASF18:
+ 1038 018a 666C6F61 		.ascii	"float32\000"
+ 1038      74333200 
+ 1039              	.LASF23:
+ 1040 0192 75696E74 		.ascii	"uint\000"
+ 1040      00
+ 1041              	.LASF12:
+ 1042 0197 756E7369 		.ascii	"unsigned int\000"
+ 1042      676E6564 
+ 1042      20696E74 
+ 1042      00
+ 1043              	.LASF26:
+ 1044 01a4 72657369 		.ascii	"resistor_value\000"
+ 1044      73746F72 
+ 1044      5F76616C 
+ 1044      756500
+ 1045              	.LASF32:
+ 1046 01b3 63616C69 		.ascii	"calibrate_step\000"
+ 1046      62726174 
+ 1046      655F7374 
+ 1046      657000
+ 1047              	.LASF13:
+ 1048 01c2 75696E74 		.ascii	"uint8_t\000"
+ 1048      385F7400 
+ 1049              	.LASF45:
+ 1050 01ca 63616C69 		.ascii	"calibrate.c\000"
+ 1050      62726174 
+ 1050      652E6300 
+ 1051              	.LASF14:
+ 1052 01d6 696E7431 		.ascii	"int16_t\000"
+ 1052      365F7400 
+ 1053              	.LASF16:
+ 1054 01de 696E7433 		.ascii	"int32_t\000"
+ 1054      325F7400 
+ 1055              	.LASF22:
+ 1056 01e6 73697A65 		.ascii	"sizetype\000"
+ 1056      74797065 
+ 1056      00
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 24
+
+
+ 1057              	.LASF33:
+ 1058 01ef 49444143 		.ascii	"IDAC_value\000"
+ 1058      5F76616C 
+ 1058      756500
+ 1059              	.LASF10:
+ 1060 01fa 6C6F6E67 		.ascii	"long long int\000"
+ 1060      206C6F6E 
+ 1060      6720696E 
+ 1060      7400
+ 1061              	.LASF21:
+ 1062 0208 63686172 		.ascii	"char\000"
+ 1062      00
+ 1063              	.LASF40:
+ 1064 020d 63616C69 		.ascii	"calibrate_array\000"
+ 1064      62726174 
+ 1064      655F6172 
+ 1064      72617900 
+ 1065              	.LASF27:
+ 1066 021d 49444143 		.ascii	"IDAC_setting\000"
+ 1066      5F736574 
+ 1066      74696E67 
+ 1066      00
+ 1067              	.LASF44:
+ 1068 022a 474E5520 		.ascii	"GNU C99 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1068      43393920 
+ 1068      352E342E 
+ 1068      31203230 
+ 1068      31363036 
+ 1069 025d 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1069      20726576 
+ 1069      6973696F 
+ 1069      6E203233 
+ 1069      37373135 
+ 1070 0290 30202D73 		.ascii	"0 -std=gnu99 -ffunction-sections -ffat-lto-objects\000"
+ 1070      74643D67 
+ 1070      6E753939 
+ 1070      202D6666 
+ 1070      756E6374 
+ 1071              	.LASF39:
+ 1072 02c3 62756666 		.ascii	"buffer\000"
+ 1072      657200
+ 1073              	.LASF15:
+ 1074 02ca 75696E74 		.ascii	"uint16_t\000"
+ 1074      31365F74 
+ 1074      00
+ 1075              	.LASF4:
+ 1076 02d3 73686F72 		.ascii	"short int\000"
+ 1076      7420696E 
+ 1076      7400
+ 1077              	.LASF8:
+ 1078 02dd 6C6F6E67 		.ascii	"long int\000"
+ 1078      20696E74 
+ 1078      00
+ 1079              	.LASF42:
+ 1080 02e6 5449415F 		.ascii	"TIA_resistor_value_index\000"
+ 1080      72657369 
+ 1080      73746F72 
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc5iFwOs.s 			page 25
+
+
+ 1080      5F76616C 
+ 1080      75655F69 
+ 1081              	.LASF24:
+ 1082 02ff 6C6F6E67 		.ascii	"long double\000"
+ 1082      20646F75 
+ 1082      626C6500 
+ 1083              	.LASF0:
+ 1084 030b 7369676E 		.ascii	"signed char\000"
+ 1084      65642063 
+ 1084      68617200 
+ 1085              	.LASF28:
+ 1086 0317 4144435F 		.ascii	"ADC_buffer_value\000"
+ 1086      62756666 
+ 1086      65725F76 
+ 1086      616C7565 
+ 1086      00
+ 1087              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

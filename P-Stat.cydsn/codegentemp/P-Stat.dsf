@@ -1,0 +1,2 @@
+Stub-:dsiswitch_bottom@[DSI=(1,2)][side=bottom]:dsihc_bottom:v45+:dsiswitch_bottom@[DSI=(1,2)][side=bottom]:dsihc_bottom:v47==>:interrupt_idmux_3.in_0
+Stub-:dsiswitch_bottom@[DSI=(1,4)][side=bottom]:dsihc_bottom:v45+:dsiswitch_bottom@[DSI=(1,4)][side=bottom]:dsihc_bottom:v47==>:interrupt_idmux_4.in_0

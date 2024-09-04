@@ -1,0 +1,611 @@
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccB3gLec.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.rodata
+  20              		.align	2
+  21              	.LC0:
+  22 0000 4144435F 		.ascii	"ADC_Output\000"
+  22      4F757470 
+  22      757400
+  23              		.section	.text.main,"ax",%progbits
+  24              		.align	2
+  25              		.global	main
+  26              		.thumb
+  27              		.thumb_func
+  28              		.type	main, %function
+  29              	main:
+  30              	.LFB63:
+  31              		.file 1 "main.c"
+   1:main.c        **** /*******************************************************************************
+   2:main.c        **** * File Name: main.c
+   3:main.c        **** *
+   4:main.c        **** * Version: 2.30
+   5:main.c        **** *
+   6:main.c        **** * Description:
+   7:main.c        **** *   This is a source code for example project of ADC single ended mode.
+   8:main.c        **** *
+   9:main.c        **** *   Variable resistor(pot) is connected to +ve input of ADC using the I/O pin.
+  10:main.c        **** *   P0.0. When voltage to positive terminal of ADC is 0, the output displayed
+  11:main.c        **** *   on the LCD pannel is 0x0000. As voltage on positive terminal goes on
+  12:main.c        **** *   increasing, the  converted value goes on increasing from 0x0000 and reaches
+  13:main.c        **** *   0xFFFF when voltage becomes 1.024V. Futher increase in voltage value,
+  14:main.c        **** *   doesn't cause any changes to values displayed in the LCD.
+  15:main.c        **** *
+  16:main.c        **** * Hardware Connections:
+  17:main.c        **** *  Connect analog input from Variable resistor to port P0[0] of DVK1 board.
+  18:main.c        **** *
+  19:main.c        **** ********************************************************************************
+  20:main.c        **** * Copyright 2012-2017, Cypress Semiconductor Corporation. All rights reserved.
+  21:main.c        **** * This software is owned by Cypress Semiconductor Corporation and is protected
+  22:main.c        **** * by and subject to worldwide patent and copyright laws and treaties.
+  23:main.c        **** * Therefore, you may use this software only as provided in the license agreement
+  24:main.c        **** * accompanying the software package from which you obtained this software.
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccB3gLec.s 			page 2
+
+
+  25:main.c        **** * CYPRESS AND ITS SUPPLIERS MAKE NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+  26:main.c        **** * WITH REGARD TO THIS SOFTWARE, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT,
+  27:main.c        **** * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+  28:main.c        **** *******************************************************************************/
+  29:main.c        **** 
+  30:main.c        **** #include <project.h>
+  31:main.c        **** 
+  32:main.c        **** 
+  33:main.c        **** /*******************************************************************************
+  34:main.c        **** * Function Name: main
+  35:main.c        **** ********************************************************************************
+  36:main.c        **** *
+  37:main.c        **** * Summary:
+  38:main.c        **** *  main() performs following functions:
+  39:main.c        **** *  1: Initializes the LCD
+  40:main.c        **** *  2: Starts ADC
+  41:main.c        **** *  3: Starts ADC converstion.
+  42:main.c        **** *  4: Gets the converted result and displays it in LCD.
+  43:main.c        **** *
+  44:main.c        **** * Parameters:
+  45:main.c        **** *  None.
+  46:main.c        **** *
+  47:main.c        **** * Return:
+  48:main.c        **** *  None.
+  49:main.c        **** *
+  50:main.c        **** *******************************************************************************/
+  51:main.c        **** int main()
+  52:main.c        **** {
+  32              		.loc 1 52 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 8
+  35              		@ frame_needed = 1, uses_anonymous_args = 0
+  36 0000 80B5     		push	{r7, lr}
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 7, -8
+  39              		.cfi_offset 14, -4
+  40 0002 82B0     		sub	sp, sp, #8
+  41              		.cfi_def_cfa_offset 16
+  42 0004 00AF     		add	r7, sp, #0
+  43              		.cfi_def_cfa_register 7
+  53:main.c        ****     int32 output;
+  54:main.c        **** 
+  55:main.c        ****     /* Start the components */
+  56:main.c        **** 
+  57:main.c        ****     LCD_Start();
+  44              		.loc 1 57 0
+  45 0006 FFF7FEFF 		bl	LCD_Start
+  58:main.c        ****     ADC_DelSig_1_Start();
+  46              		.loc 1 58 0
+  47 000a FFF7FEFF 		bl	ADC_DelSig_1_Start
+  59:main.c        **** 
+  60:main.c        ****     /* Start the ADC conversion */
+  61:main.c        ****     ADC_DelSig_1_StartConvert();
+  48              		.loc 1 61 0
+  49 000e FFF7FEFF 		bl	ADC_DelSig_1_StartConvert
+  62:main.c        **** 
+  63:main.c        ****     /* Display the value of ADC output on LCD */
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccB3gLec.s 			page 3
+
+
+  64:main.c        ****     LCD_Position(0u, 0u);
+  50              		.loc 1 64 0
+  51 0012 0021     		movs	r1, #0
+  52 0014 0020     		movs	r0, #0
+  53 0016 FFF7FEFF 		bl	LCD_Position
+  65:main.c        ****     LCD_PrintString("ADC_Output");
+  54              		.loc 1 65 0
+  55 001a 0D48     		ldr	r0, .L5
+  56 001c FFF7FEFF 		bl	LCD_PrintString
+  57              	.L4:
+  66:main.c        **** 
+  67:main.c        ****     for(;;)
+  68:main.c        ****     {
+  69:main.c        ****         if(ADC_DelSig_1_IsEndConversion(ADC_DelSig_1_RETURN_STATUS))
+  58              		.loc 1 69 0
+  59 0020 0120     		movs	r0, #1
+  60 0022 FFF7FEFF 		bl	ADC_DelSig_1_IsEndConversion
+  61 0026 0346     		mov	r3, r0
+  62 0028 002B     		cmp	r3, #0
+  63 002a F9D0     		beq	.L4
+  70:main.c        ****         {
+  71:main.c        ****             output = ADC_DelSig_1_GetResult32();
+  64              		.loc 1 71 0
+  65 002c FFF7FEFF 		bl	ADC_DelSig_1_GetResult32
+  66 0030 7860     		str	r0, [r7, #4]
+  72:main.c        ****             
+  73:main.c        ****             /* Saturate ADC result to positive numbers. */
+  74:main.c        ****             if(output < 0)
+  67              		.loc 1 74 0
+  68 0032 7B68     		ldr	r3, [r7, #4]
+  69 0034 002B     		cmp	r3, #0
+  70 0036 01DA     		bge	.L3
+  75:main.c        ****             {
+  76:main.c        ****                 output = 0;
+  71              		.loc 1 76 0
+  72 0038 0023     		movs	r3, #0
+  73 003a 7B60     		str	r3, [r7, #4]
+  74              	.L3:
+  77:main.c        ****             }
+  78:main.c        ****             LCD_Position(1u, 0u);
+  75              		.loc 1 78 0
+  76 003c 0021     		movs	r1, #0
+  77 003e 0120     		movs	r0, #1
+  78 0040 FFF7FEFF 		bl	LCD_Position
+  79:main.c        ****             LCD_PrintInt16((uint16)output);
+  79              		.loc 1 79 0
+  80 0044 7B68     		ldr	r3, [r7, #4]
+  81 0046 9BB2     		uxth	r3, r3
+  82 0048 1846     		mov	r0, r3
+  83 004a FFF7FEFF 		bl	LCD_PrintInt16
+  80:main.c        ****         }
+  81:main.c        ****     }
+  84              		.loc 1 81 0
+  85 004e E7E7     		b	.L4
+  86              	.L6:
+  87              		.align	2
+  88              	.L5:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccB3gLec.s 			page 4
+
+
+  89 0050 00000000 		.word	.LC0
+  90              		.cfi_endproc
+  91              	.LFE63:
+  92              		.size	main, .-main
+  93              		.text
+  94              	.Letext0:
+  95              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+  96              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+  97              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+  98              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+  99              		.section	.debug_info,"",%progbits
+ 100              	.Ldebug_info0:
+ 101 0000 F2000000 		.4byte	0xf2
+ 102 0004 0400     		.2byte	0x4
+ 103 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 104 000a 04       		.byte	0x4
+ 105 000b 01       		.uleb128 0x1
+ 106 000c BF000000 		.4byte	.LASF18
+ 107 0010 0C       		.byte	0xc
+ 108 0011 8A000000 		.4byte	.LASF19
+ 109 0015 2E000000 		.4byte	.LASF20
+ 110 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 111 001d 00000000 		.4byte	0
+ 112 0021 00000000 		.4byte	.Ldebug_line0
+ 113 0025 02       		.uleb128 0x2
+ 114 0026 01       		.byte	0x1
+ 115 0027 06       		.byte	0x6
+ 116 0028 84010000 		.4byte	.LASF0
+ 117 002c 02       		.uleb128 0x2
+ 118 002d 01       		.byte	0x1
+ 119 002e 08       		.byte	0x8
+ 120 002f 54010000 		.4byte	.LASF1
+ 121 0033 02       		.uleb128 0x2
+ 122 0034 02       		.byte	0x2
+ 123 0035 05       		.byte	0x5
+ 124 0036 AC010000 		.4byte	.LASF2
+ 125 003a 02       		.uleb128 0x2
+ 126 003b 02       		.byte	0x2
+ 127 003c 07       		.byte	0x7
+ 128 003d 0E000000 		.4byte	.LASF3
+ 129 0041 03       		.uleb128 0x3
+ 130 0042 9C010000 		.4byte	.LASF9
+ 131 0046 02       		.byte	0x2
+ 132 0047 3F       		.byte	0x3f
+ 133 0048 4C000000 		.4byte	0x4c
+ 134 004c 02       		.uleb128 0x2
+ 135 004d 04       		.byte	0x4
+ 136 004e 05       		.byte	0x5
+ 137 004f 67010000 		.4byte	.LASF4
+ 138 0053 02       		.uleb128 0x2
+ 139 0054 04       		.byte	0x4
+ 140 0055 07       		.byte	0x7
+ 141 0056 96000000 		.4byte	.LASF5
+ 142 005a 02       		.uleb128 0x2
+ 143 005b 08       		.byte	0x8
+ 144 005c 05       		.byte	0x5
+ 145 005d 00000000 		.4byte	.LASF6
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccB3gLec.s 			page 5
+
+
+ 146 0061 02       		.uleb128 0x2
+ 147 0062 08       		.byte	0x8
+ 148 0063 07       		.byte	0x7
+ 149 0064 A8000000 		.4byte	.LASF7
+ 150 0068 04       		.uleb128 0x4
+ 151 0069 04       		.byte	0x4
+ 152 006a 05       		.byte	0x5
+ 153 006b 696E7400 		.ascii	"int\000"
+ 154 006f 02       		.uleb128 0x2
+ 155 0070 04       		.byte	0x4
+ 156 0071 07       		.byte	0x7
+ 157 0072 21000000 		.4byte	.LASF8
+ 158 0076 03       		.uleb128 0x3
+ 159 0077 BD010000 		.4byte	.LASF10
+ 160 007b 03       		.byte	0x3
+ 161 007c 2C       		.byte	0x2c
+ 162 007d 41000000 		.4byte	0x41
+ 163 0081 05       		.uleb128 0x5
+ 164 0082 B6010000 		.4byte	.LASF11
+ 165 0086 04       		.byte	0x4
+ 166 0087 E501     		.2byte	0x1e5
+ 167 0089 3A000000 		.4byte	0x3a
+ 168 008d 05       		.uleb128 0x5
+ 169 008e CE010000 		.4byte	.LASF12
+ 170 0092 04       		.byte	0x4
+ 171 0093 E901     		.2byte	0x1e9
+ 172 0095 4C000000 		.4byte	0x4c
+ 173 0099 02       		.uleb128 0x2
+ 174 009a 04       		.byte	0x4
+ 175 009b 04       		.byte	0x4
+ 176 009c A6010000 		.4byte	.LASF13
+ 177 00a0 02       		.uleb128 0x2
+ 178 00a1 08       		.byte	0x8
+ 179 00a2 04       		.byte	0x4
+ 180 00a3 70010000 		.4byte	.LASF14
+ 181 00a7 02       		.uleb128 0x2
+ 182 00a8 01       		.byte	0x1
+ 183 00a9 08       		.byte	0x8
+ 184 00aa 62010000 		.4byte	.LASF15
+ 185 00ae 02       		.uleb128 0x2
+ 186 00af 08       		.byte	0x8
+ 187 00b0 04       		.byte	0x4
+ 188 00b1 90010000 		.4byte	.LASF16
+ 189 00b5 02       		.uleb128 0x2
+ 190 00b6 04       		.byte	0x4
+ 191 00b7 07       		.byte	0x7
+ 192 00b8 C5010000 		.4byte	.LASF17
+ 193 00bc 06       		.uleb128 0x6
+ 194 00bd 91000000 		.4byte	.LASF21
+ 195 00c1 01       		.byte	0x1
+ 196 00c2 33       		.byte	0x33
+ 197 00c3 68000000 		.4byte	0x68
+ 198 00c7 00000000 		.4byte	.LFB63
+ 199 00cb 54000000 		.4byte	.LFE63-.LFB63
+ 200 00cf 01       		.uleb128 0x1
+ 201 00d0 9C       		.byte	0x9c
+ 202 00d1 E4000000 		.4byte	0xe4
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccB3gLec.s 			page 6
+
+
+ 203 00d5 07       		.uleb128 0x7
+ 204 00d6 4D010000 		.4byte	.LASF22
+ 205 00da 01       		.byte	0x1
+ 206 00db 35       		.byte	0x35
+ 207 00dc 8D000000 		.4byte	0x8d
+ 208 00e0 02       		.uleb128 0x2
+ 209 00e1 91       		.byte	0x91
+ 210 00e2 74       		.sleb128 -12
+ 211 00e3 00       		.byte	0
+ 212 00e4 08       		.uleb128 0x8
+ 213 00e5 77010000 		.4byte	.LASF23
+ 214 00e9 05       		.byte	0x5
+ 215 00ea 1207     		.2byte	0x712
+ 216 00ec F0000000 		.4byte	0xf0
+ 217 00f0 09       		.uleb128 0x9
+ 218 00f1 76000000 		.4byte	0x76
+ 219 00f5 00       		.byte	0
+ 220              		.section	.debug_abbrev,"",%progbits
+ 221              	.Ldebug_abbrev0:
+ 222 0000 01       		.uleb128 0x1
+ 223 0001 11       		.uleb128 0x11
+ 224 0002 01       		.byte	0x1
+ 225 0003 25       		.uleb128 0x25
+ 226 0004 0E       		.uleb128 0xe
+ 227 0005 13       		.uleb128 0x13
+ 228 0006 0B       		.uleb128 0xb
+ 229 0007 03       		.uleb128 0x3
+ 230 0008 0E       		.uleb128 0xe
+ 231 0009 1B       		.uleb128 0x1b
+ 232 000a 0E       		.uleb128 0xe
+ 233 000b 55       		.uleb128 0x55
+ 234 000c 17       		.uleb128 0x17
+ 235 000d 11       		.uleb128 0x11
+ 236 000e 01       		.uleb128 0x1
+ 237 000f 10       		.uleb128 0x10
+ 238 0010 17       		.uleb128 0x17
+ 239 0011 00       		.byte	0
+ 240 0012 00       		.byte	0
+ 241 0013 02       		.uleb128 0x2
+ 242 0014 24       		.uleb128 0x24
+ 243 0015 00       		.byte	0
+ 244 0016 0B       		.uleb128 0xb
+ 245 0017 0B       		.uleb128 0xb
+ 246 0018 3E       		.uleb128 0x3e
+ 247 0019 0B       		.uleb128 0xb
+ 248 001a 03       		.uleb128 0x3
+ 249 001b 0E       		.uleb128 0xe
+ 250 001c 00       		.byte	0
+ 251 001d 00       		.byte	0
+ 252 001e 03       		.uleb128 0x3
+ 253 001f 16       		.uleb128 0x16
+ 254 0020 00       		.byte	0
+ 255 0021 03       		.uleb128 0x3
+ 256 0022 0E       		.uleb128 0xe
+ 257 0023 3A       		.uleb128 0x3a
+ 258 0024 0B       		.uleb128 0xb
+ 259 0025 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccB3gLec.s 			page 7
+
+
+ 260 0026 0B       		.uleb128 0xb
+ 261 0027 49       		.uleb128 0x49
+ 262 0028 13       		.uleb128 0x13
+ 263 0029 00       		.byte	0
+ 264 002a 00       		.byte	0
+ 265 002b 04       		.uleb128 0x4
+ 266 002c 24       		.uleb128 0x24
+ 267 002d 00       		.byte	0
+ 268 002e 0B       		.uleb128 0xb
+ 269 002f 0B       		.uleb128 0xb
+ 270 0030 3E       		.uleb128 0x3e
+ 271 0031 0B       		.uleb128 0xb
+ 272 0032 03       		.uleb128 0x3
+ 273 0033 08       		.uleb128 0x8
+ 274 0034 00       		.byte	0
+ 275 0035 00       		.byte	0
+ 276 0036 05       		.uleb128 0x5
+ 277 0037 16       		.uleb128 0x16
+ 278 0038 00       		.byte	0
+ 279 0039 03       		.uleb128 0x3
+ 280 003a 0E       		.uleb128 0xe
+ 281 003b 3A       		.uleb128 0x3a
+ 282 003c 0B       		.uleb128 0xb
+ 283 003d 3B       		.uleb128 0x3b
+ 284 003e 05       		.uleb128 0x5
+ 285 003f 49       		.uleb128 0x49
+ 286 0040 13       		.uleb128 0x13
+ 287 0041 00       		.byte	0
+ 288 0042 00       		.byte	0
+ 289 0043 06       		.uleb128 0x6
+ 290 0044 2E       		.uleb128 0x2e
+ 291 0045 01       		.byte	0x1
+ 292 0046 3F       		.uleb128 0x3f
+ 293 0047 19       		.uleb128 0x19
+ 294 0048 03       		.uleb128 0x3
+ 295 0049 0E       		.uleb128 0xe
+ 296 004a 3A       		.uleb128 0x3a
+ 297 004b 0B       		.uleb128 0xb
+ 298 004c 3B       		.uleb128 0x3b
+ 299 004d 0B       		.uleb128 0xb
+ 300 004e 49       		.uleb128 0x49
+ 301 004f 13       		.uleb128 0x13
+ 302 0050 11       		.uleb128 0x11
+ 303 0051 01       		.uleb128 0x1
+ 304 0052 12       		.uleb128 0x12
+ 305 0053 06       		.uleb128 0x6
+ 306 0054 40       		.uleb128 0x40
+ 307 0055 18       		.uleb128 0x18
+ 308 0056 9642     		.uleb128 0x2116
+ 309 0058 19       		.uleb128 0x19
+ 310 0059 01       		.uleb128 0x1
+ 311 005a 13       		.uleb128 0x13
+ 312 005b 00       		.byte	0
+ 313 005c 00       		.byte	0
+ 314 005d 07       		.uleb128 0x7
+ 315 005e 34       		.uleb128 0x34
+ 316 005f 00       		.byte	0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccB3gLec.s 			page 8
+
+
+ 317 0060 03       		.uleb128 0x3
+ 318 0061 0E       		.uleb128 0xe
+ 319 0062 3A       		.uleb128 0x3a
+ 320 0063 0B       		.uleb128 0xb
+ 321 0064 3B       		.uleb128 0x3b
+ 322 0065 0B       		.uleb128 0xb
+ 323 0066 49       		.uleb128 0x49
+ 324 0067 13       		.uleb128 0x13
+ 325 0068 02       		.uleb128 0x2
+ 326 0069 18       		.uleb128 0x18
+ 327 006a 00       		.byte	0
+ 328 006b 00       		.byte	0
+ 329 006c 08       		.uleb128 0x8
+ 330 006d 34       		.uleb128 0x34
+ 331 006e 00       		.byte	0
+ 332 006f 03       		.uleb128 0x3
+ 333 0070 0E       		.uleb128 0xe
+ 334 0071 3A       		.uleb128 0x3a
+ 335 0072 0B       		.uleb128 0xb
+ 336 0073 3B       		.uleb128 0x3b
+ 337 0074 05       		.uleb128 0x5
+ 338 0075 49       		.uleb128 0x49
+ 339 0076 13       		.uleb128 0x13
+ 340 0077 3F       		.uleb128 0x3f
+ 341 0078 19       		.uleb128 0x19
+ 342 0079 3C       		.uleb128 0x3c
+ 343 007a 19       		.uleb128 0x19
+ 344 007b 00       		.byte	0
+ 345 007c 00       		.byte	0
+ 346 007d 09       		.uleb128 0x9
+ 347 007e 35       		.uleb128 0x35
+ 348 007f 00       		.byte	0
+ 349 0080 49       		.uleb128 0x49
+ 350 0081 13       		.uleb128 0x13
+ 351 0082 00       		.byte	0
+ 352 0083 00       		.byte	0
+ 353 0084 00       		.byte	0
+ 354              		.section	.debug_aranges,"",%progbits
+ 355 0000 1C000000 		.4byte	0x1c
+ 356 0004 0200     		.2byte	0x2
+ 357 0006 00000000 		.4byte	.Ldebug_info0
+ 358 000a 04       		.byte	0x4
+ 359 000b 00       		.byte	0
+ 360 000c 0000     		.2byte	0
+ 361 000e 0000     		.2byte	0
+ 362 0010 00000000 		.4byte	.LFB63
+ 363 0014 54000000 		.4byte	.LFE63-.LFB63
+ 364 0018 00000000 		.4byte	0
+ 365 001c 00000000 		.4byte	0
+ 366              		.section	.debug_ranges,"",%progbits
+ 367              	.Ldebug_ranges0:
+ 368 0000 00000000 		.4byte	.LFB63
+ 369 0004 54000000 		.4byte	.LFE63
+ 370 0008 00000000 		.4byte	0
+ 371 000c 00000000 		.4byte	0
+ 372              		.section	.debug_line,"",%progbits
+ 373              	.Ldebug_line0:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccB3gLec.s 			page 9
+
+
+ 374 0000 6D010000 		.section	.debug_str,"MS",%progbits,1
+ 374      02004C01 
+ 374      00000201 
+ 374      FB0E0D00 
+ 374      01010101 
+ 375              	.LASF6:
+ 376 0000 6C6F6E67 		.ascii	"long long int\000"
+ 376      206C6F6E 
+ 376      6720696E 
+ 376      7400
+ 377              	.LASF3:
+ 378 000e 73686F72 		.ascii	"short unsigned int\000"
+ 378      7420756E 
+ 378      7369676E 
+ 378      65642069 
+ 378      6E7400
+ 379              	.LASF8:
+ 380 0021 756E7369 		.ascii	"unsigned int\000"
+ 380      676E6564 
+ 380      20696E74 
+ 380      00
+ 381              	.LASF20:
+ 382 002e 433A5C55 		.ascii	"C:\\Users\\User\\Dropbox\\67 PSOC\\PSoC-Potentiosta"
+ 382      73657273 
+ 382      5C557365 
+ 382      725C4472 
+ 382      6F70626F 
+ 383 005c 745C4269 		.ascii	"t\\Biosensor.cydsn\\ADC_SingleEndedMode01.cydsn\000"
+ 383      6F73656E 
+ 383      736F722E 
+ 383      63796473 
+ 383      6E5C4144 
+ 384              	.LASF19:
+ 385 008a 6D61696E 		.ascii	"main.c\000"
+ 385      2E6300
+ 386              	.LASF21:
+ 387 0091 6D61696E 		.ascii	"main\000"
+ 387      00
+ 388              	.LASF5:
+ 389 0096 6C6F6E67 		.ascii	"long unsigned int\000"
+ 389      20756E73 
+ 389      69676E65 
+ 389      6420696E 
+ 389      7400
+ 390              	.LASF7:
+ 391 00a8 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 391      206C6F6E 
+ 391      6720756E 
+ 391      7369676E 
+ 391      65642069 
+ 392              	.LASF18:
+ 393 00bf 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 393      43313120 
+ 393      352E342E 
+ 393      31203230 
+ 393      31363036 
+ 394 00f2 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccB3gLec.s 			page 10
+
+
+ 394      20726576 
+ 394      6973696F 
+ 394      6E203233 
+ 394      37373135 
+ 395 0125 30202D66 		.ascii	"0 -ffunction-sections -ffat-lto-objects\000"
+ 395      66756E63 
+ 395      74696F6E 
+ 395      2D736563 
+ 395      74696F6E 
+ 396              	.LASF22:
+ 397 014d 6F757470 		.ascii	"output\000"
+ 397      757400
+ 398              	.LASF1:
+ 399 0154 756E7369 		.ascii	"unsigned char\000"
+ 399      676E6564 
+ 399      20636861 
+ 399      7200
+ 400              	.LASF15:
+ 401 0162 63686172 		.ascii	"char\000"
+ 401      00
+ 402              	.LASF4:
+ 403 0167 6C6F6E67 		.ascii	"long int\000"
+ 403      20696E74 
+ 403      00
+ 404              	.LASF14:
+ 405 0170 646F7562 		.ascii	"double\000"
+ 405      6C6500
+ 406              	.LASF23:
+ 407 0177 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 407      52784275 
+ 407      66666572 
+ 407      00
+ 408              	.LASF0:
+ 409 0184 7369676E 		.ascii	"signed char\000"
+ 409      65642063 
+ 409      68617200 
+ 410              	.LASF16:
+ 411 0190 6C6F6E67 		.ascii	"long double\000"
+ 411      20646F75 
+ 411      626C6500 
+ 412              	.LASF9:
+ 413 019c 5F5F696E 		.ascii	"__int32_t\000"
+ 413      7433325F 
+ 413      7400
+ 414              	.LASF13:
+ 415 01a6 666C6F61 		.ascii	"float\000"
+ 415      7400
+ 416              	.LASF2:
+ 417 01ac 73686F72 		.ascii	"short int\000"
+ 417      7420696E 
+ 417      7400
+ 418              	.LASF11:
+ 419 01b6 75696E74 		.ascii	"uint16\000"
+ 419      313600
+ 420              	.LASF10:
+ 421 01bd 696E7433 		.ascii	"int32_t\000"
+ 421      325F7400 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccB3gLec.s 			page 11
+
+
+ 422              	.LASF17:
+ 423 01c5 73697A65 		.ascii	"sizetype\000"
+ 423      74797065 
+ 423      00
+ 424              	.LASF12:
+ 425 01ce 696E7433 		.ascii	"int32\000"
+ 425      3200
+ 426              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

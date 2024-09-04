@@ -1,0 +1,1397 @@
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"TIA.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.global	TIA_initVar
+  20              		.bss
+  21              		.type	TIA_initVar, %object
+  22              		.size	TIA_initVar, 1
+  23              	TIA_initVar:
+  24 0000 00       		.space	1
+  25              		.section	.text.TIA_Init,"ax",%progbits
+  26              		.align	2
+  27              		.global	TIA_Init
+  28              		.thumb
+  29              		.thumb_func
+  30              		.type	TIA_Init, %function
+  31              	TIA_Init:
+  32              	.LFB0:
+  33              		.file 1 "Generated_Source\\PSoC5\\TIA.c"
+   1:Generated_Source\PSoC5/TIA.c **** /*******************************************************************************
+   2:Generated_Source\PSoC5/TIA.c **** * File Name: TIA.c  
+   3:Generated_Source\PSoC5/TIA.c **** * Version 2.0
+   4:Generated_Source\PSoC5/TIA.c **** *
+   5:Generated_Source\PSoC5/TIA.c **** * Description:
+   6:Generated_Source\PSoC5/TIA.c **** *  This file provides the source code to the API for the TIA User Module.
+   7:Generated_Source\PSoC5/TIA.c **** *
+   8:Generated_Source\PSoC5/TIA.c **** * Note:
+   9:Generated_Source\PSoC5/TIA.c **** *
+  10:Generated_Source\PSoC5/TIA.c **** ********************************************************************************
+  11:Generated_Source\PSoC5/TIA.c **** * Copyright 2008-2012, Cypress Semiconductor Corporation.  All rights reserved.
+  12:Generated_Source\PSoC5/TIA.c **** * You may use this file only in accordance with the license, terms, conditions, 
+  13:Generated_Source\PSoC5/TIA.c **** * disclaimers, and limitations in the end user license agreement accompanying 
+  14:Generated_Source\PSoC5/TIA.c **** * the software package with which this file was provided.
+  15:Generated_Source\PSoC5/TIA.c **** *******************************************************************************/
+  16:Generated_Source\PSoC5/TIA.c **** 
+  17:Generated_Source\PSoC5/TIA.c **** #include "TIA.h"
+  18:Generated_Source\PSoC5/TIA.c **** 
+  19:Generated_Source\PSoC5/TIA.c **** #if (!CY_PSOC5A)
+  20:Generated_Source\PSoC5/TIA.c ****     #if (CYDEV_VARIABLE_VDDA == 1u)
+  21:Generated_Source\PSoC5/TIA.c ****         #include "CyScBoostClk.h"
+  22:Generated_Source\PSoC5/TIA.c ****     #endif /* (CYDEV_VARIABLE_VDDA == 1u) */
+  23:Generated_Source\PSoC5/TIA.c **** #endif /* (!CY_PSOC5A) */
+  24:Generated_Source\PSoC5/TIA.c **** 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 2
+
+
+  25:Generated_Source\PSoC5/TIA.c **** /* Fixed configuration of SC Block only performed once */
+  26:Generated_Source\PSoC5/TIA.c **** uint8 TIA_initVar = 0u;
+  27:Generated_Source\PSoC5/TIA.c **** 
+  28:Generated_Source\PSoC5/TIA.c **** #if (CY_PSOC5A)
+  29:Generated_Source\PSoC5/TIA.c ****     static TIA_BACKUP_STRUCT  TIA_P5backup;
+  30:Generated_Source\PSoC5/TIA.c **** #endif /* (CY_PSOC5A) */
+  31:Generated_Source\PSoC5/TIA.c **** 
+  32:Generated_Source\PSoC5/TIA.c **** 
+  33:Generated_Source\PSoC5/TIA.c **** /*******************************************************************************   
+  34:Generated_Source\PSoC5/TIA.c **** * Function Name: TIA_Init
+  35:Generated_Source\PSoC5/TIA.c **** ********************************************************************************
+  36:Generated_Source\PSoC5/TIA.c **** *
+  37:Generated_Source\PSoC5/TIA.c **** * Summary:
+  38:Generated_Source\PSoC5/TIA.c **** *  Initialize component's parameters to the parameters set by user in the 
+  39:Generated_Source\PSoC5/TIA.c **** *  customizer of the component placed onto schematic. Usually called in 
+  40:Generated_Source\PSoC5/TIA.c **** *  TIA_Start().
+  41:Generated_Source\PSoC5/TIA.c **** *
+  42:Generated_Source\PSoC5/TIA.c **** * Parameters:
+  43:Generated_Source\PSoC5/TIA.c **** *  void
+  44:Generated_Source\PSoC5/TIA.c **** *
+  45:Generated_Source\PSoC5/TIA.c **** * Return:
+  46:Generated_Source\PSoC5/TIA.c **** *  void
+  47:Generated_Source\PSoC5/TIA.c **** *
+  48:Generated_Source\PSoC5/TIA.c **** *******************************************************************************/
+  49:Generated_Source\PSoC5/TIA.c **** void TIA_Init(void) 
+  50:Generated_Source\PSoC5/TIA.c **** {
+  34              		.loc 1 50 0
+  35              		.cfi_startproc
+  36              		@ args = 0, pretend = 0, frame = 0
+  37              		@ frame_needed = 1, uses_anonymous_args = 0
+  38 0000 80B5     		push	{r7, lr}
+  39              		.cfi_def_cfa_offset 8
+  40              		.cfi_offset 7, -8
+  41              		.cfi_offset 14, -4
+  42 0002 00AF     		add	r7, sp, #0
+  43              		.cfi_def_cfa_register 7
+  51:Generated_Source\PSoC5/TIA.c ****     /* Set SC Block Mode to TIA - SCxx_CR0[3:1] */
+  52:Generated_Source\PSoC5/TIA.c ****     TIA_CR0_REG = TIA_MODE_TIA;
+  44              		.loc 1 52 0
+  45 0004 094B     		ldr	r3, .L2
+  46 0006 0222     		movs	r2, #2
+  47 0008 1A70     		strb	r2, [r3]
+  53:Generated_Source\PSoC5/TIA.c ****     
+  54:Generated_Source\PSoC5/TIA.c ****     /*    Set SC Block CR1 Control Register fields to support TIA mode 
+  55:Generated_Source\PSoC5/TIA.c ****             drive field set by SetPower() API
+  56:Generated_Source\PSoC5/TIA.c ****             compensation Cap - 5.1 pF
+  57:Generated_Source\PSoC5/TIA.c ****             div2 - disable, n/a for TIA mode
+  58:Generated_Source\PSoC5/TIA.c ****             Mixer/PGA Gain - 0db, n/a for TIA mode   */
+  59:Generated_Source\PSoC5/TIA.c **** 
+  60:Generated_Source\PSoC5/TIA.c ****     TIA_CR1_REG = (TIA_COMP_5P1PF |
+  48              		.loc 1 60 0
+  49 000a 094B     		ldr	r3, .L2+4
+  50 000c 0C22     		movs	r2, #12
+  51 000e 1A70     		strb	r2, [r3]
+  61:Generated_Source\PSoC5/TIA.c ****                                 TIA_DIV2_DISABLE |
+  62:Generated_Source\PSoC5/TIA.c ****                                 TIA_GAIN_0DB);
+  63:Generated_Source\PSoC5/TIA.c **** 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 3
+
+
+  64:Generated_Source\PSoC5/TIA.c **** 
+  65:Generated_Source\PSoC5/TIA.c ****     /*    Set SC Block CR2 Control Register fields to support TIA mode
+  66:Generated_Source\PSoC5/TIA.c ****             Bias - Low
+  67:Generated_Source\PSoC5/TIA.c ****             r20_r40 - 40K, n/a for TIA mode
+  68:Generated_Source\PSoC5/TIA.c ****             redc - set by SetCapFB() API
+  69:Generated_Source\PSoC5/TIA.c ****             rval - set by SetResFB() API
+  70:Generated_Source\PSoC5/TIA.c ****             PGA Ground Ref - disable, n/a for TIA mode    */
+  71:Generated_Source\PSoC5/TIA.c **** 
+  72:Generated_Source\PSoC5/TIA.c ****     TIA_CR2_REG = (TIA_BIAS_LOW |
+  52              		.loc 1 72 0
+  53 0010 084B     		ldr	r3, .L2+8
+  54 0012 0122     		movs	r2, #1
+  55 0014 1A70     		strb	r2, [r3]
+  73:Generated_Source\PSoC5/TIA.c ****                                 TIA_R20_40B_40K |
+  74:Generated_Source\PSoC5/TIA.c ****                                 TIA_GNDVREF_DI);
+  75:Generated_Source\PSoC5/TIA.c ****                           
+  76:Generated_Source\PSoC5/TIA.c ****     /* Set default resistive feedback value */
+  77:Generated_Source\PSoC5/TIA.c ****     TIA_SetResFB(TIA_INIT_RES_FEEDBACK);
+  56              		.loc 1 77 0
+  57 0016 0020     		movs	r0, #0
+  58 0018 FFF7FEFF 		bl	TIA_SetResFB
+  78:Generated_Source\PSoC5/TIA.c ****       
+  79:Generated_Source\PSoC5/TIA.c ****     /* Set default capacitive feedback value */
+  80:Generated_Source\PSoC5/TIA.c ****     TIA_SetCapFB(TIA_INIT_CAP_FEEDBACK);
+  59              		.loc 1 80 0
+  60 001c 0320     		movs	r0, #3
+  61 001e FFF7FEFF 		bl	TIA_SetCapFB
+  81:Generated_Source\PSoC5/TIA.c **** 
+  82:Generated_Source\PSoC5/TIA.c ****     /* Set default power */
+  83:Generated_Source\PSoC5/TIA.c ****     TIA_SetPower(TIA_INIT_POWER);
+  62              		.loc 1 83 0
+  63 0022 0220     		movs	r0, #2
+  64 0024 FFF7FEFF 		bl	TIA_SetPower
+  84:Generated_Source\PSoC5/TIA.c **** }
+  65              		.loc 1 84 0
+  66 0028 00BF     		nop
+  67 002a 80BD     		pop	{r7, pc}
+  68              	.L3:
+  69              		.align	2
+  70              	.L2:
+  71 002c 0C580040 		.word	1073764364
+  72 0030 0D580040 		.word	1073764365
+  73 0034 0E580040 		.word	1073764366
+  74              		.cfi_endproc
+  75              	.LFE0:
+  76              		.size	TIA_Init, .-TIA_Init
+  77              		.section	.text.TIA_Enable,"ax",%progbits
+  78              		.align	2
+  79              		.global	TIA_Enable
+  80              		.thumb
+  81              		.thumb_func
+  82              		.type	TIA_Enable, %function
+  83              	TIA_Enable:
+  84              	.LFB1:
+  85:Generated_Source\PSoC5/TIA.c **** 
+  86:Generated_Source\PSoC5/TIA.c **** 
+  87:Generated_Source\PSoC5/TIA.c **** /*******************************************************************************   
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 4
+
+
+  88:Generated_Source\PSoC5/TIA.c **** * Function Name: TIA_Enable
+  89:Generated_Source\PSoC5/TIA.c **** ********************************************************************************
+  90:Generated_Source\PSoC5/TIA.c **** *
+  91:Generated_Source\PSoC5/TIA.c **** * Summary:
+  92:Generated_Source\PSoC5/TIA.c **** *  Enables the TIA block operation
+  93:Generated_Source\PSoC5/TIA.c **** *
+  94:Generated_Source\PSoC5/TIA.c **** * Parameters:
+  95:Generated_Source\PSoC5/TIA.c **** *  void
+  96:Generated_Source\PSoC5/TIA.c **** *
+  97:Generated_Source\PSoC5/TIA.c **** * Return:
+  98:Generated_Source\PSoC5/TIA.c **** *  void
+  99:Generated_Source\PSoC5/TIA.c **** *
+ 100:Generated_Source\PSoC5/TIA.c **** *******************************************************************************/
+ 101:Generated_Source\PSoC5/TIA.c **** void TIA_Enable(void) 
+ 102:Generated_Source\PSoC5/TIA.c **** {
+  85              		.loc 1 102 0
+  86              		.cfi_startproc
+  87              		@ args = 0, pretend = 0, frame = 0
+  88              		@ frame_needed = 1, uses_anonymous_args = 0
+  89              		@ link register save eliminated.
+  90 0000 80B4     		push	{r7}
+  91              		.cfi_def_cfa_offset 4
+  92              		.cfi_offset 7, -4
+  93 0002 00AF     		add	r7, sp, #0
+  94              		.cfi_def_cfa_register 7
+ 103:Generated_Source\PSoC5/TIA.c **** 	/* This is to restore the value of register CR1 and CR2 which is saved 
+ 104:Generated_Source\PSoC5/TIA.c ****       in prior to the modifications in stop() API */
+ 105:Generated_Source\PSoC5/TIA.c **** 	#if (CY_PSOC5A)
+ 106:Generated_Source\PSoC5/TIA.c ****         if(TIA_P5backup.enableState == 1u)
+ 107:Generated_Source\PSoC5/TIA.c ****         {
+ 108:Generated_Source\PSoC5/TIA.c **** 			TIA_CR1_REG = TIA_P5backup.scCR1Reg;
+ 109:Generated_Source\PSoC5/TIA.c ****             TIA_CR2_REG =TIA_P5backup.scCR2Reg;
+ 110:Generated_Source\PSoC5/TIA.c ****             TIA_P5backup.enableState = 0u;
+ 111:Generated_Source\PSoC5/TIA.c ****         }
+ 112:Generated_Source\PSoC5/TIA.c ****     #endif
+ 113:Generated_Source\PSoC5/TIA.c ****     /* Enable power to Amp in Active mode */
+ 114:Generated_Source\PSoC5/TIA.c ****     TIA_PM_ACT_CFG_REG |= TIA_ACT_PWR_EN;
+  95              		.loc 1 114 0
+  96 0004 0D4A     		ldr	r2, .L5
+  97 0006 0D4B     		ldr	r3, .L5
+  98 0008 1B78     		ldrb	r3, [r3]
+  99 000a DBB2     		uxtb	r3, r3
+ 100 000c 43F00803 		orr	r3, r3, #8
+ 101 0010 DBB2     		uxtb	r3, r3
+ 102 0012 1370     		strb	r3, [r2]
+ 115:Generated_Source\PSoC5/TIA.c **** 
+ 116:Generated_Source\PSoC5/TIA.c ****     /* Enable the power to Amp in Alternative active mode*/
+ 117:Generated_Source\PSoC5/TIA.c ****     TIA_PM_STBY_CFG_REG |= TIA_STBY_PWR_EN;
+ 103              		.loc 1 117 0
+ 104 0014 0A4A     		ldr	r2, .L5+4
+ 105 0016 0A4B     		ldr	r3, .L5+4
+ 106 0018 1B78     		ldrb	r3, [r3]
+ 107 001a DBB2     		uxtb	r3, r3
+ 108 001c 43F00803 		orr	r3, r3, #8
+ 109 0020 DBB2     		uxtb	r3, r3
+ 110 0022 1370     		strb	r3, [r2]
+ 118:Generated_Source\PSoC5/TIA.c ****     
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 5
+
+
+ 119:Generated_Source\PSoC5/TIA.c ****     TIA_PUMP_CR1_REG |= TIA_PUMP_CR1_SC_CLKSEL;
+ 111              		.loc 1 119 0
+ 112 0024 074A     		ldr	r2, .L5+8
+ 113 0026 074B     		ldr	r3, .L5+8
+ 114 0028 1B78     		ldrb	r3, [r3]
+ 115 002a DBB2     		uxtb	r3, r3
+ 116 002c 63F07F03 		orn	r3, r3, #127
+ 117 0030 DBB2     		uxtb	r3, r3
+ 118 0032 1370     		strb	r3, [r2]
+ 120:Generated_Source\PSoC5/TIA.c ****     
+ 121:Generated_Source\PSoC5/TIA.c ****     #if (!CY_PSOC5A)
+ 122:Generated_Source\PSoC5/TIA.c ****         #if (CYDEV_VARIABLE_VDDA == 1u)
+ 123:Generated_Source\PSoC5/TIA.c ****             if(CyScPumpEnabled == 1u)
+ 124:Generated_Source\PSoC5/TIA.c ****             {
+ 125:Generated_Source\PSoC5/TIA.c ****                 TIA_BSTCLK_REG &= (uint8)(~TIA_BST_CLK_INDEX_MASK);
+ 126:Generated_Source\PSoC5/TIA.c ****                 TIA_BSTCLK_REG |= TIA_BST_CLK_EN | CyScBoostClk__INDEX;
+ 127:Generated_Source\PSoC5/TIA.c ****                 TIA_SC_MISC_REG |= TIA_PUMP_FORCE;
+ 128:Generated_Source\PSoC5/TIA.c ****                 CyScBoostClk_Start();
+ 129:Generated_Source\PSoC5/TIA.c ****             }
+ 130:Generated_Source\PSoC5/TIA.c ****             else
+ 131:Generated_Source\PSoC5/TIA.c ****             {
+ 132:Generated_Source\PSoC5/TIA.c ****                 TIA_BSTCLK_REG &= (uint8)(~TIA_BST_CLK_EN);
+ 133:Generated_Source\PSoC5/TIA.c ****                 TIA_SC_MISC_REG &= (uint8)(~TIA_PUMP_FORCE);
+ 134:Generated_Source\PSoC5/TIA.c ****             }
+ 135:Generated_Source\PSoC5/TIA.c ****         #endif /* (CYDEV_VARIABLE_VDDA == 1u) */
+ 136:Generated_Source\PSoC5/TIA.c ****     #endif /* (!CY_PSOC5A) */
+ 137:Generated_Source\PSoC5/TIA.c **** }
+ 119              		.loc 1 137 0
+ 120 0034 00BF     		nop
+ 121 0036 BD46     		mov	sp, r7
+ 122              		.cfi_def_cfa_register 13
+ 123              		@ sp needed
+ 124 0038 80BC     		pop	{r7}
+ 125              		.cfi_restore 7
+ 126              		.cfi_def_cfa_offset 0
+ 127 003a 7047     		bx	lr
+ 128              	.L6:
+ 129              		.align	2
+ 130              	.L5:
+ 131 003c A9430040 		.word	1073759145
+ 132 0040 B9430040 		.word	1073759161
+ 133 0044 77580040 		.word	1073764471
+ 134              		.cfi_endproc
+ 135              	.LFE1:
+ 136              		.size	TIA_Enable, .-TIA_Enable
+ 137              		.section	.text.TIA_Start,"ax",%progbits
+ 138              		.align	2
+ 139              		.global	TIA_Start
+ 140              		.thumb
+ 141              		.thumb_func
+ 142              		.type	TIA_Start, %function
+ 143              	TIA_Start:
+ 144              	.LFB2:
+ 138:Generated_Source\PSoC5/TIA.c **** 
+ 139:Generated_Source\PSoC5/TIA.c **** 
+ 140:Generated_Source\PSoC5/TIA.c **** /*******************************************************************************
+ 141:Generated_Source\PSoC5/TIA.c **** * Function Name: TIA_Start
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 6
+
+
+ 142:Generated_Source\PSoC5/TIA.c **** ********************************************************************************
+ 143:Generated_Source\PSoC5/TIA.c **** *
+ 144:Generated_Source\PSoC5/TIA.c **** * Summary:
+ 145:Generated_Source\PSoC5/TIA.c **** *  The start function initializes the TIA with the default values and enables
+ 146:Generated_Source\PSoC5/TIA.c **** *  power to the SC block.
+ 147:Generated_Source\PSoC5/TIA.c **** *
+ 148:Generated_Source\PSoC5/TIA.c **** * Parameters:
+ 149:Generated_Source\PSoC5/TIA.c **** *  void
+ 150:Generated_Source\PSoC5/TIA.c **** *
+ 151:Generated_Source\PSoC5/TIA.c **** * Return:
+ 152:Generated_Source\PSoC5/TIA.c **** *  void 
+ 153:Generated_Source\PSoC5/TIA.c **** *
+ 154:Generated_Source\PSoC5/TIA.c **** * Global variables:
+ 155:Generated_Source\PSoC5/TIA.c **** *  TIA_initVar: Used to check the initial configuration, modified 
+ 156:Generated_Source\PSoC5/TIA.c **** *  when this function is called for the first time.
+ 157:Generated_Source\PSoC5/TIA.c **** *
+ 158:Generated_Source\PSoC5/TIA.c **** * Theory:
+ 159:Generated_Source\PSoC5/TIA.c **** *  Full initialization of the SC Block configuration registers is only perfomed
+ 160:Generated_Source\PSoC5/TIA.c **** *  the first time the routine executes - global variable  is used to
+ 161:Generated_Source\PSoC5/TIA.c **** *  TIA_initVar is used to indicate that the static configuration 
+ 162:Generated_Source\PSoC5/TIA.c **** *  has been completed.
+ 163:Generated_Source\PSoC5/TIA.c **** *
+ 164:Generated_Source\PSoC5/TIA.c **** *******************************************************************************/
+ 165:Generated_Source\PSoC5/TIA.c **** void TIA_Start(void) 
+ 166:Generated_Source\PSoC5/TIA.c **** {
+ 145              		.loc 1 166 0
+ 146              		.cfi_startproc
+ 147              		@ args = 0, pretend = 0, frame = 0
+ 148              		@ frame_needed = 1, uses_anonymous_args = 0
+ 149 0000 80B5     		push	{r7, lr}
+ 150              		.cfi_def_cfa_offset 8
+ 151              		.cfi_offset 7, -8
+ 152              		.cfi_offset 14, -4
+ 153 0002 00AF     		add	r7, sp, #0
+ 154              		.cfi_def_cfa_register 7
+ 167:Generated_Source\PSoC5/TIA.c ****     if(TIA_initVar == 0u)
+ 155              		.loc 1 167 0
+ 156 0004 064B     		ldr	r3, .L9
+ 157 0006 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 158 0008 002B     		cmp	r3, #0
+ 159 000a 04D1     		bne	.L8
+ 168:Generated_Source\PSoC5/TIA.c ****     {
+ 169:Generated_Source\PSoC5/TIA.c ****         TIA_initVar = 1u;  
+ 160              		.loc 1 169 0
+ 161 000c 044B     		ldr	r3, .L9
+ 162 000e 0122     		movs	r2, #1
+ 163 0010 1A70     		strb	r2, [r3]
+ 170:Generated_Source\PSoC5/TIA.c ****         TIA_Init();
+ 164              		.loc 1 170 0
+ 165 0012 FFF7FEFF 		bl	TIA_Init
+ 166              	.L8:
+ 171:Generated_Source\PSoC5/TIA.c ****     }
+ 172:Generated_Source\PSoC5/TIA.c **** 
+ 173:Generated_Source\PSoC5/TIA.c ****     TIA_Enable();
+ 167              		.loc 1 173 0
+ 168 0016 FFF7FEFF 		bl	TIA_Enable
+ 174:Generated_Source\PSoC5/TIA.c **** }
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 7
+
+
+ 169              		.loc 1 174 0
+ 170 001a 00BF     		nop
+ 171 001c 80BD     		pop	{r7, pc}
+ 172              	.L10:
+ 173 001e 00BF     		.align	2
+ 174              	.L9:
+ 175 0020 00000000 		.word	TIA_initVar
+ 176              		.cfi_endproc
+ 177              	.LFE2:
+ 178              		.size	TIA_Start, .-TIA_Start
+ 179              		.section	.text.TIA_Stop,"ax",%progbits
+ 180              		.align	2
+ 181              		.global	TIA_Stop
+ 182              		.thumb
+ 183              		.thumb_func
+ 184              		.type	TIA_Stop, %function
+ 185              	TIA_Stop:
+ 186              	.LFB3:
+ 175:Generated_Source\PSoC5/TIA.c **** 
+ 176:Generated_Source\PSoC5/TIA.c **** 
+ 177:Generated_Source\PSoC5/TIA.c **** /*******************************************************************************
+ 178:Generated_Source\PSoC5/TIA.c **** * Function Name: TIA_Stop
+ 179:Generated_Source\PSoC5/TIA.c **** ********************************************************************************
+ 180:Generated_Source\PSoC5/TIA.c **** *
+ 181:Generated_Source\PSoC5/TIA.c **** * Summary: 
+ 182:Generated_Source\PSoC5/TIA.c **** *  Disables power to SC block.
+ 183:Generated_Source\PSoC5/TIA.c **** *
+ 184:Generated_Source\PSoC5/TIA.c **** * Parameters:
+ 185:Generated_Source\PSoC5/TIA.c **** *  void
+ 186:Generated_Source\PSoC5/TIA.c **** *
+ 187:Generated_Source\PSoC5/TIA.c **** * Return:
+ 188:Generated_Source\PSoC5/TIA.c **** *  void
+ 189:Generated_Source\PSoC5/TIA.c **** *
+ 190:Generated_Source\PSoC5/TIA.c **** *******************************************************************************/
+ 191:Generated_Source\PSoC5/TIA.c **** void TIA_Stop(void) 
+ 192:Generated_Source\PSoC5/TIA.c **** {
+ 187              		.loc 1 192 0
+ 188              		.cfi_startproc
+ 189              		@ args = 0, pretend = 0, frame = 0
+ 190              		@ frame_needed = 1, uses_anonymous_args = 0
+ 191              		@ link register save eliminated.
+ 192 0000 80B4     		push	{r7}
+ 193              		.cfi_def_cfa_offset 4
+ 194              		.cfi_offset 7, -4
+ 195 0002 00AF     		add	r7, sp, #0
+ 196              		.cfi_def_cfa_register 7
+ 193:Generated_Source\PSoC5/TIA.c ****      /* Disble power to the Amp in Active mode template*/
+ 194:Generated_Source\PSoC5/TIA.c ****     TIA_PM_ACT_CFG_REG &= (uint8)(~TIA_ACT_PWR_EN);
+ 197              		.loc 1 194 0
+ 198 0004 094A     		ldr	r2, .L12
+ 199 0006 094B     		ldr	r3, .L12
+ 200 0008 1B78     		ldrb	r3, [r3]
+ 201 000a DBB2     		uxtb	r3, r3
+ 202 000c 23F00803 		bic	r3, r3, #8
+ 203 0010 DBB2     		uxtb	r3, r3
+ 204 0012 1370     		strb	r3, [r2]
+ 195:Generated_Source\PSoC5/TIA.c **** 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 8
+
+
+ 196:Generated_Source\PSoC5/TIA.c ****     /* Disble power to the Amp in Alternative active mode template*/
+ 197:Generated_Source\PSoC5/TIA.c ****     TIA_PM_STBY_CFG_REG &= (uint8)(~TIA_STBY_PWR_EN);
+ 205              		.loc 1 197 0
+ 206 0014 064A     		ldr	r2, .L12+4
+ 207 0016 064B     		ldr	r3, .L12+4
+ 208 0018 1B78     		ldrb	r3, [r3]
+ 209 001a DBB2     		uxtb	r3, r3
+ 210 001c 23F00803 		bic	r3, r3, #8
+ 211 0020 DBB2     		uxtb	r3, r3
+ 212 0022 1370     		strb	r3, [r2]
+ 198:Generated_Source\PSoC5/TIA.c ****     
+ 199:Generated_Source\PSoC5/TIA.c ****     #if (!CY_PSOC5A)
+ 200:Generated_Source\PSoC5/TIA.c ****         #if (CYDEV_VARIABLE_VDDA == 1u)
+ 201:Generated_Source\PSoC5/TIA.c ****             TIA_BSTCLK_REG &= (uint8)(~TIA_BST_CLK_EN);
+ 202:Generated_Source\PSoC5/TIA.c ****             /* Disable pumps only if there aren't any SC block in use */
+ 203:Generated_Source\PSoC5/TIA.c ****             if ((TIA_PM_ACT_CFG_REG & TIA_PM_ACT_CFG_MASK) == 0u)
+ 204:Generated_Source\PSoC5/TIA.c ****             {
+ 205:Generated_Source\PSoC5/TIA.c ****                 TIA_SC_MISC_REG &= (uint8)(~TIA_PUMP_FORCE);
+ 206:Generated_Source\PSoC5/TIA.c ****                 TIA_PUMP_CR1_REG &= (uint8)(~TIA_PUMP_CR1_SC_CLKSEL);
+ 207:Generated_Source\PSoC5/TIA.c ****                 CyScBoostClk_Stop();
+ 208:Generated_Source\PSoC5/TIA.c ****             }
+ 209:Generated_Source\PSoC5/TIA.c ****         #endif /* CYDEV_VARIABLE_VDDA == 1u */
+ 210:Generated_Source\PSoC5/TIA.c ****     #endif /* (CY_PSOC3 || CY_PSOC5LP) */
+ 211:Generated_Source\PSoC5/TIA.c ****         
+ 212:Generated_Source\PSoC5/TIA.c ****     /* This sets TIA in zero current mode and output routes are valid */
+ 213:Generated_Source\PSoC5/TIA.c ****     #if (CY_PSOC5A)
+ 214:Generated_Source\PSoC5/TIA.c ****         TIA_P5backup.scCR1Reg = TIA_CR1_REG;
+ 215:Generated_Source\PSoC5/TIA.c ****         TIA_P5backup.scCR2Reg = TIA_CR2_REG;
+ 216:Generated_Source\PSoC5/TIA.c ****         TIA_CR1_REG = 0x00u;
+ 217:Generated_Source\PSoC5/TIA.c ****         TIA_CR2_REG = 0x00u;
+ 218:Generated_Source\PSoC5/TIA.c ****         TIA_P5backup.enableState = 1u;
+ 219:Generated_Source\PSoC5/TIA.c ****     #endif /* (CY_PSOC5A) */
+ 220:Generated_Source\PSoC5/TIA.c **** }
+ 213              		.loc 1 220 0
+ 214 0024 00BF     		nop
+ 215 0026 BD46     		mov	sp, r7
+ 216              		.cfi_def_cfa_register 13
+ 217              		@ sp needed
+ 218 0028 80BC     		pop	{r7}
+ 219              		.cfi_restore 7
+ 220              		.cfi_def_cfa_offset 0
+ 221 002a 7047     		bx	lr
+ 222              	.L13:
+ 223              		.align	2
+ 224              	.L12:
+ 225 002c A9430040 		.word	1073759145
+ 226 0030 B9430040 		.word	1073759161
+ 227              		.cfi_endproc
+ 228              	.LFE3:
+ 229              		.size	TIA_Stop, .-TIA_Stop
+ 230              		.section	.text.TIA_SetPower,"ax",%progbits
+ 231              		.align	2
+ 232              		.global	TIA_SetPower
+ 233              		.thumb
+ 234              		.thumb_func
+ 235              		.type	TIA_SetPower, %function
+ 236              	TIA_SetPower:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 9
+
+
+ 237              	.LFB4:
+ 221:Generated_Source\PSoC5/TIA.c **** 
+ 222:Generated_Source\PSoC5/TIA.c **** 
+ 223:Generated_Source\PSoC5/TIA.c **** /*******************************************************************************
+ 224:Generated_Source\PSoC5/TIA.c **** * Function Name: TIA_SetPower
+ 225:Generated_Source\PSoC5/TIA.c **** ********************************************************************************
+ 226:Generated_Source\PSoC5/TIA.c **** *
+ 227:Generated_Source\PSoC5/TIA.c **** * Summary:
+ 228:Generated_Source\PSoC5/TIA.c **** *  Set the drive power of the TIA.
+ 229:Generated_Source\PSoC5/TIA.c **** *
+ 230:Generated_Source\PSoC5/TIA.c **** * Parameters:
+ 231:Generated_Source\PSoC5/TIA.c **** *  Power: Sets power level between (0) and (3) high power.
+ 232:Generated_Source\PSoC5/TIA.c **** *
+ 233:Generated_Source\PSoC5/TIA.c **** * Return:
+ 234:Generated_Source\PSoC5/TIA.c **** *  void
+ 235:Generated_Source\PSoC5/TIA.c **** *
+ 236:Generated_Source\PSoC5/TIA.c **** *******************************************************************************/
+ 237:Generated_Source\PSoC5/TIA.c **** void TIA_SetPower(uint8 power) 
+ 238:Generated_Source\PSoC5/TIA.c **** {
+ 238              		.loc 1 238 0
+ 239              		.cfi_startproc
+ 240              		@ args = 0, pretend = 0, frame = 16
+ 241              		@ frame_needed = 1, uses_anonymous_args = 0
+ 242              		@ link register save eliminated.
+ 243 0000 80B4     		push	{r7}
+ 244              		.cfi_def_cfa_offset 4
+ 245              		.cfi_offset 7, -4
+ 246 0002 85B0     		sub	sp, sp, #20
+ 247              		.cfi_def_cfa_offset 24
+ 248 0004 00AF     		add	r7, sp, #0
+ 249              		.cfi_def_cfa_register 7
+ 250 0006 0346     		mov	r3, r0
+ 251 0008 FB71     		strb	r3, [r7, #7]
+ 239:Generated_Source\PSoC5/TIA.c ****     uint8 tmpCR;
+ 240:Generated_Source\PSoC5/TIA.c **** 
+ 241:Generated_Source\PSoC5/TIA.c ****     /* Sets drive bits in SC Block Control Register 1:  SCxx_CR[1:0] */
+ 242:Generated_Source\PSoC5/TIA.c ****     tmpCR = TIA_CR1_REG & (uint8)(~TIA_DRIVE_MASK);
+ 252              		.loc 1 242 0
+ 253 000a 0A4B     		ldr	r3, .L15
+ 254 000c 1B78     		ldrb	r3, [r3]
+ 255 000e DBB2     		uxtb	r3, r3
+ 256 0010 23F00303 		bic	r3, r3, #3
+ 257 0014 FB73     		strb	r3, [r7, #15]
+ 243:Generated_Source\PSoC5/TIA.c ****     tmpCR |= (power & TIA_DRIVE_MASK);
+ 258              		.loc 1 243 0
+ 259 0016 FB79     		ldrb	r3, [r7, #7]
+ 260 0018 03F00303 		and	r3, r3, #3
+ 261 001c DAB2     		uxtb	r2, r3
+ 262 001e FB7B     		ldrb	r3, [r7, #15]
+ 263 0020 1343     		orrs	r3, r3, r2
+ 264 0022 FB73     		strb	r3, [r7, #15]
+ 244:Generated_Source\PSoC5/TIA.c ****     TIA_CR1_REG = tmpCR;  
+ 265              		.loc 1 244 0
+ 266 0024 034A     		ldr	r2, .L15
+ 267 0026 FB7B     		ldrb	r3, [r7, #15]
+ 268 0028 1370     		strb	r3, [r2]
+ 245:Generated_Source\PSoC5/TIA.c **** }
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 10
+
+
+ 269              		.loc 1 245 0
+ 270 002a 00BF     		nop
+ 271 002c 1437     		adds	r7, r7, #20
+ 272              		.cfi_def_cfa_offset 4
+ 273 002e BD46     		mov	sp, r7
+ 274              		.cfi_def_cfa_register 13
+ 275              		@ sp needed
+ 276 0030 80BC     		pop	{r7}
+ 277              		.cfi_restore 7
+ 278              		.cfi_def_cfa_offset 0
+ 279 0032 7047     		bx	lr
+ 280              	.L16:
+ 281              		.align	2
+ 282              	.L15:
+ 283 0034 0D580040 		.word	1073764365
+ 284              		.cfi_endproc
+ 285              	.LFE4:
+ 286              		.size	TIA_SetPower, .-TIA_SetPower
+ 287              		.section	.text.TIA_SetResFB,"ax",%progbits
+ 288              		.align	2
+ 289              		.global	TIA_SetResFB
+ 290              		.thumb
+ 291              		.thumb_func
+ 292              		.type	TIA_SetResFB, %function
+ 293              	TIA_SetResFB:
+ 294              	.LFB5:
+ 246:Generated_Source\PSoC5/TIA.c **** 
+ 247:Generated_Source\PSoC5/TIA.c **** 
+ 248:Generated_Source\PSoC5/TIA.c **** /*******************************************************************************
+ 249:Generated_Source\PSoC5/TIA.c **** * Function Name: TIA_SetResFB
+ 250:Generated_Source\PSoC5/TIA.c **** ********************************************************************************
+ 251:Generated_Source\PSoC5/TIA.c **** *
+ 252:Generated_Source\PSoC5/TIA.c **** * Summary:
+ 253:Generated_Source\PSoC5/TIA.c **** *  This function sets value for the resistive feedback of the amplifier.
+ 254:Generated_Source\PSoC5/TIA.c **** *
+ 255:Generated_Source\PSoC5/TIA.c **** * Parameters:
+ 256:Generated_Source\PSoC5/TIA.c **** *  res_feedback: specifies resistive feedback value (see header file for gain 
+ 257:Generated_Source\PSoC5/TIA.c **** *                values.)
+ 258:Generated_Source\PSoC5/TIA.c **** *
+ 259:Generated_Source\PSoC5/TIA.c **** * Return:
+ 260:Generated_Source\PSoC5/TIA.c **** *  void
+ 261:Generated_Source\PSoC5/TIA.c **** *
+ 262:Generated_Source\PSoC5/TIA.c **** *******************************************************************************/
+ 263:Generated_Source\PSoC5/TIA.c **** void TIA_SetResFB(uint8 res_feedback) 
+ 264:Generated_Source\PSoC5/TIA.c **** {
+ 295              		.loc 1 264 0
+ 296              		.cfi_startproc
+ 297              		@ args = 0, pretend = 0, frame = 8
+ 298              		@ frame_needed = 1, uses_anonymous_args = 0
+ 299              		@ link register save eliminated.
+ 300 0000 80B4     		push	{r7}
+ 301              		.cfi_def_cfa_offset 4
+ 302              		.cfi_offset 7, -4
+ 303 0002 83B0     		sub	sp, sp, #12
+ 304              		.cfi_def_cfa_offset 16
+ 305 0004 00AF     		add	r7, sp, #0
+ 306              		.cfi_def_cfa_register 7
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 11
+
+
+ 307 0006 0346     		mov	r3, r0
+ 308 0008 FB71     		strb	r3, [r7, #7]
+ 265:Generated_Source\PSoC5/TIA.c ****     /* Only set new gain if it is a valid gain */
+ 266:Generated_Source\PSoC5/TIA.c ****     if( res_feedback <= TIA_RES_FEEDBACK_MAX)
+ 309              		.loc 1 266 0
+ 310 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 311 000c 072B     		cmp	r3, #7
+ 312 000e 11D8     		bhi	.L19
+ 267:Generated_Source\PSoC5/TIA.c ****     {
+ 268:Generated_Source\PSoC5/TIA.c ****         /* Clear SCxx_CR2 rval bits - SCxx_CR2[6:4] */
+ 269:Generated_Source\PSoC5/TIA.c ****         TIA_CR2_REG &= (uint8)(~TIA_RVAL_MASK);
+ 313              		.loc 1 269 0
+ 314 0010 0B4A     		ldr	r2, .L20
+ 315 0012 0B4B     		ldr	r3, .L20
+ 316 0014 1B78     		ldrb	r3, [r3]
+ 317 0016 DBB2     		uxtb	r3, r3
+ 318 0018 23F07003 		bic	r3, r3, #112
+ 319 001c DBB2     		uxtb	r3, r3
+ 320 001e 1370     		strb	r3, [r2]
+ 270:Generated_Source\PSoC5/TIA.c **** 
+ 271:Generated_Source\PSoC5/TIA.c ****         /* Set resistive feedback value */
+ 272:Generated_Source\PSoC5/TIA.c ****         TIA_CR2_REG |= (uint8)(res_feedback << 4);
+ 321              		.loc 1 272 0
+ 322 0020 0749     		ldr	r1, .L20
+ 323 0022 074B     		ldr	r3, .L20
+ 324 0024 1B78     		ldrb	r3, [r3]
+ 325 0026 DAB2     		uxtb	r2, r3
+ 326 0028 FB79     		ldrb	r3, [r7, #7]
+ 327 002a 1B01     		lsls	r3, r3, #4
+ 328 002c DBB2     		uxtb	r3, r3
+ 329 002e 1343     		orrs	r3, r3, r2
+ 330 0030 DBB2     		uxtb	r3, r3
+ 331 0032 0B70     		strb	r3, [r1]
+ 332              	.L19:
+ 273:Generated_Source\PSoC5/TIA.c ****     }
+ 274:Generated_Source\PSoC5/TIA.c **** }
+ 333              		.loc 1 274 0
+ 334 0034 00BF     		nop
+ 335 0036 0C37     		adds	r7, r7, #12
+ 336              		.cfi_def_cfa_offset 4
+ 337 0038 BD46     		mov	sp, r7
+ 338              		.cfi_def_cfa_register 13
+ 339              		@ sp needed
+ 340 003a 80BC     		pop	{r7}
+ 341              		.cfi_restore 7
+ 342              		.cfi_def_cfa_offset 0
+ 343 003c 7047     		bx	lr
+ 344              	.L21:
+ 345 003e 00BF     		.align	2
+ 346              	.L20:
+ 347 0040 0E580040 		.word	1073764366
+ 348              		.cfi_endproc
+ 349              	.LFE5:
+ 350              		.size	TIA_SetResFB, .-TIA_SetResFB
+ 351              		.section	.text.TIA_SetCapFB,"ax",%progbits
+ 352              		.align	2
+ 353              		.global	TIA_SetCapFB
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 12
+
+
+ 354              		.thumb
+ 355              		.thumb_func
+ 356              		.type	TIA_SetCapFB, %function
+ 357              	TIA_SetCapFB:
+ 358              	.LFB6:
+ 275:Generated_Source\PSoC5/TIA.c **** 
+ 276:Generated_Source\PSoC5/TIA.c **** 
+ 277:Generated_Source\PSoC5/TIA.c **** /*******************************************************************************
+ 278:Generated_Source\PSoC5/TIA.c **** * Function Name: TIA_SetCapFB
+ 279:Generated_Source\PSoC5/TIA.c **** ********************************************************************************
+ 280:Generated_Source\PSoC5/TIA.c **** *
+ 281:Generated_Source\PSoC5/TIA.c **** * Summary:
+ 282:Generated_Source\PSoC5/TIA.c **** *  This function sets the value for the capacitive feedback of the amplifier.
+ 283:Generated_Source\PSoC5/TIA.c **** *
+ 284:Generated_Source\PSoC5/TIA.c **** * Parameters:
+ 285:Generated_Source\PSoC5/TIA.c **** *  cap_feedback: specifies capacitive feedback value (see header file for gain 
+ 286:Generated_Source\PSoC5/TIA.c **** *                values.)
+ 287:Generated_Source\PSoC5/TIA.c **** *
+ 288:Generated_Source\PSoC5/TIA.c **** * Return:
+ 289:Generated_Source\PSoC5/TIA.c **** *  void
+ 290:Generated_Source\PSoC5/TIA.c **** *
+ 291:Generated_Source\PSoC5/TIA.c **** *******************************************************************************/
+ 292:Generated_Source\PSoC5/TIA.c **** void TIA_SetCapFB(uint8 cap_feedback) 
+ 293:Generated_Source\PSoC5/TIA.c **** {
+ 359              		.loc 1 293 0
+ 360              		.cfi_startproc
+ 361              		@ args = 0, pretend = 0, frame = 8
+ 362              		@ frame_needed = 1, uses_anonymous_args = 0
+ 363              		@ link register save eliminated.
+ 364 0000 80B4     		push	{r7}
+ 365              		.cfi_def_cfa_offset 4
+ 366              		.cfi_offset 7, -4
+ 367 0002 83B0     		sub	sp, sp, #12
+ 368              		.cfi_def_cfa_offset 16
+ 369 0004 00AF     		add	r7, sp, #0
+ 370              		.cfi_def_cfa_register 7
+ 371 0006 0346     		mov	r3, r0
+ 372 0008 FB71     		strb	r3, [r7, #7]
+ 294:Generated_Source\PSoC5/TIA.c ****     /* Only set new gain if it is a valid gain */
+ 295:Generated_Source\PSoC5/TIA.c ****     if( cap_feedback <= TIA_CAP_FEEDBACK_MAX)
+ 373              		.loc 1 295 0
+ 374 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 375 000c 032B     		cmp	r3, #3
+ 376 000e 11D8     		bhi	.L24
+ 296:Generated_Source\PSoC5/TIA.c ****     {
+ 297:Generated_Source\PSoC5/TIA.c ****         /* Clear SCxx_CR2 redc bits -  - CR2[3:2] */
+ 298:Generated_Source\PSoC5/TIA.c ****         TIA_CR2_REG &= (uint8)(~TIA_REDC_MASK);
+ 377              		.loc 1 298 0
+ 378 0010 0B4A     		ldr	r2, .L25
+ 379 0012 0B4B     		ldr	r3, .L25
+ 380 0014 1B78     		ldrb	r3, [r3]
+ 381 0016 DBB2     		uxtb	r3, r3
+ 382 0018 23F00C03 		bic	r3, r3, #12
+ 383 001c DBB2     		uxtb	r3, r3
+ 384 001e 1370     		strb	r3, [r2]
+ 299:Generated_Source\PSoC5/TIA.c **** 
+ 300:Generated_Source\PSoC5/TIA.c ****         /* Set redc capacitive feedback value */
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 13
+
+
+ 301:Generated_Source\PSoC5/TIA.c ****         TIA_CR2_REG |= (uint8)(cap_feedback << 2);
+ 385              		.loc 1 301 0
+ 386 0020 0749     		ldr	r1, .L25
+ 387 0022 074B     		ldr	r3, .L25
+ 388 0024 1B78     		ldrb	r3, [r3]
+ 389 0026 DAB2     		uxtb	r2, r3
+ 390 0028 FB79     		ldrb	r3, [r7, #7]
+ 391 002a 9B00     		lsls	r3, r3, #2
+ 392 002c DBB2     		uxtb	r3, r3
+ 393 002e 1343     		orrs	r3, r3, r2
+ 394 0030 DBB2     		uxtb	r3, r3
+ 395 0032 0B70     		strb	r3, [r1]
+ 396              	.L24:
+ 302:Generated_Source\PSoC5/TIA.c ****     }
+ 303:Generated_Source\PSoC5/TIA.c **** }
+ 397              		.loc 1 303 0
+ 398 0034 00BF     		nop
+ 399 0036 0C37     		adds	r7, r7, #12
+ 400              		.cfi_def_cfa_offset 4
+ 401 0038 BD46     		mov	sp, r7
+ 402              		.cfi_def_cfa_register 13
+ 403              		@ sp needed
+ 404 003a 80BC     		pop	{r7}
+ 405              		.cfi_restore 7
+ 406              		.cfi_def_cfa_offset 0
+ 407 003c 7047     		bx	lr
+ 408              	.L26:
+ 409 003e 00BF     		.align	2
+ 410              	.L25:
+ 411 0040 0E580040 		.word	1073764366
+ 412              		.cfi_endproc
+ 413              	.LFE6:
+ 414              		.size	TIA_SetCapFB, .-TIA_SetCapFB
+ 415              		.text
+ 416              	.Letext0:
+ 417              		.file 2 "Generated_Source\\PSoC5\\cytypes.h"
+ 418              		.section	.debug_info,"",%progbits
+ 419              	.Ldebug_info0:
+ 420 0000 74010000 		.4byte	0x174
+ 421 0004 0400     		.2byte	0x4
+ 422 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 423 000a 04       		.byte	0x4
+ 424 000b 01       		.uleb128 0x1
+ 425 000c E3000000 		.4byte	.LASF25
+ 426 0010 0C       		.byte	0xc
+ 427 0011 1D000000 		.4byte	.LASF26
+ 428 0015 84000000 		.4byte	.LASF27
+ 429 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 430 001d 00000000 		.4byte	0
+ 431 0021 00000000 		.4byte	.Ldebug_line0
+ 432 0025 02       		.uleb128 0x2
+ 433 0026 01       		.byte	0x1
+ 434 0027 06       		.byte	0x6
+ 435 0028 14020000 		.4byte	.LASF0
+ 436 002c 02       		.uleb128 0x2
+ 437 002d 01       		.byte	0x1
+ 438 002e 08       		.byte	0x8
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 14
+
+
+ 439 002f 71000000 		.4byte	.LASF1
+ 440 0033 02       		.uleb128 0x2
+ 441 0034 02       		.byte	0x2
+ 442 0035 05       		.byte	0x5
+ 443 0036 DA010000 		.4byte	.LASF2
+ 444 003a 02       		.uleb128 0x2
+ 445 003b 02       		.byte	0x2
+ 446 003c 07       		.byte	0x7
+ 447 003d 3A000000 		.4byte	.LASF3
+ 448 0041 02       		.uleb128 0x2
+ 449 0042 04       		.byte	0x4
+ 450 0043 05       		.byte	0x5
+ 451 0044 0B020000 		.4byte	.LASF4
+ 452 0048 02       		.uleb128 0x2
+ 453 0049 04       		.byte	0x4
+ 454 004a 07       		.byte	0x7
+ 455 004b C4000000 		.4byte	.LASF5
+ 456 004f 02       		.uleb128 0x2
+ 457 0050 08       		.byte	0x8
+ 458 0051 05       		.byte	0x5
+ 459 0052 C7010000 		.4byte	.LASF6
+ 460 0056 02       		.uleb128 0x2
+ 461 0057 08       		.byte	0x8
+ 462 0058 07       		.byte	0x7
+ 463 0059 92010000 		.4byte	.LASF7
+ 464 005d 03       		.uleb128 0x3
+ 465 005e 04       		.byte	0x4
+ 466 005f 05       		.byte	0x5
+ 467 0060 696E7400 		.ascii	"int\000"
+ 468 0064 02       		.uleb128 0x2
+ 469 0065 04       		.byte	0x4
+ 470 0066 07       		.byte	0x7
+ 471 0067 7C010000 		.4byte	.LASF8
+ 472 006b 04       		.uleb128 0x4
+ 473 006c D6000000 		.4byte	.LASF12
+ 474 0070 02       		.byte	0x2
+ 475 0071 E901     		.2byte	0x1e9
+ 476 0073 2C000000 		.4byte	0x2c
+ 477 0077 02       		.uleb128 0x2
+ 478 0078 04       		.byte	0x4
+ 479 0079 04       		.byte	0x4
+ 480 007a 6B000000 		.4byte	.LASF9
+ 481 007e 02       		.uleb128 0x2
+ 482 007f 08       		.byte	0x8
+ 483 0080 04       		.byte	0x4
+ 484 0081 DC000000 		.4byte	.LASF10
+ 485 0085 02       		.uleb128 0x2
+ 486 0086 01       		.byte	0x1
+ 487 0087 08       		.byte	0x8
+ 488 0088 D5010000 		.4byte	.LASF11
+ 489 008c 04       		.uleb128 0x4
+ 490 008d 7F000000 		.4byte	.LASF13
+ 491 0091 02       		.byte	0x2
+ 492 0092 9302     		.2byte	0x293
+ 493 0094 98000000 		.4byte	0x98
+ 494 0098 05       		.uleb128 0x5
+ 495 0099 6B000000 		.4byte	0x6b
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 15
+
+
+ 496 009d 02       		.uleb128 0x2
+ 497 009e 04       		.byte	0x4
+ 498 009f 07       		.byte	0x7
+ 499 00a0 BE010000 		.4byte	.LASF14
+ 500 00a4 06       		.uleb128 0x6
+ 501 00a5 89010000 		.4byte	.LASF15
+ 502 00a9 01       		.byte	0x1
+ 503 00aa 31       		.byte	0x31
+ 504 00ab 00000000 		.4byte	.LFB0
+ 505 00af 38000000 		.4byte	.LFE0-.LFB0
+ 506 00b3 01       		.uleb128 0x1
+ 507 00b4 9C       		.byte	0x9c
+ 508 00b5 07       		.uleb128 0x7
+ 509 00b6 60000000 		.4byte	.LASF16
+ 510 00ba 01       		.byte	0x1
+ 511 00bb 65       		.byte	0x65
+ 512 00bc 00000000 		.4byte	.LFB1
+ 513 00c0 48000000 		.4byte	.LFE1-.LFB1
+ 514 00c4 01       		.uleb128 0x1
+ 515 00c5 9C       		.byte	0x9c
+ 516 00c6 06       		.uleb128 0x6
+ 517 00c7 13000000 		.4byte	.LASF17
+ 518 00cb 01       		.byte	0x1
+ 519 00cc A5       		.byte	0xa5
+ 520 00cd 00000000 		.4byte	.LFB2
+ 521 00d1 24000000 		.4byte	.LFE2-.LFB2
+ 522 00d5 01       		.uleb128 0x1
+ 523 00d6 9C       		.byte	0x9c
+ 524 00d7 07       		.uleb128 0x7
+ 525 00d8 A9010000 		.4byte	.LASF18
+ 526 00dc 01       		.byte	0x1
+ 527 00dd BF       		.byte	0xbf
+ 528 00de 00000000 		.4byte	.LFB3
+ 529 00e2 34000000 		.4byte	.LFE3-.LFB3
+ 530 00e6 01       		.uleb128 0x1
+ 531 00e7 9C       		.byte	0x9c
+ 532 00e8 08       		.uleb128 0x8
+ 533 00e9 00000000 		.4byte	.LASF19
+ 534 00ed 01       		.byte	0x1
+ 535 00ee ED       		.byte	0xed
+ 536 00ef 00000000 		.4byte	.LFB4
+ 537 00f3 38000000 		.4byte	.LFE4-.LFB4
+ 538 00f7 01       		.uleb128 0x1
+ 539 00f8 9C       		.byte	0x9c
+ 540 00f9 1A010000 		.4byte	0x11a
+ 541 00fd 09       		.uleb128 0x9
+ 542 00fe 4D000000 		.4byte	.LASF21
+ 543 0102 01       		.byte	0x1
+ 544 0103 ED       		.byte	0xed
+ 545 0104 6B000000 		.4byte	0x6b
+ 546 0108 02       		.uleb128 0x2
+ 547 0109 91       		.byte	0x91
+ 548 010a 6F       		.sleb128 -17
+ 549 010b 0A       		.uleb128 0xa
+ 550 010c 0D000000 		.4byte	.LASF28
+ 551 0110 01       		.byte	0x1
+ 552 0111 EF       		.byte	0xef
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 16
+
+
+ 553 0112 6B000000 		.4byte	0x6b
+ 554 0116 02       		.uleb128 0x2
+ 555 0117 91       		.byte	0x91
+ 556 0118 77       		.sleb128 -9
+ 557 0119 00       		.byte	0
+ 558 011a 0B       		.uleb128 0xb
+ 559 011b 53000000 		.4byte	.LASF20
+ 560 011f 01       		.byte	0x1
+ 561 0120 0701     		.2byte	0x107
+ 562 0122 00000000 		.4byte	.LFB5
+ 563 0126 44000000 		.4byte	.LFE5-.LFB5
+ 564 012a 01       		.uleb128 0x1
+ 565 012b 9C       		.byte	0x9c
+ 566 012c 40010000 		.4byte	0x140
+ 567 0130 0C       		.uleb128 0xc
+ 568 0131 F1010000 		.4byte	.LASF22
+ 569 0135 01       		.byte	0x1
+ 570 0136 0701     		.2byte	0x107
+ 571 0138 6B000000 		.4byte	0x6b
+ 572 013c 02       		.uleb128 0x2
+ 573 013d 91       		.byte	0x91
+ 574 013e 77       		.sleb128 -9
+ 575 013f 00       		.byte	0
+ 576 0140 0B       		.uleb128 0xb
+ 577 0141 E4010000 		.4byte	.LASF23
+ 578 0145 01       		.byte	0x1
+ 579 0146 2401     		.2byte	0x124
+ 580 0148 00000000 		.4byte	.LFB6
+ 581 014c 44000000 		.4byte	.LFE6-.LFB6
+ 582 0150 01       		.uleb128 0x1
+ 583 0151 9C       		.byte	0x9c
+ 584 0152 66010000 		.4byte	0x166
+ 585 0156 0C       		.uleb128 0xc
+ 586 0157 FE010000 		.4byte	.LASF24
+ 587 015b 01       		.byte	0x1
+ 588 015c 2401     		.2byte	0x124
+ 589 015e 6B000000 		.4byte	0x6b
+ 590 0162 02       		.uleb128 0x2
+ 591 0163 91       		.byte	0x91
+ 592 0164 77       		.sleb128 -9
+ 593 0165 00       		.byte	0
+ 594 0166 0D       		.uleb128 0xd
+ 595 0167 B2010000 		.4byte	.LASF29
+ 596 016b 01       		.byte	0x1
+ 597 016c 1A       		.byte	0x1a
+ 598 016d 6B000000 		.4byte	0x6b
+ 599 0171 05       		.uleb128 0x5
+ 600 0172 03       		.byte	0x3
+ 601 0173 00000000 		.4byte	TIA_initVar
+ 602 0177 00       		.byte	0
+ 603              		.section	.debug_abbrev,"",%progbits
+ 604              	.Ldebug_abbrev0:
+ 605 0000 01       		.uleb128 0x1
+ 606 0001 11       		.uleb128 0x11
+ 607 0002 01       		.byte	0x1
+ 608 0003 25       		.uleb128 0x25
+ 609 0004 0E       		.uleb128 0xe
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 17
+
+
+ 610 0005 13       		.uleb128 0x13
+ 611 0006 0B       		.uleb128 0xb
+ 612 0007 03       		.uleb128 0x3
+ 613 0008 0E       		.uleb128 0xe
+ 614 0009 1B       		.uleb128 0x1b
+ 615 000a 0E       		.uleb128 0xe
+ 616 000b 55       		.uleb128 0x55
+ 617 000c 17       		.uleb128 0x17
+ 618 000d 11       		.uleb128 0x11
+ 619 000e 01       		.uleb128 0x1
+ 620 000f 10       		.uleb128 0x10
+ 621 0010 17       		.uleb128 0x17
+ 622 0011 00       		.byte	0
+ 623 0012 00       		.byte	0
+ 624 0013 02       		.uleb128 0x2
+ 625 0014 24       		.uleb128 0x24
+ 626 0015 00       		.byte	0
+ 627 0016 0B       		.uleb128 0xb
+ 628 0017 0B       		.uleb128 0xb
+ 629 0018 3E       		.uleb128 0x3e
+ 630 0019 0B       		.uleb128 0xb
+ 631 001a 03       		.uleb128 0x3
+ 632 001b 0E       		.uleb128 0xe
+ 633 001c 00       		.byte	0
+ 634 001d 00       		.byte	0
+ 635 001e 03       		.uleb128 0x3
+ 636 001f 24       		.uleb128 0x24
+ 637 0020 00       		.byte	0
+ 638 0021 0B       		.uleb128 0xb
+ 639 0022 0B       		.uleb128 0xb
+ 640 0023 3E       		.uleb128 0x3e
+ 641 0024 0B       		.uleb128 0xb
+ 642 0025 03       		.uleb128 0x3
+ 643 0026 08       		.uleb128 0x8
+ 644 0027 00       		.byte	0
+ 645 0028 00       		.byte	0
+ 646 0029 04       		.uleb128 0x4
+ 647 002a 16       		.uleb128 0x16
+ 648 002b 00       		.byte	0
+ 649 002c 03       		.uleb128 0x3
+ 650 002d 0E       		.uleb128 0xe
+ 651 002e 3A       		.uleb128 0x3a
+ 652 002f 0B       		.uleb128 0xb
+ 653 0030 3B       		.uleb128 0x3b
+ 654 0031 05       		.uleb128 0x5
+ 655 0032 49       		.uleb128 0x49
+ 656 0033 13       		.uleb128 0x13
+ 657 0034 00       		.byte	0
+ 658 0035 00       		.byte	0
+ 659 0036 05       		.uleb128 0x5
+ 660 0037 35       		.uleb128 0x35
+ 661 0038 00       		.byte	0
+ 662 0039 49       		.uleb128 0x49
+ 663 003a 13       		.uleb128 0x13
+ 664 003b 00       		.byte	0
+ 665 003c 00       		.byte	0
+ 666 003d 06       		.uleb128 0x6
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 18
+
+
+ 667 003e 2E       		.uleb128 0x2e
+ 668 003f 00       		.byte	0
+ 669 0040 3F       		.uleb128 0x3f
+ 670 0041 19       		.uleb128 0x19
+ 671 0042 03       		.uleb128 0x3
+ 672 0043 0E       		.uleb128 0xe
+ 673 0044 3A       		.uleb128 0x3a
+ 674 0045 0B       		.uleb128 0xb
+ 675 0046 3B       		.uleb128 0x3b
+ 676 0047 0B       		.uleb128 0xb
+ 677 0048 27       		.uleb128 0x27
+ 678 0049 19       		.uleb128 0x19
+ 679 004a 11       		.uleb128 0x11
+ 680 004b 01       		.uleb128 0x1
+ 681 004c 12       		.uleb128 0x12
+ 682 004d 06       		.uleb128 0x6
+ 683 004e 40       		.uleb128 0x40
+ 684 004f 18       		.uleb128 0x18
+ 685 0050 9642     		.uleb128 0x2116
+ 686 0052 19       		.uleb128 0x19
+ 687 0053 00       		.byte	0
+ 688 0054 00       		.byte	0
+ 689 0055 07       		.uleb128 0x7
+ 690 0056 2E       		.uleb128 0x2e
+ 691 0057 00       		.byte	0
+ 692 0058 3F       		.uleb128 0x3f
+ 693 0059 19       		.uleb128 0x19
+ 694 005a 03       		.uleb128 0x3
+ 695 005b 0E       		.uleb128 0xe
+ 696 005c 3A       		.uleb128 0x3a
+ 697 005d 0B       		.uleb128 0xb
+ 698 005e 3B       		.uleb128 0x3b
+ 699 005f 0B       		.uleb128 0xb
+ 700 0060 27       		.uleb128 0x27
+ 701 0061 19       		.uleb128 0x19
+ 702 0062 11       		.uleb128 0x11
+ 703 0063 01       		.uleb128 0x1
+ 704 0064 12       		.uleb128 0x12
+ 705 0065 06       		.uleb128 0x6
+ 706 0066 40       		.uleb128 0x40
+ 707 0067 18       		.uleb128 0x18
+ 708 0068 9742     		.uleb128 0x2117
+ 709 006a 19       		.uleb128 0x19
+ 710 006b 00       		.byte	0
+ 711 006c 00       		.byte	0
+ 712 006d 08       		.uleb128 0x8
+ 713 006e 2E       		.uleb128 0x2e
+ 714 006f 01       		.byte	0x1
+ 715 0070 3F       		.uleb128 0x3f
+ 716 0071 19       		.uleb128 0x19
+ 717 0072 03       		.uleb128 0x3
+ 718 0073 0E       		.uleb128 0xe
+ 719 0074 3A       		.uleb128 0x3a
+ 720 0075 0B       		.uleb128 0xb
+ 721 0076 3B       		.uleb128 0x3b
+ 722 0077 0B       		.uleb128 0xb
+ 723 0078 27       		.uleb128 0x27
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 19
+
+
+ 724 0079 19       		.uleb128 0x19
+ 725 007a 11       		.uleb128 0x11
+ 726 007b 01       		.uleb128 0x1
+ 727 007c 12       		.uleb128 0x12
+ 728 007d 06       		.uleb128 0x6
+ 729 007e 40       		.uleb128 0x40
+ 730 007f 18       		.uleb128 0x18
+ 731 0080 9742     		.uleb128 0x2117
+ 732 0082 19       		.uleb128 0x19
+ 733 0083 01       		.uleb128 0x1
+ 734 0084 13       		.uleb128 0x13
+ 735 0085 00       		.byte	0
+ 736 0086 00       		.byte	0
+ 737 0087 09       		.uleb128 0x9
+ 738 0088 05       		.uleb128 0x5
+ 739 0089 00       		.byte	0
+ 740 008a 03       		.uleb128 0x3
+ 741 008b 0E       		.uleb128 0xe
+ 742 008c 3A       		.uleb128 0x3a
+ 743 008d 0B       		.uleb128 0xb
+ 744 008e 3B       		.uleb128 0x3b
+ 745 008f 0B       		.uleb128 0xb
+ 746 0090 49       		.uleb128 0x49
+ 747 0091 13       		.uleb128 0x13
+ 748 0092 02       		.uleb128 0x2
+ 749 0093 18       		.uleb128 0x18
+ 750 0094 00       		.byte	0
+ 751 0095 00       		.byte	0
+ 752 0096 0A       		.uleb128 0xa
+ 753 0097 34       		.uleb128 0x34
+ 754 0098 00       		.byte	0
+ 755 0099 03       		.uleb128 0x3
+ 756 009a 0E       		.uleb128 0xe
+ 757 009b 3A       		.uleb128 0x3a
+ 758 009c 0B       		.uleb128 0xb
+ 759 009d 3B       		.uleb128 0x3b
+ 760 009e 0B       		.uleb128 0xb
+ 761 009f 49       		.uleb128 0x49
+ 762 00a0 13       		.uleb128 0x13
+ 763 00a1 02       		.uleb128 0x2
+ 764 00a2 18       		.uleb128 0x18
+ 765 00a3 00       		.byte	0
+ 766 00a4 00       		.byte	0
+ 767 00a5 0B       		.uleb128 0xb
+ 768 00a6 2E       		.uleb128 0x2e
+ 769 00a7 01       		.byte	0x1
+ 770 00a8 3F       		.uleb128 0x3f
+ 771 00a9 19       		.uleb128 0x19
+ 772 00aa 03       		.uleb128 0x3
+ 773 00ab 0E       		.uleb128 0xe
+ 774 00ac 3A       		.uleb128 0x3a
+ 775 00ad 0B       		.uleb128 0xb
+ 776 00ae 3B       		.uleb128 0x3b
+ 777 00af 05       		.uleb128 0x5
+ 778 00b0 27       		.uleb128 0x27
+ 779 00b1 19       		.uleb128 0x19
+ 780 00b2 11       		.uleb128 0x11
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 20
+
+
+ 781 00b3 01       		.uleb128 0x1
+ 782 00b4 12       		.uleb128 0x12
+ 783 00b5 06       		.uleb128 0x6
+ 784 00b6 40       		.uleb128 0x40
+ 785 00b7 18       		.uleb128 0x18
+ 786 00b8 9742     		.uleb128 0x2117
+ 787 00ba 19       		.uleb128 0x19
+ 788 00bb 01       		.uleb128 0x1
+ 789 00bc 13       		.uleb128 0x13
+ 790 00bd 00       		.byte	0
+ 791 00be 00       		.byte	0
+ 792 00bf 0C       		.uleb128 0xc
+ 793 00c0 05       		.uleb128 0x5
+ 794 00c1 00       		.byte	0
+ 795 00c2 03       		.uleb128 0x3
+ 796 00c3 0E       		.uleb128 0xe
+ 797 00c4 3A       		.uleb128 0x3a
+ 798 00c5 0B       		.uleb128 0xb
+ 799 00c6 3B       		.uleb128 0x3b
+ 800 00c7 05       		.uleb128 0x5
+ 801 00c8 49       		.uleb128 0x49
+ 802 00c9 13       		.uleb128 0x13
+ 803 00ca 02       		.uleb128 0x2
+ 804 00cb 18       		.uleb128 0x18
+ 805 00cc 00       		.byte	0
+ 806 00cd 00       		.byte	0
+ 807 00ce 0D       		.uleb128 0xd
+ 808 00cf 34       		.uleb128 0x34
+ 809 00d0 00       		.byte	0
+ 810 00d1 03       		.uleb128 0x3
+ 811 00d2 0E       		.uleb128 0xe
+ 812 00d3 3A       		.uleb128 0x3a
+ 813 00d4 0B       		.uleb128 0xb
+ 814 00d5 3B       		.uleb128 0x3b
+ 815 00d6 0B       		.uleb128 0xb
+ 816 00d7 49       		.uleb128 0x49
+ 817 00d8 13       		.uleb128 0x13
+ 818 00d9 3F       		.uleb128 0x3f
+ 819 00da 19       		.uleb128 0x19
+ 820 00db 02       		.uleb128 0x2
+ 821 00dc 18       		.uleb128 0x18
+ 822 00dd 00       		.byte	0
+ 823 00de 00       		.byte	0
+ 824 00df 00       		.byte	0
+ 825              		.section	.debug_aranges,"",%progbits
+ 826 0000 4C000000 		.4byte	0x4c
+ 827 0004 0200     		.2byte	0x2
+ 828 0006 00000000 		.4byte	.Ldebug_info0
+ 829 000a 04       		.byte	0x4
+ 830 000b 00       		.byte	0
+ 831 000c 0000     		.2byte	0
+ 832 000e 0000     		.2byte	0
+ 833 0010 00000000 		.4byte	.LFB0
+ 834 0014 38000000 		.4byte	.LFE0-.LFB0
+ 835 0018 00000000 		.4byte	.LFB1
+ 836 001c 48000000 		.4byte	.LFE1-.LFB1
+ 837 0020 00000000 		.4byte	.LFB2
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 21
+
+
+ 838 0024 24000000 		.4byte	.LFE2-.LFB2
+ 839 0028 00000000 		.4byte	.LFB3
+ 840 002c 34000000 		.4byte	.LFE3-.LFB3
+ 841 0030 00000000 		.4byte	.LFB4
+ 842 0034 38000000 		.4byte	.LFE4-.LFB4
+ 843 0038 00000000 		.4byte	.LFB5
+ 844 003c 44000000 		.4byte	.LFE5-.LFB5
+ 845 0040 00000000 		.4byte	.LFB6
+ 846 0044 44000000 		.4byte	.LFE6-.LFB6
+ 847 0048 00000000 		.4byte	0
+ 848 004c 00000000 		.4byte	0
+ 849              		.section	.debug_ranges,"",%progbits
+ 850              	.Ldebug_ranges0:
+ 851 0000 00000000 		.4byte	.LFB0
+ 852 0004 38000000 		.4byte	.LFE0
+ 853 0008 00000000 		.4byte	.LFB1
+ 854 000c 48000000 		.4byte	.LFE1
+ 855 0010 00000000 		.4byte	.LFB2
+ 856 0014 24000000 		.4byte	.LFE2
+ 857 0018 00000000 		.4byte	.LFB3
+ 858 001c 34000000 		.4byte	.LFE3
+ 859 0020 00000000 		.4byte	.LFB4
+ 860 0024 38000000 		.4byte	.LFE4
+ 861 0028 00000000 		.4byte	.LFB5
+ 862 002c 44000000 		.4byte	.LFE5
+ 863 0030 00000000 		.4byte	.LFB6
+ 864 0034 44000000 		.4byte	.LFE6
+ 865 0038 00000000 		.4byte	0
+ 866 003c 00000000 		.4byte	0
+ 867              		.section	.debug_line,"",%progbits
+ 868              	.Ldebug_line0:
+ 869 0000 DC000000 		.section	.debug_str,"MS",%progbits,1
+ 869      02004000 
+ 869      00000201 
+ 869      FB0E0D00 
+ 869      01010101 
+ 870              	.LASF19:
+ 871 0000 5449415F 		.ascii	"TIA_SetPower\000"
+ 871      53657450 
+ 871      6F776572 
+ 871      00
+ 872              	.LASF28:
+ 873 000d 746D7043 		.ascii	"tmpCR\000"
+ 873      5200
+ 874              	.LASF17:
+ 875 0013 5449415F 		.ascii	"TIA_Start\000"
+ 875      53746172 
+ 875      7400
+ 876              	.LASF26:
+ 877 001d 47656E65 		.ascii	"Generated_Source\\PSoC5\\TIA.c\000"
+ 877      72617465 
+ 877      645F536F 
+ 877      75726365 
+ 877      5C50536F 
+ 878              	.LASF3:
+ 879 003a 73686F72 		.ascii	"short unsigned int\000"
+ 879      7420756E 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 22
+
+
+ 879      7369676E 
+ 879      65642069 
+ 879      6E7400
+ 880              	.LASF21:
+ 881 004d 706F7765 		.ascii	"power\000"
+ 881      7200
+ 882              	.LASF20:
+ 883 0053 5449415F 		.ascii	"TIA_SetResFB\000"
+ 883      53657452 
+ 883      65734642 
+ 883      00
+ 884              	.LASF16:
+ 885 0060 5449415F 		.ascii	"TIA_Enable\000"
+ 885      456E6162 
+ 885      6C6500
+ 886              	.LASF9:
+ 887 006b 666C6F61 		.ascii	"float\000"
+ 887      7400
+ 888              	.LASF1:
+ 889 0071 756E7369 		.ascii	"unsigned char\000"
+ 889      676E6564 
+ 889      20636861 
+ 889      7200
+ 890              	.LASF13:
+ 891 007f 72656738 		.ascii	"reg8\000"
+ 891      00
+ 892              	.LASF27:
+ 893 0084 433A5C55 		.ascii	"C:\\Users\\User\\Dropbox\\67 PSOC\\PSoC-Potentiosta"
+ 893      73657273 
+ 893      5C557365 
+ 893      725C4472 
+ 893      6F70626F 
+ 894 00b2 745C4269 		.ascii	"t\\Biosensor.cydsn\000"
+ 894      6F73656E 
+ 894      736F722E 
+ 894      63796473 
+ 894      6E00
+ 895              	.LASF5:
+ 896 00c4 6C6F6E67 		.ascii	"long unsigned int\000"
+ 896      20756E73 
+ 896      69676E65 
+ 896      6420696E 
+ 896      7400
+ 897              	.LASF12:
+ 898 00d6 75696E74 		.ascii	"uint8\000"
+ 898      3800
+ 899              	.LASF10:
+ 900 00dc 646F7562 		.ascii	"double\000"
+ 900      6C6500
+ 901              	.LASF25:
+ 902 00e3 474E5520 		.ascii	"GNU C99 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 902      43393920 
+ 902      352E342E 
+ 902      31203230 
+ 902      31363036 
+ 903 0116 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 903      20726576 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 23
+
+
+ 903      6973696F 
+ 903      6E203233 
+ 903      37373135 
+ 904 0149 30202D73 		.ascii	"0 -std=gnu99 -ffunction-sections -ffat-lto-objects\000"
+ 904      74643D67 
+ 904      6E753939 
+ 904      202D6666 
+ 904      756E6374 
+ 905              	.LASF8:
+ 906 017c 756E7369 		.ascii	"unsigned int\000"
+ 906      676E6564 
+ 906      20696E74 
+ 906      00
+ 907              	.LASF15:
+ 908 0189 5449415F 		.ascii	"TIA_Init\000"
+ 908      496E6974 
+ 908      00
+ 909              	.LASF7:
+ 910 0192 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 910      206C6F6E 
+ 910      6720756E 
+ 910      7369676E 
+ 910      65642069 
+ 911              	.LASF18:
+ 912 01a9 5449415F 		.ascii	"TIA_Stop\000"
+ 912      53746F70 
+ 912      00
+ 913              	.LASF29:
+ 914 01b2 5449415F 		.ascii	"TIA_initVar\000"
+ 914      696E6974 
+ 914      56617200 
+ 915              	.LASF14:
+ 916 01be 73697A65 		.ascii	"sizetype\000"
+ 916      74797065 
+ 916      00
+ 917              	.LASF6:
+ 918 01c7 6C6F6E67 		.ascii	"long long int\000"
+ 918      206C6F6E 
+ 918      6720696E 
+ 918      7400
+ 919              	.LASF11:
+ 920 01d5 63686172 		.ascii	"char\000"
+ 920      00
+ 921              	.LASF2:
+ 922 01da 73686F72 		.ascii	"short int\000"
+ 922      7420696E 
+ 922      7400
+ 923              	.LASF23:
+ 924 01e4 5449415F 		.ascii	"TIA_SetCapFB\000"
+ 924      53657443 
+ 924      61704642 
+ 924      00
+ 925              	.LASF22:
+ 926 01f1 7265735F 		.ascii	"res_feedback\000"
+ 926      66656564 
+ 926      6261636B 
+ 926      00
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccUP2R2o.s 			page 24
+
+
+ 927              	.LASF24:
+ 928 01fe 6361705F 		.ascii	"cap_feedback\000"
+ 928      66656564 
+ 928      6261636B 
+ 928      00
+ 929              	.LASF4:
+ 930 020b 6C6F6E67 		.ascii	"long int\000"
+ 930      20696E74 
+ 930      00
+ 931              	.LASF0:
+ 932 0214 7369676E 		.ascii	"signed char\000"
+ 932      65642063 
+ 932      68617200 
+ 933              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

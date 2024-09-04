@@ -1,0 +1,1683 @@
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"helper_functions.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.comm	buffer,64,4
+  20              		.comm	calibrate_array,20,4
+  21              		.section	.text.helper_Writebyte_EEPROM,"ax",%progbits
+  22              		.align	2
+  23              		.global	helper_Writebyte_EEPROM
+  24              		.thumb
+  25              		.thumb_func
+  26              		.type	helper_Writebyte_EEPROM, %function
+  27              	helper_Writebyte_EEPROM:
+  28              	.LFB64:
+  29              		.file 1 "helper_functions.c"
+   1:helper_functions.c **** /*******************************************************************************
+   2:helper_functions.c **** * File Name: helper_functions.c
+   3:helper_functions.c **** *
+   4:helper_functions.c **** * Description:
+   5:helper_functions.c **** *  Functions used by main.
+   6:helper_functions.c **** *  basically EEPROM functions at this point.
+   7:helper_functions.c **** *
+   8:helper_functions.c **** **********************************************************************************
+   9:helper_functions.c **** * Copyright Highland Biosciences Ltd
+  10:helper_functions.c **** * Copyright Naresuan University, Phitsanulok Thailand
+  11:helper_functions.c **** * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
+  12:helper_functions.c **** *********************************************************************************/
+  13:helper_functions.c **** 
+  14:helper_functions.c **** #include <helper_functions.h>
+  15:helper_functions.c **** #include <main.h>
+  16:helper_functions.c **** 
+  17:helper_functions.c **** /******************************************************************************
+  18:helper_functions.c **** * Function Name: helper_Writebyte_EEPROM
+  19:helper_functions.c **** *******************************************************************************
+  20:helper_functions.c **** *
+  21:helper_functions.c **** * Summary:
+  22:helper_functions.c **** *    Start the eepromm, update the temperature and write a byte to it
+  23:helper_functions.c **** *
+  24:helper_functions.c **** * Parameters:
+  25:helper_functions.c **** *     data: the byte to write in
+  26:helper_functions.c **** *     address: the address to write the data at
+  27:helper_functions.c **** *
+  28:helper_functions.c **** * Return:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 2
+
+
+  29:helper_functions.c **** *
+  30:helper_functions.c **** *******************************************************************************/
+  31:helper_functions.c **** 
+  32:helper_functions.c **** uint8_t helper_Writebyte_EEPROM(uint8_t data, uint16_t address) {
+  30              		.loc 1 32 0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 16
+  33              		@ frame_needed = 1, uses_anonymous_args = 0
+  34 0000 80B5     		push	{r7, lr}
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 7, -8
+  37              		.cfi_offset 14, -4
+  38 0002 84B0     		sub	sp, sp, #16
+  39              		.cfi_def_cfa_offset 24
+  40 0004 00AF     		add	r7, sp, #0
+  41              		.cfi_def_cfa_register 7
+  42 0006 0346     		mov	r3, r0
+  43 0008 0A46     		mov	r2, r1
+  44 000a FB71     		strb	r3, [r7, #7]
+  45 000c 1346     		mov	r3, r2	@ movhi
+  46 000e BB80     		strh	r3, [r7, #4]	@ movhi
+  33:helper_functions.c ****     EEPROM_Start();
+  47              		.loc 1 33 0
+  48 0010 FFF7FEFF 		bl	EEPROM_Start
+  34:helper_functions.c ****     CyDelayUs(10);
+  49              		.loc 1 34 0
+  50 0014 0A20     		movs	r0, #10
+  51 0016 FFF7FEFF 		bl	CyDelayUs
+  35:helper_functions.c ****     EEPROM_UpdateTemperature();
+  52              		.loc 1 35 0
+  53 001a FFF7FEFF 		bl	EEPROM_UpdateTemperature
+  36:helper_functions.c ****     uint8_t write_results = EEPROM_WriteByte(data, address);
+  54              		.loc 1 36 0
+  55 001e BA88     		ldrh	r2, [r7, #4]
+  56 0020 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+  57 0022 1146     		mov	r1, r2
+  58 0024 1846     		mov	r0, r3
+  59 0026 FFF7FEFF 		bl	EEPROM_WriteByte
+  60 002a 0346     		mov	r3, r0
+  61 002c FB73     		strb	r3, [r7, #15]
+  37:helper_functions.c ****     EEPROM_Stop();
+  62              		.loc 1 37 0
+  63 002e FFF7FEFF 		bl	EEPROM_Stop
+  38:helper_functions.c ****     return write_results;
+  64              		.loc 1 38 0
+  65 0032 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+  39:helper_functions.c **** }
+  66              		.loc 1 39 0
+  67 0034 1846     		mov	r0, r3
+  68 0036 1037     		adds	r7, r7, #16
+  69              		.cfi_def_cfa_offset 8
+  70 0038 BD46     		mov	sp, r7
+  71              		.cfi_def_cfa_register 13
+  72              		@ sp needed
+  73 003a 80BD     		pop	{r7, pc}
+  74              		.cfi_endproc
+  75              	.LFE64:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 3
+
+
+  76              		.size	helper_Writebyte_EEPROM, .-helper_Writebyte_EEPROM
+  77              		.section	.text.helper_Readbyte_EEPROM,"ax",%progbits
+  78              		.align	2
+  79              		.global	helper_Readbyte_EEPROM
+  80              		.thumb
+  81              		.thumb_func
+  82              		.type	helper_Readbyte_EEPROM, %function
+  83              	helper_Readbyte_EEPROM:
+  84              	.LFB65:
+  40:helper_functions.c **** 
+  41:helper_functions.c **** /******************************************************************************
+  42:helper_functions.c **** * Function Name: helper_Readbyte_EEPROM
+  43:helper_functions.c **** *******************************************************************************
+  44:helper_functions.c **** *
+  45:helper_functions.c **** * Summary:
+  46:helper_functions.c **** *    Start the eepromm, update the temperature and read a byte to it
+  47:helper_functions.c **** *
+  48:helper_functions.c **** * Parameters:
+  49:helper_functions.c **** *     address: the address to read the data from
+  50:helper_functions.c **** *
+  51:helper_functions.c **** * Return:
+  52:helper_functions.c **** *     data that was read
+  53:helper_functions.c **** *
+  54:helper_functions.c **** *******************************************************************************/
+  55:helper_functions.c **** 
+  56:helper_functions.c **** uint8_t helper_Readbyte_EEPROM(uint16_t address) {
+  85              		.loc 1 56 0
+  86              		.cfi_startproc
+  87              		@ args = 0, pretend = 0, frame = 16
+  88              		@ frame_needed = 1, uses_anonymous_args = 0
+  89 0000 80B5     		push	{r7, lr}
+  90              		.cfi_def_cfa_offset 8
+  91              		.cfi_offset 7, -8
+  92              		.cfi_offset 14, -4
+  93 0002 84B0     		sub	sp, sp, #16
+  94              		.cfi_def_cfa_offset 24
+  95 0004 00AF     		add	r7, sp, #0
+  96              		.cfi_def_cfa_register 7
+  97 0006 0346     		mov	r3, r0
+  98 0008 FB80     		strh	r3, [r7, #6]	@ movhi
+  57:helper_functions.c ****     EEPROM_Start();
+  99              		.loc 1 57 0
+ 100 000a FFF7FEFF 		bl	EEPROM_Start
+  58:helper_functions.c ****     CyDelayUs(10);
+ 101              		.loc 1 58 0
+ 102 000e 0A20     		movs	r0, #10
+ 103 0010 FFF7FEFF 		bl	CyDelayUs
+  59:helper_functions.c ****     EEPROM_UpdateTemperature();
+ 104              		.loc 1 59 0
+ 105 0014 FFF7FEFF 		bl	EEPROM_UpdateTemperature
+  60:helper_functions.c ****     CyDelayUs(10);
+ 106              		.loc 1 60 0
+ 107 0018 0A20     		movs	r0, #10
+ 108 001a FFF7FEFF 		bl	CyDelayUs
+  61:helper_functions.c ****     uint8_t data = EEPROM_ReadByte(address);
+ 109              		.loc 1 61 0
+ 110 001e FB88     		ldrh	r3, [r7, #6]
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 4
+
+
+ 111 0020 1846     		mov	r0, r3
+ 112 0022 FFF7FEFF 		bl	EEPROM_ReadByte
+ 113 0026 0346     		mov	r3, r0
+ 114 0028 FB73     		strb	r3, [r7, #15]
+  62:helper_functions.c ****     EEPROM_Stop();
+ 115              		.loc 1 62 0
+ 116 002a FFF7FEFF 		bl	EEPROM_Stop
+  63:helper_functions.c ****     return data;
+ 117              		.loc 1 63 0
+ 118 002e FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+  64:helper_functions.c **** }
+ 119              		.loc 1 64 0
+ 120 0030 1846     		mov	r0, r3
+ 121 0032 1037     		adds	r7, r7, #16
+ 122              		.cfi_def_cfa_offset 8
+ 123 0034 BD46     		mov	sp, r7
+ 124              		.cfi_def_cfa_register 13
+ 125              		@ sp needed
+ 126 0036 80BD     		pop	{r7, pc}
+ 127              		.cfi_endproc
+ 128              	.LFE65:
+ 129              		.size	helper_Readbyte_EEPROM, .-helper_Readbyte_EEPROM
+ 130              		.section	.text.helper_HardwareInit,"ax",%progbits
+ 131              		.align	2
+ 132              		.global	helper_HardwareInit
+ 133              		.thumb
+ 134              		.thumb_func
+ 135              		.type	helper_HardwareInit, %function
+ 136              	helper_HardwareInit:
+ 137              	.LFB66:
+  65:helper_functions.c **** 
+  66:helper_functions.c **** /******************************************************************************
+  67:helper_functions.c **** * Function Name: helper_HardwareInit
+  68:helper_functions.c **** *******************************************************************************
+  69:helper_functions.c **** *
+  70:helper_functions.c **** * Summary:
+  71:helper_functions.c **** *    Start all the hardware needed for an experiment.
+  72:helper_functions.c **** *
+  73:helper_functions.c **** *******************************************************************************/
+  74:helper_functions.c **** void helper_HardwareInit(void){ 
+ 138              		.loc 1 74 0
+ 139              		.cfi_startproc
+ 140              		@ args = 0, pretend = 0, frame = 0
+ 141              		@ frame_needed = 1, uses_anonymous_args = 0
+ 142 0000 80B5     		push	{r7, lr}
+ 143              		.cfi_def_cfa_offset 8
+ 144              		.cfi_offset 7, -8
+ 145              		.cfi_offset 14, -4
+ 146 0002 00AF     		add	r7, sp, #0
+ 147              		.cfi_def_cfa_register 7
+  75:helper_functions.c ****  
+  76:helper_functions.c ****     /* setup the communications */
+  77:helper_functions.c ****     Clock_PWM_Start();    
+ 148              		.loc 1 77 0
+ 149 0004 FFF7FEFF 		bl	Clock_PWM_Start
+  78:helper_functions.c ****     LCD_Start();
+ 150              		.loc 1 78 0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 5
+
+
+ 151 0008 FFF7FEFF 		bl	LCD_Start
+  79:helper_functions.c ****     
+  80:helper_functions.c ****     /* Initialise system timing */
+  81:helper_functions.c ****     PWM_S_Init();
+ 152              		.loc 1 81 0
+ 153 000c FFF7FEFF 		bl	PWM_S_Init
+  82:helper_functions.c ****     PWM_M_Init();
+ 154              		.loc 1 82 0
+ 155 0010 FFF7FEFF 		bl	PWM_M_Init
+  83:helper_functions.c ****     
+  84:helper_functions.c ****     
+  85:helper_functions.c ****     /* Voltage Control Circuit */  
+  86:helper_functions.c ****     VDAC_Poise_Init();   
+ 156              		.loc 1 86 0
+ 157 0014 FFF7FEFF 		bl	VDAC_Poise_Init
+  87:helper_functions.c ****     Opamp_Aux_Init();
+ 158              		.loc 1 87 0
+ 159 0018 FFF7FEFF 		bl	Opamp_Aux_Init
+  88:helper_functions.c ****     
+  89:helper_functions.c ****     AMux_electrode_Init();
+ 160              		.loc 1 89 0
+ 161 001c FFF7FEFF 		bl	AMux_electrode_Start
+  90:helper_functions.c ****     
+  91:helper_functions.c ****    
+  92:helper_functions.c ****     /* Current Measuring Circuit */
+  93:helper_functions.c ****     ADC_DelSig_Init();
+ 162              		.loc 1 93 0
+ 163 0020 FFF7FEFF 		bl	ADC_DelSig_Init
+  94:helper_functions.c ****     VDAC_TIA_Init();
+ 164              		.loc 1 94 0
+ 165 0024 FFF7FEFF 		bl	VDAC_TIA_Init
+  95:helper_functions.c ****     TIA_Init();
+ 166              		.loc 1 95 0
+ 167 0028 FFF7FEFF 		bl	TIA_Init
+  96:helper_functions.c ****     IDAC_calibrate_Init();
+ 168              		.loc 1 96 0
+ 169 002c FFF7FEFF 		bl	IDAC_calibrate_Init
+  97:helper_functions.c ****     AMux_TIA_input_Init();
+ 170              		.loc 1 97 0
+ 171 0030 FFF7FEFF 		bl	AMux_TIA_input_Start
+  98:helper_functions.c ****   
+  99:helper_functions.c ****     
+ 100:helper_functions.c **** }
+ 172              		.loc 1 100 0
+ 173 0034 00BF     		nop
+ 174 0036 80BD     		pop	{r7, pc}
+ 175              		.cfi_endproc
+ 176              	.LFE66:
+ 177              		.size	helper_HardwareInit, .-helper_HardwareInit
+ 178              		.section	.text.helper_HardwareEnable,"ax",%progbits
+ 179              		.align	2
+ 180              		.global	helper_HardwareEnable
+ 181              		.thumb
+ 182              		.thumb_func
+ 183              		.type	helper_HardwareEnable, %function
+ 184              	helper_HardwareEnable:
+ 185              	.LFB67:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 6
+
+
+ 101:helper_functions.c **** 
+ 102:helper_functions.c **** /******************************************************************************
+ 103:helper_functions.c **** * Function Name: helper_Hardware Enable
+ 104:helper_functions.c **** *******************************************************************************
+ 105:helper_functions.c **** *
+ 106:helper_functions.c **** * Summary:
+ 107:helper_functions.c **** *    Start all the hardware needed for an experiment.
+ 108:helper_functions.c **** *
+ 109:helper_functions.c **** *******************************************************************************/
+ 110:helper_functions.c **** void helper_HardwareEnable(void){ 
+ 186              		.loc 1 110 0
+ 187              		.cfi_startproc
+ 188              		@ args = 0, pretend = 0, frame = 0
+ 189              		@ frame_needed = 1, uses_anonymous_args = 0
+ 190 0000 80B5     		push	{r7, lr}
+ 191              		.cfi_def_cfa_offset 8
+ 192              		.cfi_offset 7, -8
+ 193              		.cfi_offset 14, -4
+ 194 0002 00AF     		add	r7, sp, #0
+ 195              		.cfi_def_cfa_register 7
+ 111:helper_functions.c ****  
+ 112:helper_functions.c ****     /* setup the communications and system timing */                             
+ 113:helper_functions.c ****     PWM_M_Enable();         
+ 196              		.loc 1 113 0
+ 197 0004 FFF7FEFF 		bl	PWM_M_Enable
+ 114:helper_functions.c ****     PWM_S_Enable();
+ 198              		.loc 1 114 0
+ 199 0008 FFF7FEFF 		bl	PWM_S_Enable
+ 115:helper_functions.c ****     
+ 116:helper_functions.c ****     /* Voltage Control Circuit */  
+ 117:helper_functions.c ****     VDAC_Poise_Enable();
+ 200              		.loc 1 117 0
+ 201 000c FFF7FEFF 		bl	VDAC_Poise_Enable
+ 118:helper_functions.c ****     Opamp_Aux_Enable();
+ 202              		.loc 1 118 0
+ 203 0010 FFF7FEFF 		bl	Opamp_Aux_Enable
+ 119:helper_functions.c ****     
+ 120:helper_functions.c ****      /* Current Measuring Circuit */   
+ 121:helper_functions.c ****     ADC_DelSig_Enable();
+ 204              		.loc 1 121 0
+ 205 0014 FFF7FEFF 		bl	ADC_DelSig_Enable
+ 122:helper_functions.c ****     VDAC_TIA_Enable();
+ 206              		.loc 1 122 0
+ 207 0018 FFF7FEFF 		bl	VDAC_TIA_Enable
+ 123:helper_functions.c ****     TIA_Enable();
+ 208              		.loc 1 123 0
+ 209 001c FFF7FEFF 		bl	TIA_Enable
+ 124:helper_functions.c ****     AMux_TIA_input_Select(AMux_TIA_working_electrode_ch);    
+ 210              		.loc 1 124 0
+ 211 0020 0120     		movs	r0, #1
+ 212 0022 FFF7FEFF 		bl	AMux_TIA_input_FastSelect
+ 125:helper_functions.c **** }
+ 213              		.loc 1 125 0
+ 214 0026 00BF     		nop
+ 215 0028 80BD     		pop	{r7, pc}
+ 216              		.cfi_endproc
+ 217              	.LFE67:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 7
+
+
+ 218              		.size	helper_HardwareEnable, .-helper_HardwareEnable
+ 219 002a 00BF     		.section	.text.helper_HardwareSleep,"ax",%progbits
+ 220              		.align	2
+ 221              		.global	helper_HardwareSleep
+ 222              		.thumb
+ 223              		.thumb_func
+ 224              		.type	helper_HardwareSleep, %function
+ 225              	helper_HardwareSleep:
+ 226              	.LFB68:
+ 126:helper_functions.c **** 
+ 127:helper_functions.c **** /******************************************************************************
+ 128:helper_functions.c **** * Function Name: helper_HardwareSleep
+ 129:helper_functions.c **** *******************************************************************************
+ 130:helper_functions.c **** *
+ 131:helper_functions.c **** * Summary:
+ 132:helper_functions.c **** *    Put to sleep all the hardware needed for an experiment.
+ 133:helper_functions.c **** *
+ 134:helper_functions.c **** *******************************************************************************/
+ 135:helper_functions.c **** void helper_HardwareSleep(void){  
+ 227              		.loc 1 135 0
+ 228              		.cfi_startproc
+ 229              		@ args = 0, pretend = 0, frame = 0
+ 230              		@ frame_needed = 1, uses_anonymous_args = 0
+ 231 0000 80B5     		push	{r7, lr}
+ 232              		.cfi_def_cfa_offset 8
+ 233              		.cfi_offset 7, -8
+ 234              		.cfi_offset 14, -4
+ 235 0002 00AF     		add	r7, sp, #0
+ 236              		.cfi_def_cfa_register 7
+ 136:helper_functions.c ****     
+ 137:helper_functions.c ****     /* Voltage Control Circuit */  
+ 138:helper_functions.c ****     VDAC_Poise_Sleep();
+ 237              		.loc 1 138 0
+ 238 0004 FFF7FEFF 		bl	VDAC_Poise_Sleep
+ 139:helper_functions.c ****     Opamp_Aux_Sleep();
+ 239              		.loc 1 139 0
+ 240 0008 FFF7FEFF 		bl	Opamp_Aux_Sleep
+ 140:helper_functions.c ****     
+ 141:helper_functions.c ****     /* Current Measuring Circuit */
+ 142:helper_functions.c **** //    ADC_SigDel_Sleep();
+ 143:helper_functions.c ****     VDAC_TIA_Sleep();
+ 241              		.loc 1 143 0
+ 242 000c FFF7FEFF 		bl	VDAC_TIA_Sleep
+ 144:helper_functions.c ****     TIA_Sleep();  
+ 243              		.loc 1 144 0
+ 244 0010 FFF7FEFF 		bl	TIA_Sleep
+ 145:helper_functions.c **** }
+ 245              		.loc 1 145 0
+ 246 0014 00BF     		nop
+ 247 0016 80BD     		pop	{r7, pc}
+ 248              		.cfi_endproc
+ 249              	.LFE68:
+ 250              		.size	helper_HardwareSleep, .-helper_HardwareSleep
+ 251              		.section	.text.helper_HardwareWakeup,"ax",%progbits
+ 252              		.align	2
+ 253              		.global	helper_HardwareWakeup
+ 254              		.thumb
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 8
+
+
+ 255              		.thumb_func
+ 256              		.type	helper_HardwareWakeup, %function
+ 257              	helper_HardwareWakeup:
+ 258              	.LFB69:
+ 146:helper_functions.c **** 
+ 147:helper_functions.c **** 
+ 148:helper_functions.c **** /******************************************************************************
+ 149:helper_functions.c **** * Function Name: helper_HardwareWakeup
+ 150:helper_functions.c **** *******************************************************************************
+ 151:helper_functions.c **** *
+ 152:helper_functions.c **** * Summary:
+ 153:helper_functions.c **** *    Start all the hardware needed for an experiment.
+ 154:helper_functions.c **** *
+ 155:helper_functions.c **** *******************************************************************************/
+ 156:helper_functions.c **** void helper_HardwareWakeup(void){  // wakeup all the components that have to be on for a reading
+ 259              		.loc 1 156 0
+ 260              		.cfi_startproc
+ 261              		@ args = 0, pretend = 0, frame = 0
+ 262              		@ frame_needed = 1, uses_anonymous_args = 0
+ 263 0000 80B5     		push	{r7, lr}
+ 264              		.cfi_def_cfa_offset 8
+ 265              		.cfi_offset 7, -8
+ 266              		.cfi_offset 14, -4
+ 267 0002 00AF     		add	r7, sp, #0
+ 268              		.cfi_def_cfa_register 7
+ 157:helper_functions.c ****         
+ 158:helper_functions.c ****     /* Voltage Control Circuit */  
+ 159:helper_functions.c ****     
+ 160:helper_functions.c ****     VDAC_Poise_Wakeup();
+ 269              		.loc 1 160 0
+ 270 0004 FFF7FEFF 		bl	VDAC_Poise_Wakeup
+ 161:helper_functions.c ****     Opamp_Aux_Wakeup();
+ 271              		.loc 1 161 0
+ 272 0008 FFF7FEFF 		bl	Opamp_Aux_Wakeup
+ 162:helper_functions.c ****     
+ 163:helper_functions.c ****     /* Current Measuring Circuit */
+ 164:helper_functions.c ****    
+ 165:helper_functions.c ****     VDAC_TIA_Wakeup();
+ 273              		.loc 1 165 0
+ 274 000c FFF7FEFF 		bl	VDAC_TIA_Wakeup
+ 166:helper_functions.c ****     TIA_Wakeup();  
+ 275              		.loc 1 166 0
+ 276 0010 FFF7FEFF 		bl	TIA_Wakeup
+ 167:helper_functions.c ****         
+ 168:helper_functions.c **** }
+ 277              		.loc 1 168 0
+ 278 0014 00BF     		nop
+ 279 0016 80BD     		pop	{r7, pc}
+ 280              		.cfi_endproc
+ 281              	.LFE69:
+ 282              		.size	helper_HardwareWakeup, .-helper_HardwareWakeup
+ 283              		.section	.text.helper_WipeLCD,"ax",%progbits
+ 284              		.align	2
+ 285              		.global	helper_WipeLCD
+ 286              		.thumb
+ 287              		.thumb_func
+ 288              		.type	helper_WipeLCD, %function
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 9
+
+
+ 289              	helper_WipeLCD:
+ 290              	.LFB70:
+ 169:helper_functions.c **** 
+ 170:helper_functions.c **** 
+ 171:helper_functions.c **** /******************************************************************************
+ 172:helper_functions.c **** * Function Name: helper_WipeLCD
+ 173:helper_functions.c **** *******************************************************************************
+ 174:helper_functions.c **** *
+ 175:helper_functions.c **** * Summary: Wipe the LCD buffers ready for new messages
+ 176:helper_functions.c **** *
+ 177:helper_functions.c **** *******************************************************************************/
+ 178:helper_functions.c **** 
+ 179:helper_functions.c **** void helper_WipeLCD(void){  // wipe the text 
+ 291              		.loc 1 179 0
+ 292              		.cfi_startproc
+ 293              		@ args = 0, pretend = 0, frame = 0
+ 294              		@ frame_needed = 1, uses_anonymous_args = 0
+ 295 0000 80B5     		push	{r7, lr}
+ 296              		.cfi_def_cfa_offset 8
+ 297              		.cfi_offset 7, -8
+ 298              		.cfi_offset 14, -4
+ 299 0002 00AF     		add	r7, sp, #0
+ 300              		.cfi_def_cfa_register 7
+ 180:helper_functions.c ****     memset(LCD_str_top, 0, MAX_LCD_BYTES);          
+ 301              		.loc 1 180 0
+ 302 0004 1022     		movs	r2, #16
+ 303 0006 0021     		movs	r1, #0
+ 304 0008 0448     		ldr	r0, .L10
+ 305 000a FFF7FEFF 		bl	memset
+ 181:helper_functions.c ****     memset(LCD_str_bot, 0, MAX_LCD_BYTES);              
+ 306              		.loc 1 181 0
+ 307 000e 1022     		movs	r2, #16
+ 308 0010 0021     		movs	r1, #0
+ 309 0012 0348     		ldr	r0, .L10+4
+ 310 0014 FFF7FEFF 		bl	memset
+ 182:helper_functions.c **** }
+ 311              		.loc 1 182 0
+ 312 0018 00BF     		nop
+ 313 001a 80BD     		pop	{r7, pc}
+ 314              	.L11:
+ 315              		.align	2
+ 316              	.L10:
+ 317 001c 00000000 		.word	LCD_str_top
+ 318 0020 00000000 		.word	LCD_str_bot
+ 319              		.cfi_endproc
+ 320              	.LFE70:
+ 321              		.size	helper_WipeLCD, .-helper_WipeLCD
+ 322              		.section	.text.helper_WipeLCD_top,"ax",%progbits
+ 323              		.align	2
+ 324              		.global	helper_WipeLCD_top
+ 325              		.thumb
+ 326              		.thumb_func
+ 327              		.type	helper_WipeLCD_top, %function
+ 328              	helper_WipeLCD_top:
+ 329              	.LFB71:
+ 183:helper_functions.c **** 
+ 184:helper_functions.c **** void helper_WipeLCD_top(void){  // wipe the text top line
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 10
+
+
+ 330              		.loc 1 184 0
+ 331              		.cfi_startproc
+ 332              		@ args = 0, pretend = 0, frame = 0
+ 333              		@ frame_needed = 1, uses_anonymous_args = 0
+ 334 0000 80B5     		push	{r7, lr}
+ 335              		.cfi_def_cfa_offset 8
+ 336              		.cfi_offset 7, -8
+ 337              		.cfi_offset 14, -4
+ 338 0002 00AF     		add	r7, sp, #0
+ 339              		.cfi_def_cfa_register 7
+ 185:helper_functions.c ****     memset(LCD_str_top, 0, MAX_LCD_BYTES);          
+ 340              		.loc 1 185 0
+ 341 0004 1022     		movs	r2, #16
+ 342 0006 0021     		movs	r1, #0
+ 343 0008 0248     		ldr	r0, .L13
+ 344 000a FFF7FEFF 		bl	memset
+ 186:helper_functions.c **** }
+ 345              		.loc 1 186 0
+ 346 000e 00BF     		nop
+ 347 0010 80BD     		pop	{r7, pc}
+ 348              	.L14:
+ 349 0012 00BF     		.align	2
+ 350              	.L13:
+ 351 0014 00000000 		.word	LCD_str_top
+ 352              		.cfi_endproc
+ 353              	.LFE71:
+ 354              		.size	helper_WipeLCD_top, .-helper_WipeLCD_top
+ 355              		.section	.text.helper_WipeLCD_bot,"ax",%progbits
+ 356              		.align	2
+ 357              		.global	helper_WipeLCD_bot
+ 358              		.thumb
+ 359              		.thumb_func
+ 360              		.type	helper_WipeLCD_bot, %function
+ 361              	helper_WipeLCD_bot:
+ 362              	.LFB72:
+ 187:helper_functions.c **** 
+ 188:helper_functions.c **** void helper_WipeLCD_bot (void){  // wipe the text top line
+ 363              		.loc 1 188 0
+ 364              		.cfi_startproc
+ 365              		@ args = 0, pretend = 0, frame = 0
+ 366              		@ frame_needed = 1, uses_anonymous_args = 0
+ 367 0000 80B5     		push	{r7, lr}
+ 368              		.cfi_def_cfa_offset 8
+ 369              		.cfi_offset 7, -8
+ 370              		.cfi_offset 14, -4
+ 371 0002 00AF     		add	r7, sp, #0
+ 372              		.cfi_def_cfa_register 7
+ 189:helper_functions.c ****     memset(LCD_str_bot, 0, MAX_LCD_BYTES);          
+ 373              		.loc 1 189 0
+ 374 0004 1022     		movs	r2, #16
+ 375 0006 0021     		movs	r1, #0
+ 376 0008 0248     		ldr	r0, .L16
+ 377 000a FFF7FEFF 		bl	memset
+ 190:helper_functions.c **** }
+ 378              		.loc 1 190 0
+ 379 000e 00BF     		nop
+ 380 0010 80BD     		pop	{r7, pc}
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 11
+
+
+ 381              	.L17:
+ 382 0012 00BF     		.align	2
+ 383              	.L16:
+ 384 0014 00000000 		.word	LCD_str_bot
+ 385              		.cfi_endproc
+ 386              	.LFE72:
+ 387              		.size	helper_WipeLCD_bot, .-helper_WipeLCD_bot
+ 388              		.section	.text.helper_ClrTx,"ax",%progbits
+ 389              		.align	2
+ 390              		.global	helper_ClrTx
+ 391              		.thumb
+ 392              		.thumb_func
+ 393              		.type	helper_ClrTx, %function
+ 394              	helper_ClrTx:
+ 395              	.LFB73:
+ 191:helper_functions.c **** 
+ 192:helper_functions.c **** 
+ 193:helper_functions.c **** /******************************************************************************
+ 194:helper_functions.c **** * Function Name: helper_ClrTx
+ 195:helper_functions.c **** *******************************************************************************
+ 196:helper_functions.c **** *
+ 197:helper_functions.c **** * Summary:
+ 198:helper_functions.c **** *    Wipe the buffers used to collect output from Host PC
+ 199:helper_functions.c **** *
+ 200:helper_functions.c **** *******************************************************************************/
+ 201:helper_functions.c **** void helper_ClrTx(void)
+ 202:helper_functions.c **** {        
+ 396              		.loc 1 202 0
+ 397              		.cfi_startproc
+ 398              		@ args = 0, pretend = 0, frame = 0
+ 399              		@ frame_needed = 1, uses_anonymous_args = 0
+ 400 0000 80B5     		push	{r7, lr}
+ 401              		.cfi_def_cfa_offset 8
+ 402              		.cfi_offset 7, -8
+ 403              		.cfi_offset 14, -4
+ 404 0002 00AF     		add	r7, sp, #0
+ 405              		.cfi_def_cfa_register 7
+ 203:helper_functions.c ****     memset(TX_Data, 0, USBUART_BUFFER_SIZE);           
+ 406              		.loc 1 203 0
+ 407 0004 4022     		movs	r2, #64
+ 408 0006 0021     		movs	r1, #0
+ 409 0008 0248     		ldr	r0, .L19
+ 410 000a FFF7FEFF 		bl	memset
+ 204:helper_functions.c **** }
+ 411              		.loc 1 204 0
+ 412 000e 00BF     		nop
+ 413 0010 80BD     		pop	{r7, pc}
+ 414              	.L20:
+ 415 0012 00BF     		.align	2
+ 416              	.L19:
+ 417 0014 00000000 		.word	TX_Data
+ 418              		.cfi_endproc
+ 419              	.LFE73:
+ 420              		.size	helper_ClrTx, .-helper_ClrTx
+ 421              		.section	.text.helper_ClrRx,"ax",%progbits
+ 422              		.align	2
+ 423              		.global	helper_ClrRx
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 12
+
+
+ 424              		.thumb
+ 425              		.thumb_func
+ 426              		.type	helper_ClrRx, %function
+ 427              	helper_ClrRx:
+ 428              	.LFB74:
+ 205:helper_functions.c **** 
+ 206:helper_functions.c **** 
+ 207:helper_functions.c **** /******************************************************************************
+ 208:helper_functions.c **** * Function Name: helper_WipeIn
+ 209:helper_functions.c **** *******************************************************************************
+ 210:helper_functions.c **** *
+ 211:helper_functions.c **** * Summary:
+ 212:helper_functions.c **** *    Wipe the buffers used to collect output from Host PC
+ 213:helper_functions.c **** *
+ 214:helper_functions.c **** *******************************************************************************/
+ 215:helper_functions.c **** void helper_ClrRx(void)
+ 216:helper_functions.c **** {                   
+ 429              		.loc 1 216 0
+ 430              		.cfi_startproc
+ 431              		@ args = 0, pretend = 0, frame = 0
+ 432              		@ frame_needed = 1, uses_anonymous_args = 0
+ 433 0000 80B5     		push	{r7, lr}
+ 434              		.cfi_def_cfa_offset 8
+ 435              		.cfi_offset 7, -8
+ 436              		.cfi_offset 14, -4
+ 437 0002 00AF     		add	r7, sp, #0
+ 438              		.cfi_def_cfa_register 7
+ 217:helper_functions.c ****     memset(RX_Data, 0, USBUART_BUFFER_SIZE);           
+ 439              		.loc 1 217 0
+ 440 0004 4022     		movs	r2, #64
+ 441 0006 0021     		movs	r1, #0
+ 442 0008 0248     		ldr	r0, .L22
+ 443 000a FFF7FEFF 		bl	memset
+ 218:helper_functions.c **** }
+ 444              		.loc 1 218 0
+ 445 000e 00BF     		nop
+ 446 0010 80BD     		pop	{r7, pc}
+ 447              	.L23:
+ 448 0012 00BF     		.align	2
+ 449              	.L22:
+ 450 0014 00000000 		.word	RX_Data
+ 451              		.cfi_endproc
+ 452              	.LFE74:
+ 453              		.size	helper_ClrRx, .-helper_ClrRx
+ 454              		.text
+ 455              	.Letext0:
+ 456              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 457              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 458              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 459              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 460              		.file 6 "./globals.h"
+ 461              		.file 7 "./calibrate.h"
+ 462              		.file 8 "./main.h"
+ 463              		.section	.debug_info,"",%progbits
+ 464              	.Ldebug_info0:
+ 465 0000 D4020000 		.4byte	0x2d4
+ 466 0004 0400     		.2byte	0x4
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 13
+
+
+ 467 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 468 000a 04       		.byte	0x4
+ 469 000b 01       		.uleb128 0x1
+ 470 000c 68010000 		.4byte	.LASF44
+ 471 0010 0C       		.byte	0xc
+ 472 0011 33000000 		.4byte	.LASF45
+ 473 0015 8E000000 		.4byte	.LASF46
+ 474 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 475 001d 00000000 		.4byte	0
+ 476 0021 00000000 		.4byte	.Ldebug_line0
+ 477 0025 02       		.uleb128 0x2
+ 478 0026 01       		.byte	0x1
+ 479 0027 06       		.byte	0x6
+ 480 0028 2E030000 		.4byte	.LASF0
+ 481 002c 03       		.uleb128 0x3
+ 482 002d 00000000 		.4byte	.LASF2
+ 483 0031 02       		.byte	0x2
+ 484 0032 1D       		.byte	0x1d
+ 485 0033 37000000 		.4byte	0x37
+ 486 0037 02       		.uleb128 0x2
+ 487 0038 01       		.byte	0x1
+ 488 0039 08       		.byte	0x8
+ 489 003a 35010000 		.4byte	.LASF1
+ 490 003e 03       		.uleb128 0x3
+ 491 003f 0A000000 		.4byte	.LASF3
+ 492 0043 02       		.byte	0x2
+ 493 0044 29       		.byte	0x29
+ 494 0045 49000000 		.4byte	0x49
+ 495 0049 02       		.uleb128 0x2
+ 496 004a 02       		.byte	0x2
+ 497 004b 05       		.byte	0x5
+ 498 004c E7020000 		.4byte	.LASF4
+ 499 0050 03       		.uleb128 0x3
+ 500 0051 43010000 		.4byte	.LASF5
+ 501 0055 02       		.byte	0x2
+ 502 0056 2B       		.byte	0x2b
+ 503 0057 5B000000 		.4byte	0x5b
+ 504 005b 02       		.uleb128 0x2
+ 505 005c 02       		.byte	0x2
+ 506 005d 07       		.byte	0x7
+ 507 005e E0000000 		.4byte	.LASF6
+ 508 0062 03       		.uleb128 0x3
+ 509 0063 14000000 		.4byte	.LASF7
+ 510 0067 02       		.byte	0x2
+ 511 0068 3F       		.byte	0x3f
+ 512 0069 6D000000 		.4byte	0x6d
+ 513 006d 02       		.uleb128 0x2
+ 514 006e 04       		.byte	0x4
+ 515 006f 05       		.byte	0x5
+ 516 0070 2A000000 		.4byte	.LASF8
+ 517 0074 02       		.uleb128 0x2
+ 518 0075 04       		.byte	0x4
+ 519 0076 07       		.byte	0x7
+ 520 0077 CE000000 		.4byte	.LASF9
+ 521 007b 02       		.uleb128 0x2
+ 522 007c 08       		.byte	0x8
+ 523 007d 05       		.byte	0x5
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 14
+
+
+ 524 007e AE020000 		.4byte	.LASF10
+ 525 0082 02       		.uleb128 0x2
+ 526 0083 08       		.byte	0x8
+ 527 0084 07       		.byte	0x7
+ 528 0085 56020000 		.4byte	.LASF11
+ 529 0089 04       		.uleb128 0x4
+ 530 008a 04       		.byte	0x4
+ 531 008b 05       		.byte	0x5
+ 532 008c 696E7400 		.ascii	"int\000"
+ 533 0090 02       		.uleb128 0x2
+ 534 0091 04       		.byte	0x4
+ 535 0092 07       		.byte	0x7
+ 536 0093 41020000 		.4byte	.LASF12
+ 537 0097 03       		.uleb128 0x3
+ 538 0098 6D020000 		.4byte	.LASF13
+ 539 009c 03       		.byte	0x3
+ 540 009d 18       		.byte	0x18
+ 541 009e 2C000000 		.4byte	0x2c
+ 542 00a2 03       		.uleb128 0x3
+ 543 00a3 7D020000 		.4byte	.LASF14
+ 544 00a7 03       		.byte	0x3
+ 545 00a8 20       		.byte	0x20
+ 546 00a9 3E000000 		.4byte	0x3e
+ 547 00ad 03       		.uleb128 0x3
+ 548 00ae F8020000 		.4byte	.LASF15
+ 549 00b2 03       		.byte	0x3
+ 550 00b3 24       		.byte	0x24
+ 551 00b4 50000000 		.4byte	0x50
+ 552 00b8 03       		.uleb128 0x3
+ 553 00b9 9D020000 		.4byte	.LASF16
+ 554 00bd 03       		.byte	0x3
+ 555 00be 2C       		.byte	0x2c
+ 556 00bf 62000000 		.4byte	0x62
+ 557 00c3 05       		.uleb128 0x5
+ 558 00c4 66000000 		.4byte	.LASF17
+ 559 00c8 04       		.byte	0x4
+ 560 00c9 E901     		.2byte	0x1e9
+ 561 00cb 37000000 		.4byte	0x37
+ 562 00cf 02       		.uleb128 0x2
+ 563 00d0 04       		.byte	0x4
+ 564 00d1 04       		.byte	0x4
+ 565 00d2 5B000000 		.4byte	.LASF18
+ 566 00d6 02       		.uleb128 0x2
+ 567 00d7 08       		.byte	0x8
+ 568 00d8 04       		.byte	0x4
+ 569 00d9 4E010000 		.4byte	.LASF19
+ 570 00dd 02       		.uleb128 0x2
+ 571 00de 01       		.byte	0x1
+ 572 00df 08       		.byte	0x8
+ 573 00e0 BC020000 		.4byte	.LASF20
+ 574 00e4 02       		.uleb128 0x2
+ 575 00e5 04       		.byte	0x4
+ 576 00e6 07       		.byte	0x7
+ 577 00e7 A5020000 		.4byte	.LASF21
+ 578 00eb 02       		.uleb128 0x2
+ 579 00ec 08       		.byte	0x8
+ 580 00ed 04       		.byte	0x4
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 15
+
+
+ 581 00ee 22030000 		.4byte	.LASF22
+ 582 00f2 06       		.uleb128 0x6
+ 583 00f3 F3000000 		.4byte	.LASF47
+ 584 00f7 14       		.byte	0x14
+ 585 00f8 07       		.byte	0x7
+ 586 00f9 1D       		.byte	0x1d
+ 587 00fa 15010000 		.4byte	0x115
+ 588 00fe 07       		.uleb128 0x7
+ 589 00ff 75736200 		.ascii	"usb\000"
+ 590 0103 07       		.byte	0x7
+ 591 0104 1E       		.byte	0x1e
+ 592 0105 15010000 		.4byte	0x115
+ 593 0109 08       		.uleb128 0x8
+ 594 010a 61000000 		.4byte	.LASF23
+ 595 010e 07       		.byte	0x7
+ 596 010f 1F       		.byte	0x1f
+ 597 0110 25010000 		.4byte	0x125
+ 598 0114 00       		.byte	0
+ 599 0115 09       		.uleb128 0x9
+ 600 0116 97000000 		.4byte	0x97
+ 601 011a 25010000 		.4byte	0x125
+ 602 011e 0A       		.uleb128 0xa
+ 603 011f E4000000 		.4byte	0xe4
+ 604 0123 13       		.byte	0x13
+ 605 0124 00       		.byte	0
+ 606 0125 09       		.uleb128 0x9
+ 607 0126 A2000000 		.4byte	0xa2
+ 608 012a 35010000 		.4byte	0x135
+ 609 012e 0A       		.uleb128 0xa
+ 610 012f E4000000 		.4byte	0xe4
+ 611 0133 09       		.byte	0x9
+ 612 0134 00       		.byte	0
+ 613 0135 0B       		.uleb128 0xb
+ 614 0136 85020000 		.4byte	.LASF25
+ 615 013a 01       		.byte	0x1
+ 616 013b 20       		.byte	0x20
+ 617 013c 97000000 		.4byte	0x97
+ 618 0140 00000000 		.4byte	.LFB64
+ 619 0144 3C000000 		.4byte	.LFE64-.LFB64
+ 620 0148 01       		.uleb128 0x1
+ 621 0149 9C       		.byte	0x9c
+ 622 014a 79010000 		.4byte	0x179
+ 623 014e 0C       		.uleb128 0xc
+ 624 014f 61000000 		.4byte	.LASF23
+ 625 0153 01       		.byte	0x1
+ 626 0154 20       		.byte	0x20
+ 627 0155 97000000 		.4byte	0x97
+ 628 0159 02       		.uleb128 0x2
+ 629 015a 91       		.byte	0x91
+ 630 015b 6F       		.sleb128 -17
+ 631 015c 0C       		.uleb128 0xc
+ 632 015d 4E020000 		.4byte	.LASF24
+ 633 0161 01       		.byte	0x1
+ 634 0162 20       		.byte	0x20
+ 635 0163 AD000000 		.4byte	0xad
+ 636 0167 02       		.uleb128 0x2
+ 637 0168 91       		.byte	0x91
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 16
+
+
+ 638 0169 6C       		.sleb128 -20
+ 639 016a 0D       		.uleb128 0xd
+ 640 016b 01030000 		.4byte	.LASF27
+ 641 016f 01       		.byte	0x1
+ 642 0170 24       		.byte	0x24
+ 643 0171 97000000 		.4byte	0x97
+ 644 0175 02       		.uleb128 0x2
+ 645 0176 91       		.byte	0x91
+ 646 0177 77       		.sleb128 -9
+ 647 0178 00       		.byte	0
+ 648 0179 0B       		.uleb128 0xb
+ 649 017a 0E020000 		.4byte	.LASF26
+ 650 017e 01       		.byte	0x1
+ 651 017f 38       		.byte	0x38
+ 652 0180 97000000 		.4byte	0x97
+ 653 0184 00000000 		.4byte	.LFB65
+ 654 0188 38000000 		.4byte	.LFE65-.LFB65
+ 655 018c 01       		.uleb128 0x1
+ 656 018d 9C       		.byte	0x9c
+ 657 018e AF010000 		.4byte	0x1af
+ 658 0192 0C       		.uleb128 0xc
+ 659 0193 4E020000 		.4byte	.LASF24
+ 660 0197 01       		.byte	0x1
+ 661 0198 38       		.byte	0x38
+ 662 0199 AD000000 		.4byte	0xad
+ 663 019d 02       		.uleb128 0x2
+ 664 019e 91       		.byte	0x91
+ 665 019f 6E       		.sleb128 -18
+ 666 01a0 0D       		.uleb128 0xd
+ 667 01a1 61000000 		.4byte	.LASF23
+ 668 01a5 01       		.byte	0x1
+ 669 01a6 3D       		.byte	0x3d
+ 670 01a7 97000000 		.4byte	0x97
+ 671 01ab 02       		.uleb128 0x2
+ 672 01ac 91       		.byte	0x91
+ 673 01ad 77       		.sleb128 -9
+ 674 01ae 00       		.byte	0
+ 675 01af 0E       		.uleb128 0xe
+ 676 01b0 19010000 		.4byte	.LASF28
+ 677 01b4 01       		.byte	0x1
+ 678 01b5 4A       		.byte	0x4a
+ 679 01b6 00000000 		.4byte	.LFB66
+ 680 01ba 38000000 		.4byte	.LFE66-.LFB66
+ 681 01be 01       		.uleb128 0x1
+ 682 01bf 9C       		.byte	0x9c
+ 683 01c0 0E       		.uleb128 0xe
+ 684 01c1 6C000000 		.4byte	.LASF29
+ 685 01c5 01       		.byte	0x1
+ 686 01c6 6E       		.byte	0x6e
+ 687 01c7 00000000 		.4byte	.LFB67
+ 688 01cb 2A000000 		.4byte	.LFE67-.LFB67
+ 689 01cf 01       		.uleb128 0x1
+ 690 01d0 9C       		.byte	0x9c
+ 691 01d1 0E       		.uleb128 0xe
+ 692 01d2 46000000 		.4byte	.LASF30
+ 693 01d6 01       		.byte	0x1
+ 694 01d7 87       		.byte	0x87
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 17
+
+
+ 695 01d8 00000000 		.4byte	.LFB68
+ 696 01dc 18000000 		.4byte	.LFE68-.LFB68
+ 697 01e0 01       		.uleb128 0x1
+ 698 01e1 9C       		.byte	0x9c
+ 699 01e2 0E       		.uleb128 0xe
+ 700 01e3 C1020000 		.4byte	.LASF31
+ 701 01e7 01       		.byte	0x1
+ 702 01e8 9C       		.byte	0x9c
+ 703 01e9 00000000 		.4byte	.LFB69
+ 704 01ed 18000000 		.4byte	.LFE69-.LFB69
+ 705 01f1 01       		.uleb128 0x1
+ 706 01f2 9C       		.byte	0x9c
+ 707 01f3 0E       		.uleb128 0xe
+ 708 01f4 25020000 		.4byte	.LASF32
+ 709 01f8 01       		.byte	0x1
+ 710 01f9 B3       		.byte	0xb3
+ 711 01fa 00000000 		.4byte	.LFB70
+ 712 01fe 24000000 		.4byte	.LFE70-.LFB70
+ 713 0202 01       		.uleb128 0x1
+ 714 0203 9C       		.byte	0x9c
+ 715 0204 0E       		.uleb128 0xe
+ 716 0205 55010000 		.4byte	.LASF33
+ 717 0209 01       		.byte	0x1
+ 718 020a B8       		.byte	0xb8
+ 719 020b 00000000 		.4byte	.LFB71
+ 720 020f 18000000 		.4byte	.LFE71-.LFB71
+ 721 0213 01       		.uleb128 0x1
+ 722 0214 9C       		.byte	0x9c
+ 723 0215 0E       		.uleb128 0xe
+ 724 0216 0F030000 		.4byte	.LASF34
+ 725 021a 01       		.byte	0x1
+ 726 021b BC       		.byte	0xbc
+ 727 021c 00000000 		.4byte	.LFB72
+ 728 0220 18000000 		.4byte	.LFE72-.LFB72
+ 729 0224 01       		.uleb128 0x1
+ 730 0225 9C       		.byte	0x9c
+ 731 0226 0E       		.uleb128 0xe
+ 732 0227 34020000 		.4byte	.LASF35
+ 733 022b 01       		.byte	0x1
+ 734 022c C9       		.byte	0xc9
+ 735 022d 00000000 		.4byte	.LFB73
+ 736 0231 18000000 		.4byte	.LFE73-.LFB73
+ 737 0235 01       		.uleb128 0x1
+ 738 0236 9C       		.byte	0x9c
+ 739 0237 0E       		.uleb128 0xe
+ 740 0238 01020000 		.4byte	.LASF36
+ 741 023c 01       		.byte	0x1
+ 742 023d D7       		.byte	0xd7
+ 743 023e 00000000 		.4byte	.LFB74
+ 744 0242 18000000 		.4byte	.LFE74-.LFB74
+ 745 0246 01       		.uleb128 0x1
+ 746 0247 9C       		.byte	0x9c
+ 747 0248 0F       		.uleb128 0xf
+ 748 0249 0C010000 		.4byte	.LASF37
+ 749 024d 05       		.byte	0x5
+ 750 024e 1207     		.2byte	0x712
+ 751 0250 54020000 		.4byte	0x254
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 18
+
+
+ 752 0254 10       		.uleb128 0x10
+ 753 0255 B8000000 		.4byte	0xb8
+ 754 0259 09       		.uleb128 0x9
+ 755 025a C3000000 		.4byte	0xc3
+ 756 025e 69020000 		.4byte	0x269
+ 757 0262 0A       		.uleb128 0xa
+ 758 0263 E4000000 		.4byte	0xe4
+ 759 0267 3F       		.byte	0x3f
+ 760 0268 00       		.byte	0
+ 761 0269 11       		.uleb128 0x11
+ 762 026a F1020000 		.4byte	.LASF38
+ 763 026e 06       		.byte	0x6
+ 764 026f 50       		.byte	0x50
+ 765 0270 59020000 		.4byte	0x259
+ 766 0274 05       		.uleb128 0x5
+ 767 0275 03       		.byte	0x3
+ 768 0276 00000000 		.4byte	buffer
+ 769 027a 11       		.uleb128 0x11
+ 770 027b D7020000 		.4byte	.LASF39
+ 771 027f 07       		.byte	0x7
+ 772 0280 21       		.byte	0x21
+ 773 0281 F2000000 		.4byte	0xf2
+ 774 0285 05       		.uleb128 0x5
+ 775 0286 03       		.byte	0x3
+ 776 0287 00000000 		.4byte	calibrate_array
+ 777 028b 09       		.uleb128 0x9
+ 778 028c 97000000 		.4byte	0x97
+ 779 0290 9B020000 		.4byte	0x29b
+ 780 0294 0A       		.uleb128 0xa
+ 781 0295 E4000000 		.4byte	0xe4
+ 782 0299 0F       		.byte	0xf
+ 783 029a 00       		.byte	0
+ 784 029b 12       		.uleb128 0x12
+ 785 029c 82000000 		.4byte	.LASF40
+ 786 02a0 08       		.byte	0x8
+ 787 02a1 22       		.byte	0x22
+ 788 02a2 8B020000 		.4byte	0x28b
+ 789 02a6 12       		.uleb128 0x12
+ 790 02a7 1E000000 		.4byte	.LASF41
+ 791 02ab 08       		.byte	0x8
+ 792 02ac 23       		.byte	0x23
+ 793 02ad 8B020000 		.4byte	0x28b
+ 794 02b1 09       		.uleb128 0x9
+ 795 02b2 97000000 		.4byte	0x97
+ 796 02b6 C1020000 		.4byte	0x2c1
+ 797 02ba 0A       		.uleb128 0xa
+ 798 02bb E4000000 		.4byte	0xe4
+ 799 02bf 3F       		.byte	0x3f
+ 800 02c0 00       		.byte	0
+ 801 02c1 12       		.uleb128 0x12
+ 802 02c2 2D010000 		.4byte	.LASF42
+ 803 02c6 08       		.byte	0x8
+ 804 02c7 24       		.byte	0x24
+ 805 02c8 B1020000 		.4byte	0x2b1
+ 806 02cc 12       		.uleb128 0x12
+ 807 02cd 75020000 		.4byte	.LASF43
+ 808 02d1 08       		.byte	0x8
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 19
+
+
+ 809 02d2 25       		.byte	0x25
+ 810 02d3 B1020000 		.4byte	0x2b1
+ 811 02d7 00       		.byte	0
+ 812              		.section	.debug_abbrev,"",%progbits
+ 813              	.Ldebug_abbrev0:
+ 814 0000 01       		.uleb128 0x1
+ 815 0001 11       		.uleb128 0x11
+ 816 0002 01       		.byte	0x1
+ 817 0003 25       		.uleb128 0x25
+ 818 0004 0E       		.uleb128 0xe
+ 819 0005 13       		.uleb128 0x13
+ 820 0006 0B       		.uleb128 0xb
+ 821 0007 03       		.uleb128 0x3
+ 822 0008 0E       		.uleb128 0xe
+ 823 0009 1B       		.uleb128 0x1b
+ 824 000a 0E       		.uleb128 0xe
+ 825 000b 55       		.uleb128 0x55
+ 826 000c 17       		.uleb128 0x17
+ 827 000d 11       		.uleb128 0x11
+ 828 000e 01       		.uleb128 0x1
+ 829 000f 10       		.uleb128 0x10
+ 830 0010 17       		.uleb128 0x17
+ 831 0011 00       		.byte	0
+ 832 0012 00       		.byte	0
+ 833 0013 02       		.uleb128 0x2
+ 834 0014 24       		.uleb128 0x24
+ 835 0015 00       		.byte	0
+ 836 0016 0B       		.uleb128 0xb
+ 837 0017 0B       		.uleb128 0xb
+ 838 0018 3E       		.uleb128 0x3e
+ 839 0019 0B       		.uleb128 0xb
+ 840 001a 03       		.uleb128 0x3
+ 841 001b 0E       		.uleb128 0xe
+ 842 001c 00       		.byte	0
+ 843 001d 00       		.byte	0
+ 844 001e 03       		.uleb128 0x3
+ 845 001f 16       		.uleb128 0x16
+ 846 0020 00       		.byte	0
+ 847 0021 03       		.uleb128 0x3
+ 848 0022 0E       		.uleb128 0xe
+ 849 0023 3A       		.uleb128 0x3a
+ 850 0024 0B       		.uleb128 0xb
+ 851 0025 3B       		.uleb128 0x3b
+ 852 0026 0B       		.uleb128 0xb
+ 853 0027 49       		.uleb128 0x49
+ 854 0028 13       		.uleb128 0x13
+ 855 0029 00       		.byte	0
+ 856 002a 00       		.byte	0
+ 857 002b 04       		.uleb128 0x4
+ 858 002c 24       		.uleb128 0x24
+ 859 002d 00       		.byte	0
+ 860 002e 0B       		.uleb128 0xb
+ 861 002f 0B       		.uleb128 0xb
+ 862 0030 3E       		.uleb128 0x3e
+ 863 0031 0B       		.uleb128 0xb
+ 864 0032 03       		.uleb128 0x3
+ 865 0033 08       		.uleb128 0x8
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 20
+
+
+ 866 0034 00       		.byte	0
+ 867 0035 00       		.byte	0
+ 868 0036 05       		.uleb128 0x5
+ 869 0037 16       		.uleb128 0x16
+ 870 0038 00       		.byte	0
+ 871 0039 03       		.uleb128 0x3
+ 872 003a 0E       		.uleb128 0xe
+ 873 003b 3A       		.uleb128 0x3a
+ 874 003c 0B       		.uleb128 0xb
+ 875 003d 3B       		.uleb128 0x3b
+ 876 003e 05       		.uleb128 0x5
+ 877 003f 49       		.uleb128 0x49
+ 878 0040 13       		.uleb128 0x13
+ 879 0041 00       		.byte	0
+ 880 0042 00       		.byte	0
+ 881 0043 06       		.uleb128 0x6
+ 882 0044 17       		.uleb128 0x17
+ 883 0045 01       		.byte	0x1
+ 884 0046 03       		.uleb128 0x3
+ 885 0047 0E       		.uleb128 0xe
+ 886 0048 0B       		.uleb128 0xb
+ 887 0049 0B       		.uleb128 0xb
+ 888 004a 3A       		.uleb128 0x3a
+ 889 004b 0B       		.uleb128 0xb
+ 890 004c 3B       		.uleb128 0x3b
+ 891 004d 0B       		.uleb128 0xb
+ 892 004e 01       		.uleb128 0x1
+ 893 004f 13       		.uleb128 0x13
+ 894 0050 00       		.byte	0
+ 895 0051 00       		.byte	0
+ 896 0052 07       		.uleb128 0x7
+ 897 0053 0D       		.uleb128 0xd
+ 898 0054 00       		.byte	0
+ 899 0055 03       		.uleb128 0x3
+ 900 0056 08       		.uleb128 0x8
+ 901 0057 3A       		.uleb128 0x3a
+ 902 0058 0B       		.uleb128 0xb
+ 903 0059 3B       		.uleb128 0x3b
+ 904 005a 0B       		.uleb128 0xb
+ 905 005b 49       		.uleb128 0x49
+ 906 005c 13       		.uleb128 0x13
+ 907 005d 00       		.byte	0
+ 908 005e 00       		.byte	0
+ 909 005f 08       		.uleb128 0x8
+ 910 0060 0D       		.uleb128 0xd
+ 911 0061 00       		.byte	0
+ 912 0062 03       		.uleb128 0x3
+ 913 0063 0E       		.uleb128 0xe
+ 914 0064 3A       		.uleb128 0x3a
+ 915 0065 0B       		.uleb128 0xb
+ 916 0066 3B       		.uleb128 0x3b
+ 917 0067 0B       		.uleb128 0xb
+ 918 0068 49       		.uleb128 0x49
+ 919 0069 13       		.uleb128 0x13
+ 920 006a 00       		.byte	0
+ 921 006b 00       		.byte	0
+ 922 006c 09       		.uleb128 0x9
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 21
+
+
+ 923 006d 01       		.uleb128 0x1
+ 924 006e 01       		.byte	0x1
+ 925 006f 49       		.uleb128 0x49
+ 926 0070 13       		.uleb128 0x13
+ 927 0071 01       		.uleb128 0x1
+ 928 0072 13       		.uleb128 0x13
+ 929 0073 00       		.byte	0
+ 930 0074 00       		.byte	0
+ 931 0075 0A       		.uleb128 0xa
+ 932 0076 21       		.uleb128 0x21
+ 933 0077 00       		.byte	0
+ 934 0078 49       		.uleb128 0x49
+ 935 0079 13       		.uleb128 0x13
+ 936 007a 2F       		.uleb128 0x2f
+ 937 007b 0B       		.uleb128 0xb
+ 938 007c 00       		.byte	0
+ 939 007d 00       		.byte	0
+ 940 007e 0B       		.uleb128 0xb
+ 941 007f 2E       		.uleb128 0x2e
+ 942 0080 01       		.byte	0x1
+ 943 0081 3F       		.uleb128 0x3f
+ 944 0082 19       		.uleb128 0x19
+ 945 0083 03       		.uleb128 0x3
+ 946 0084 0E       		.uleb128 0xe
+ 947 0085 3A       		.uleb128 0x3a
+ 948 0086 0B       		.uleb128 0xb
+ 949 0087 3B       		.uleb128 0x3b
+ 950 0088 0B       		.uleb128 0xb
+ 951 0089 27       		.uleb128 0x27
+ 952 008a 19       		.uleb128 0x19
+ 953 008b 49       		.uleb128 0x49
+ 954 008c 13       		.uleb128 0x13
+ 955 008d 11       		.uleb128 0x11
+ 956 008e 01       		.uleb128 0x1
+ 957 008f 12       		.uleb128 0x12
+ 958 0090 06       		.uleb128 0x6
+ 959 0091 40       		.uleb128 0x40
+ 960 0092 18       		.uleb128 0x18
+ 961 0093 9642     		.uleb128 0x2116
+ 962 0095 19       		.uleb128 0x19
+ 963 0096 01       		.uleb128 0x1
+ 964 0097 13       		.uleb128 0x13
+ 965 0098 00       		.byte	0
+ 966 0099 00       		.byte	0
+ 967 009a 0C       		.uleb128 0xc
+ 968 009b 05       		.uleb128 0x5
+ 969 009c 00       		.byte	0
+ 970 009d 03       		.uleb128 0x3
+ 971 009e 0E       		.uleb128 0xe
+ 972 009f 3A       		.uleb128 0x3a
+ 973 00a0 0B       		.uleb128 0xb
+ 974 00a1 3B       		.uleb128 0x3b
+ 975 00a2 0B       		.uleb128 0xb
+ 976 00a3 49       		.uleb128 0x49
+ 977 00a4 13       		.uleb128 0x13
+ 978 00a5 02       		.uleb128 0x2
+ 979 00a6 18       		.uleb128 0x18
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 22
+
+
+ 980 00a7 00       		.byte	0
+ 981 00a8 00       		.byte	0
+ 982 00a9 0D       		.uleb128 0xd
+ 983 00aa 34       		.uleb128 0x34
+ 984 00ab 00       		.byte	0
+ 985 00ac 03       		.uleb128 0x3
+ 986 00ad 0E       		.uleb128 0xe
+ 987 00ae 3A       		.uleb128 0x3a
+ 988 00af 0B       		.uleb128 0xb
+ 989 00b0 3B       		.uleb128 0x3b
+ 990 00b1 0B       		.uleb128 0xb
+ 991 00b2 49       		.uleb128 0x49
+ 992 00b3 13       		.uleb128 0x13
+ 993 00b4 02       		.uleb128 0x2
+ 994 00b5 18       		.uleb128 0x18
+ 995 00b6 00       		.byte	0
+ 996 00b7 00       		.byte	0
+ 997 00b8 0E       		.uleb128 0xe
+ 998 00b9 2E       		.uleb128 0x2e
+ 999 00ba 00       		.byte	0
+ 1000 00bb 3F       		.uleb128 0x3f
+ 1001 00bc 19       		.uleb128 0x19
+ 1002 00bd 03       		.uleb128 0x3
+ 1003 00be 0E       		.uleb128 0xe
+ 1004 00bf 3A       		.uleb128 0x3a
+ 1005 00c0 0B       		.uleb128 0xb
+ 1006 00c1 3B       		.uleb128 0x3b
+ 1007 00c2 0B       		.uleb128 0xb
+ 1008 00c3 27       		.uleb128 0x27
+ 1009 00c4 19       		.uleb128 0x19
+ 1010 00c5 11       		.uleb128 0x11
+ 1011 00c6 01       		.uleb128 0x1
+ 1012 00c7 12       		.uleb128 0x12
+ 1013 00c8 06       		.uleb128 0x6
+ 1014 00c9 40       		.uleb128 0x40
+ 1015 00ca 18       		.uleb128 0x18
+ 1016 00cb 9642     		.uleb128 0x2116
+ 1017 00cd 19       		.uleb128 0x19
+ 1018 00ce 00       		.byte	0
+ 1019 00cf 00       		.byte	0
+ 1020 00d0 0F       		.uleb128 0xf
+ 1021 00d1 34       		.uleb128 0x34
+ 1022 00d2 00       		.byte	0
+ 1023 00d3 03       		.uleb128 0x3
+ 1024 00d4 0E       		.uleb128 0xe
+ 1025 00d5 3A       		.uleb128 0x3a
+ 1026 00d6 0B       		.uleb128 0xb
+ 1027 00d7 3B       		.uleb128 0x3b
+ 1028 00d8 05       		.uleb128 0x5
+ 1029 00d9 49       		.uleb128 0x49
+ 1030 00da 13       		.uleb128 0x13
+ 1031 00db 3F       		.uleb128 0x3f
+ 1032 00dc 19       		.uleb128 0x19
+ 1033 00dd 3C       		.uleb128 0x3c
+ 1034 00de 19       		.uleb128 0x19
+ 1035 00df 00       		.byte	0
+ 1036 00e0 00       		.byte	0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 23
+
+
+ 1037 00e1 10       		.uleb128 0x10
+ 1038 00e2 35       		.uleb128 0x35
+ 1039 00e3 00       		.byte	0
+ 1040 00e4 49       		.uleb128 0x49
+ 1041 00e5 13       		.uleb128 0x13
+ 1042 00e6 00       		.byte	0
+ 1043 00e7 00       		.byte	0
+ 1044 00e8 11       		.uleb128 0x11
+ 1045 00e9 34       		.uleb128 0x34
+ 1046 00ea 00       		.byte	0
+ 1047 00eb 03       		.uleb128 0x3
+ 1048 00ec 0E       		.uleb128 0xe
+ 1049 00ed 3A       		.uleb128 0x3a
+ 1050 00ee 0B       		.uleb128 0xb
+ 1051 00ef 3B       		.uleb128 0x3b
+ 1052 00f0 0B       		.uleb128 0xb
+ 1053 00f1 49       		.uleb128 0x49
+ 1054 00f2 13       		.uleb128 0x13
+ 1055 00f3 3F       		.uleb128 0x3f
+ 1056 00f4 19       		.uleb128 0x19
+ 1057 00f5 02       		.uleb128 0x2
+ 1058 00f6 18       		.uleb128 0x18
+ 1059 00f7 00       		.byte	0
+ 1060 00f8 00       		.byte	0
+ 1061 00f9 12       		.uleb128 0x12
+ 1062 00fa 34       		.uleb128 0x34
+ 1063 00fb 00       		.byte	0
+ 1064 00fc 03       		.uleb128 0x3
+ 1065 00fd 0E       		.uleb128 0xe
+ 1066 00fe 3A       		.uleb128 0x3a
+ 1067 00ff 0B       		.uleb128 0xb
+ 1068 0100 3B       		.uleb128 0x3b
+ 1069 0101 0B       		.uleb128 0xb
+ 1070 0102 49       		.uleb128 0x49
+ 1071 0103 13       		.uleb128 0x13
+ 1072 0104 3F       		.uleb128 0x3f
+ 1073 0105 19       		.uleb128 0x19
+ 1074 0106 3C       		.uleb128 0x3c
+ 1075 0107 19       		.uleb128 0x19
+ 1076 0108 00       		.byte	0
+ 1077 0109 00       		.byte	0
+ 1078 010a 00       		.byte	0
+ 1079              		.section	.debug_aranges,"",%progbits
+ 1080 0000 6C000000 		.4byte	0x6c
+ 1081 0004 0200     		.2byte	0x2
+ 1082 0006 00000000 		.4byte	.Ldebug_info0
+ 1083 000a 04       		.byte	0x4
+ 1084 000b 00       		.byte	0
+ 1085 000c 0000     		.2byte	0
+ 1086 000e 0000     		.2byte	0
+ 1087 0010 00000000 		.4byte	.LFB64
+ 1088 0014 3C000000 		.4byte	.LFE64-.LFB64
+ 1089 0018 00000000 		.4byte	.LFB65
+ 1090 001c 38000000 		.4byte	.LFE65-.LFB65
+ 1091 0020 00000000 		.4byte	.LFB66
+ 1092 0024 38000000 		.4byte	.LFE66-.LFB66
+ 1093 0028 00000000 		.4byte	.LFB67
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 24
+
+
+ 1094 002c 2A000000 		.4byte	.LFE67-.LFB67
+ 1095 0030 00000000 		.4byte	.LFB68
+ 1096 0034 18000000 		.4byte	.LFE68-.LFB68
+ 1097 0038 00000000 		.4byte	.LFB69
+ 1098 003c 18000000 		.4byte	.LFE69-.LFB69
+ 1099 0040 00000000 		.4byte	.LFB70
+ 1100 0044 24000000 		.4byte	.LFE70-.LFB70
+ 1101 0048 00000000 		.4byte	.LFB71
+ 1102 004c 18000000 		.4byte	.LFE71-.LFB71
+ 1103 0050 00000000 		.4byte	.LFB72
+ 1104 0054 18000000 		.4byte	.LFE72-.LFB72
+ 1105 0058 00000000 		.4byte	.LFB73
+ 1106 005c 18000000 		.4byte	.LFE73-.LFB73
+ 1107 0060 00000000 		.4byte	.LFB74
+ 1108 0064 18000000 		.4byte	.LFE74-.LFB74
+ 1109 0068 00000000 		.4byte	0
+ 1110 006c 00000000 		.4byte	0
+ 1111              		.section	.debug_ranges,"",%progbits
+ 1112              	.Ldebug_ranges0:
+ 1113 0000 00000000 		.4byte	.LFB64
+ 1114 0004 3C000000 		.4byte	.LFE64
+ 1115 0008 00000000 		.4byte	.LFB65
+ 1116 000c 38000000 		.4byte	.LFE65
+ 1117 0010 00000000 		.4byte	.LFB66
+ 1118 0014 38000000 		.4byte	.LFE66
+ 1119 0018 00000000 		.4byte	.LFB67
+ 1120 001c 2A000000 		.4byte	.LFE67
+ 1121 0020 00000000 		.4byte	.LFB68
+ 1122 0024 18000000 		.4byte	.LFE68
+ 1123 0028 00000000 		.4byte	.LFB69
+ 1124 002c 18000000 		.4byte	.LFE69
+ 1125 0030 00000000 		.4byte	.LFB70
+ 1126 0034 24000000 		.4byte	.LFE70
+ 1127 0038 00000000 		.4byte	.LFB71
+ 1128 003c 18000000 		.4byte	.LFE71
+ 1129 0040 00000000 		.4byte	.LFB72
+ 1130 0044 18000000 		.4byte	.LFE72
+ 1131 0048 00000000 		.4byte	.LFB73
+ 1132 004c 18000000 		.4byte	.LFE73
+ 1133 0050 00000000 		.4byte	.LFB74
+ 1134 0054 18000000 		.4byte	.LFE74
+ 1135 0058 00000000 		.4byte	0
+ 1136 005c 00000000 		.4byte	0
+ 1137              		.section	.debug_line,"",%progbits
+ 1138              	.Ldebug_line0:
+ 1139 0000 72020000 		.section	.debug_str,"MS",%progbits,1
+ 1139      02008401 
+ 1139      00000201 
+ 1139      FB0E0D00 
+ 1139      01010101 
+ 1140              	.LASF2:
+ 1141 0000 5F5F7569 		.ascii	"__uint8_t\000"
+ 1141      6E74385F 
+ 1141      7400
+ 1142              	.LASF3:
+ 1143 000a 5F5F696E 		.ascii	"__int16_t\000"
+ 1143      7431365F 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 25
+
+
+ 1143      7400
+ 1144              	.LASF7:
+ 1145 0014 5F5F696E 		.ascii	"__int32_t\000"
+ 1145      7433325F 
+ 1145      7400
+ 1146              	.LASF41:
+ 1147 001e 4C43445F 		.ascii	"LCD_str_bot\000"
+ 1147      7374725F 
+ 1147      626F7400 
+ 1148              	.LASF8:
+ 1149 002a 6C6F6E67 		.ascii	"long int\000"
+ 1149      20696E74 
+ 1149      00
+ 1150              	.LASF45:
+ 1151 0033 68656C70 		.ascii	"helper_functions.c\000"
+ 1151      65725F66 
+ 1151      756E6374 
+ 1151      696F6E73 
+ 1151      2E6300
+ 1152              	.LASF30:
+ 1153 0046 68656C70 		.ascii	"helper_HardwareSleep\000"
+ 1153      65725F48 
+ 1153      61726477 
+ 1153      61726553 
+ 1153      6C656570 
+ 1154              	.LASF18:
+ 1155 005b 666C6F61 		.ascii	"float\000"
+ 1155      7400
+ 1156              	.LASF23:
+ 1157 0061 64617461 		.ascii	"data\000"
+ 1157      00
+ 1158              	.LASF17:
+ 1159 0066 75696E74 		.ascii	"uint8\000"
+ 1159      3800
+ 1160              	.LASF29:
+ 1161 006c 68656C70 		.ascii	"helper_HardwareEnable\000"
+ 1161      65725F48 
+ 1161      61726477 
+ 1161      61726545 
+ 1161      6E61626C 
+ 1162              	.LASF40:
+ 1163 0082 4C43445F 		.ascii	"LCD_str_top\000"
+ 1163      7374725F 
+ 1163      746F7000 
+ 1164              	.LASF46:
+ 1165 008e 433A5C55 		.ascii	"C:\\Users\\User\\Dropbox\\67 PSOC\\PSoC-Potentiosta"
+ 1165      73657273 
+ 1165      5C557365 
+ 1165      725C4472 
+ 1165      6F70626F 
+ 1166 00bc 745C4269 		.ascii	"t\\Biosensor.cydsn\000"
+ 1166      6F73656E 
+ 1166      736F722E 
+ 1166      63796473 
+ 1166      6E00
+ 1167              	.LASF9:
+ 1168 00ce 6C6F6E67 		.ascii	"long unsigned int\000"
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 26
+
+
+ 1168      20756E73 
+ 1168      69676E65 
+ 1168      6420696E 
+ 1168      7400
+ 1169              	.LASF6:
+ 1170 00e0 73686F72 		.ascii	"short unsigned int\000"
+ 1170      7420756E 
+ 1170      7369676E 
+ 1170      65642069 
+ 1170      6E7400
+ 1171              	.LASF47:
+ 1172 00f3 63616C69 		.ascii	"calibrate_data_usb_union\000"
+ 1172      62726174 
+ 1172      655F6461 
+ 1172      74615F75 
+ 1172      73625F75 
+ 1173              	.LASF37:
+ 1174 010c 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1174      52784275 
+ 1174      66666572 
+ 1174      00
+ 1175              	.LASF28:
+ 1176 0119 68656C70 		.ascii	"helper_HardwareInit\000"
+ 1176      65725F48 
+ 1176      61726477 
+ 1176      61726549 
+ 1176      6E697400 
+ 1177              	.LASF42:
+ 1178 012d 52585F44 		.ascii	"RX_Data\000"
+ 1178      61746100 
+ 1179              	.LASF1:
+ 1180 0135 756E7369 		.ascii	"unsigned char\000"
+ 1180      676E6564 
+ 1180      20636861 
+ 1180      7200
+ 1181              	.LASF5:
+ 1182 0143 5F5F7569 		.ascii	"__uint16_t\000"
+ 1182      6E743136 
+ 1182      5F7400
+ 1183              	.LASF19:
+ 1184 014e 646F7562 		.ascii	"double\000"
+ 1184      6C6500
+ 1185              	.LASF33:
+ 1186 0155 68656C70 		.ascii	"helper_WipeLCD_top\000"
+ 1186      65725F57 
+ 1186      6970654C 
+ 1186      43445F74 
+ 1186      6F7000
+ 1187              	.LASF44:
+ 1188 0168 474E5520 		.ascii	"GNU C99 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1188      43393920 
+ 1188      352E342E 
+ 1188      31203230 
+ 1188      31363036 
+ 1189 019b 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1189      20726576 
+ 1189      6973696F 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 27
+
+
+ 1189      6E203233 
+ 1189      37373135 
+ 1190 01ce 30202D73 		.ascii	"0 -std=gnu99 -ffunction-sections -ffat-lto-objects\000"
+ 1190      74643D67 
+ 1190      6E753939 
+ 1190      202D6666 
+ 1190      756E6374 
+ 1191              	.LASF36:
+ 1192 0201 68656C70 		.ascii	"helper_ClrRx\000"
+ 1192      65725F43 
+ 1192      6C725278 
+ 1192      00
+ 1193              	.LASF26:
+ 1194 020e 68656C70 		.ascii	"helper_Readbyte_EEPROM\000"
+ 1194      65725F52 
+ 1194      65616462 
+ 1194      7974655F 
+ 1194      45455052 
+ 1195              	.LASF32:
+ 1196 0225 68656C70 		.ascii	"helper_WipeLCD\000"
+ 1196      65725F57 
+ 1196      6970654C 
+ 1196      434400
+ 1197              	.LASF35:
+ 1198 0234 68656C70 		.ascii	"helper_ClrTx\000"
+ 1198      65725F43 
+ 1198      6C725478 
+ 1198      00
+ 1199              	.LASF12:
+ 1200 0241 756E7369 		.ascii	"unsigned int\000"
+ 1200      676E6564 
+ 1200      20696E74 
+ 1200      00
+ 1201              	.LASF24:
+ 1202 024e 61646472 		.ascii	"address\000"
+ 1202      65737300 
+ 1203              	.LASF11:
+ 1204 0256 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1204      206C6F6E 
+ 1204      6720756E 
+ 1204      7369676E 
+ 1204      65642069 
+ 1205              	.LASF13:
+ 1206 026d 75696E74 		.ascii	"uint8_t\000"
+ 1206      385F7400 
+ 1207              	.LASF43:
+ 1208 0275 54585F44 		.ascii	"TX_Data\000"
+ 1208      61746100 
+ 1209              	.LASF14:
+ 1210 027d 696E7431 		.ascii	"int16_t\000"
+ 1210      365F7400 
+ 1211              	.LASF25:
+ 1212 0285 68656C70 		.ascii	"helper_Writebyte_EEPROM\000"
+ 1212      65725F57 
+ 1212      72697465 
+ 1212      62797465 
+ 1212      5F454550 
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 28
+
+
+ 1213              	.LASF16:
+ 1214 029d 696E7433 		.ascii	"int32_t\000"
+ 1214      325F7400 
+ 1215              	.LASF21:
+ 1216 02a5 73697A65 		.ascii	"sizetype\000"
+ 1216      74797065 
+ 1216      00
+ 1217              	.LASF10:
+ 1218 02ae 6C6F6E67 		.ascii	"long long int\000"
+ 1218      206C6F6E 
+ 1218      6720696E 
+ 1218      7400
+ 1219              	.LASF20:
+ 1220 02bc 63686172 		.ascii	"char\000"
+ 1220      00
+ 1221              	.LASF31:
+ 1222 02c1 68656C70 		.ascii	"helper_HardwareWakeup\000"
+ 1222      65725F48 
+ 1222      61726477 
+ 1222      61726557 
+ 1222      616B6575 
+ 1223              	.LASF39:
+ 1224 02d7 63616C69 		.ascii	"calibrate_array\000"
+ 1224      62726174 
+ 1224      655F6172 
+ 1224      72617900 
+ 1225              	.LASF4:
+ 1226 02e7 73686F72 		.ascii	"short int\000"
+ 1226      7420696E 
+ 1226      7400
+ 1227              	.LASF38:
+ 1228 02f1 62756666 		.ascii	"buffer\000"
+ 1228      657200
+ 1229              	.LASF15:
+ 1230 02f8 75696E74 		.ascii	"uint16_t\000"
+ 1230      31365F74 
+ 1230      00
+ 1231              	.LASF27:
+ 1232 0301 77726974 		.ascii	"write_results\000"
+ 1232      655F7265 
+ 1232      73756C74 
+ 1232      7300
+ 1233              	.LASF34:
+ 1234 030f 68656C70 		.ascii	"helper_WipeLCD_bot\000"
+ 1234      65725F57 
+ 1234      6970654C 
+ 1234      43445F62 
+ 1234      6F7400
+ 1235              	.LASF22:
+ 1236 0322 6C6F6E67 		.ascii	"long double\000"
+ 1236      20646F75 
+ 1236      626C6500 
+ 1237              	.LASF0:
+ 1238 032e 7369676E 		.ascii	"signed char\000"
+ 1238      65642063 
+ 1238      68617200 
+ 1239              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccWDcuW1.s 			page 29
+
+
