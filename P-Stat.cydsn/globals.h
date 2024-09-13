@@ -34,24 +34,26 @@
 #define SET_ADC_CONFIG                  'E'
 #define TIA_RESISTOR                    'F'
 #define ADC_BUFFER_GAIN                 'G'
+#define SET_VDAC_OFFSET                 'J'
 
     
 // Electrode definitions
-#define TWO_ELECTRODE_CONFIG            0
-#define THREE_ELECTRODE_CONFIG          1 
+#define TWO_ELECTRODE_CONFIG            (0x00u)
+#define THREE_ELECTRODE_CONFIG          (0x01u)
     
       
 /**************************************
 *           API Constants
 **************************************/
-#define true                            1
-#define false                           0
+#define true                            (0x01u)
+#define false                           (0x00u)
     
 /**************************************
 *           ADC Constants
 **************************************/     
-#define DO_NOT_RESTART_ADC              0  
-#define NUM_CONVERSIONS                 4
+#define DO_NOT_RESTART_ADC              (0x00u)  
+#define RESTART_ADC                     (0x01u)
+#define NUM_CONVERSIONS                 (0x04u)
     
 /**************************************
 *           DAC Constants
@@ -60,18 +62,27 @@
 #define DAC_OFFSET                      128
 #define VIRTUAL_GROUND                  128    
     
-// Define the AMux channels
-#define AMux_TIA_working_electrode_ch   1
+/**************************************
+*           DELSIG Constants
+**************************************/ 
+        
+/* Constants for IsEndConversion() "retMode" parameter */
+#define ADC_DelSig_RETURN_STATUS        (0x01u)
+#define ADC_DelSig_WAIT_FOR_RESULT      (0x00u)
     
-#define VDAC_ADDRESS                    0   
-#define VDAC_channel                    0  
+/**************************************
+*           AMux channels
+**************************************/   
+#define AMux_TIA_working_electrode_ch   (0x01u)
+#define VDAC_ADDRESS                    (0x00u)   
+#define VDAC_channel                    (0x00u)  
 
     
 /**************************************
 *        USB Constants
 **************************************/
   
-#define USBFS_DEVICE                    (0u)
+#define USBFS_DEVICE                    (0x00u)  
 #define USBUART_BUFFER_SIZE             (64u)
 #define LINE_STR_LENGTH                 (20u)
 // char8* parity[] = {"None", "Odd", "Even", "Mark", "Space"};
@@ -84,7 +95,7 @@ uint8 buffer[USBUART_BUFFER_SIZE];
 **************************************/
    
 
-#define EEPROM_READ_TEMPERATURE_CORRECT        0
+#define EEPROM_READ_TEMPERATURE_CORRECT  (0x00u)  
   
 /**************************************
 *        EEPROM LCD Constants
@@ -96,13 +107,13 @@ uint8 buffer[USBUART_BUFFER_SIZE];
 *        Calibration Constants 
 **************************************/   
 
-#define AMux_TIA_calibrat_ch 0
-#define AMux_TIA_measure_ch 1    
-#define Number_calibration_points 5
+#define AMux_TIA_calibrat_ch             (0x00u)  
+#define AMux_TIA_measure_ch              (0x01u)      
+#define Number_calibration_points        (0x05u)    
 
 
 extern int16_t voltage;
-extern double current;
+extern float current;
 
 
 /* External variable of the device address located in USBFS.h */

@@ -2,8 +2,6 @@
 * File Name: user_selections.c
 *
 * Description:
-*  Make some of functions the user can call through the USB. 
-*  Only for the longer functions to keep main clearer
 *
 **********************************************************************************
 * Copyright Kyle Vitautas Lopin, Naresuan University, Phitsanulok Thailand
@@ -11,9 +9,9 @@
 *********************************************************************************/
 
 #include <project.h>
-#include <main.h>
+#include <main.h>                   // TX/RX buffers 
 #include <user_selections.h>
-#include <helper_functions.h>
+#include <calibrate.h>              // calibrator list
 
 
 void user_setup_electrode (uint8_t data_buffer[])
@@ -41,15 +39,10 @@ void user_setup_electrode (uint8_t data_buffer[])
 /******************************************************************************
 * Function Name: user_setup_TIA_CONFIG
 *******************************************************************************
-*
 * Summary: Stop all operations by disabling all the isrs and reset the look up table index to 0
-*
 * Global variables:
-*
 * Parameters:data_buffer[]
-*
 * Return: None
-*
 *******************************************************************************/
 
 void user_setup_ADC_CONFIG(uint8_t data_buffer[]) 
@@ -58,9 +51,9 @@ void user_setup_ADC_CONFIG(uint8_t data_buffer[])
        
     helper_ClrTx();
     
-    if (ADC_config == 1 || ADC_config == 2) 
+    if (ADC_config >= 1 || ADC_config <= 4) 
         {
-            ADC_DelSig_SelectConfiguration(ADC_config, DO_NOT_RESTART_ADC);    
+            ADC_DelSig_SelectConfiguration(ADC_config, RESTART_ADC);    
             snprintf((char *)TX_Data, USBUART_BUFFER_SIZE, "ADC CONFIGURATION =%d ",ADC_config) ;                             
         }
         else
@@ -85,7 +78,7 @@ void user_setup_ADC_CONFIG(uint8_t data_buffer[])
 
 void user_setup_TIA_RESISTOR(uint8_t data_buffer[]) 
 {    
-    TIA_resistor_value_index = data_buffer[4]-'0'; 
+    TIA_resistor_value_index = data_buffer[2]-'0'; 
     
     helper_ClrTx();
     
@@ -105,20 +98,15 @@ void user_setup_TIA_RESISTOR(uint8_t data_buffer[])
 /******************************************************************************
 * Function Name: user_setup_ADC_BUFFER_GAIN
 *******************************************************************************
-*
 * Summary: is the adc buffer gain setting {1, 2, 4, 8}
-*
 * Global variables:
-*
 * Parameters:data_buffer[]
-*
 * Return: None
-*
 *******************************************************************************/
 
 void user_setup_ADC_BUFFER_GAIN(uint8_t data_buffer[]) 
 {    
-    ADC_buffer_index = data_buffer[6]-'0'; 
+    ADC_buffer_index = data_buffer[2]-'0'; 
     
     helper_ClrTx();
     
@@ -140,19 +128,11 @@ void user_setup_ADC_BUFFER_GAIN(uint8_t data_buffer[])
 /******************************************************************************
 * Function Name: user_reset_device
 *******************************************************************************
-*
-* Summary:
-*  Stop all operations by disabling all the isrs and reset the look up table index to 0
-*  
+* Summary: Stop all operations by disabling all the isrs and reset the look up table index to 0
 * Global variables:
-*
-* Parameters:
-*  None
-*
-* Return:
-*  None
-*
-*******************************************************************************/
+* Parameters: None
+* Return:  None
+********************************************************************************/
 void user_reset_device(void) {
 
     helper_HardwareSleep();
@@ -176,7 +156,8 @@ void user_reset_device(void) {
 
 void user_identify(void) 
 {
-snprintf((char *)TX_Data, USBUART_BUFFER_SIZE, "Cheeky Potentiostat II - Rev 1 ");    
+helper_ClrTx();
+snprintf((char *)TX_Data, USBUART_BUFFER_SIZE, ">> Ready ");    
 USB_send (TX_Data, USBUART_BUFFER_SIZE ) ;   
 }
 

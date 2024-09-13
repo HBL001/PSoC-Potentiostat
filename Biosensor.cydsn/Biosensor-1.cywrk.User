@@ -13,7 +13,7 @@
 <v>Output</v>
 </TreeKeys>
 <TreeStates>
-<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Biosensor-1">
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Biosensor-1\P-Stat\Source Files\main.c">
 <ExpandedNodeIds>
 <v>Biosensor-1</v>
 <v>Biosensor-1\P-Stat</v>
@@ -46,57 +46,8 @@
 <v>Biosensor-1\P-Stat\Source Files\usb_protocols.c</v>
 <v>Biosensor-1\P-Stat\Source Files\user_selections.c</v>
 <v>Biosensor-1\P-Stat\Generated_Source</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5</v>
 </ExpandedNodeIds>
-<VisibleNodeIds>
-<v>Biosensor-1</v>
-<v>Biosensor-1\P-Stat</v>
-<v>Biosensor-1\P-Stat\TopDesign</v>
-<v>Biosensor-1\P-Stat\P-Stat.cydwr</v>
-<v>Biosensor-1\P-Stat\P-Stat.cydwr\Pins</v>
-<v>Biosensor-1\P-Stat\P-Stat.cydwr\Analog</v>
-<v>Biosensor-1\P-Stat\P-Stat.cydwr\Clocks</v>
-<v>Biosensor-1\P-Stat\P-Stat.cydwr\Interrupts</v>
-<v>Biosensor-1\P-Stat\P-Stat.cydwr\DMA</v>
-<v>Biosensor-1\P-Stat\P-Stat.cydwr\System</v>
-<v>Biosensor-1\P-Stat\P-Stat.cydwr\Directives</v>
-<v>Biosensor-1\P-Stat\P-Stat.cydwr\Flash Security</v>
-<v>Biosensor-1\P-Stat\P-Stat.cydwr\EEPROM</v>
-<v>Biosensor-1\P-Stat\Header Files</v>
-<v>Biosensor-1\P-Stat\Header Files\adc.h</v>
-<v>Biosensor-1\P-Stat\Header Files\calibrate.h</v>
-<v>Biosensor-1\P-Stat\Header Files\dac.h</v>
-<v>Biosensor-1\P-Stat\Header Files\globals.h</v>
-<v>Biosensor-1\P-Stat\Header Files\helper_functions.h</v>
-<v>Biosensor-1\P-Stat\Header Files\main.h</v>
-<v>Biosensor-1\P-Stat\Header Files\usb_protocols.h</v>
-<v>Biosensor-1\P-Stat\Header Files\user_selections.h</v>
-<v>Biosensor-1\P-Stat\Source Files</v>
-<v>Biosensor-1\P-Stat\Source Files\adc.c</v>
-<v>Biosensor-1\P-Stat\Source Files\calibrate.c</v>
-<v>Biosensor-1\P-Stat\Source Files\dac.c</v>
-<v>Biosensor-1\P-Stat\Source Files\helper_functions.c</v>
-<v>Biosensor-1\P-Stat\Source Files\main.c</v>
-<v>Biosensor-1\P-Stat\Source Files\usb_protocols.c</v>
-<v>Biosensor-1\P-Stat\Source Files\user_selections.c</v>
-<v>Biosensor-1\P-Stat\Generated_Source</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\ADC_DelSig</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\ADC_DelSig_Ext_CP_Clk</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\ADC_DelSig_IRQ</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\ADC_DelSig_theACLK</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\AMux_electrode</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\AMux_TIA_input</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\Clock_PWM</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\Counter_Electrode</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\cy_boot</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\EEPROM</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\Em_EEPROM_Dynamic</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\IDAC_calibrate</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\isr_adc</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\isr_adc_reset</v>
-<v>Biosensor-1\P-Stat\Generated_Source\PSoC5\LCD</v>
-</VisibleNodeIds>
+<VisibleNodeIds />
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 <CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
 <ExpandedNodeIds>
@@ -106,13 +57,7 @@
 <v>Biosensor-1\P-Stat\TopDesign\TopDesign.cysch</v>
 <v>Biosensor-1\P-Stat\TopDesign\TopDesign_01.cymacro</v>
 </ExpandedNodeIds>
-<VisibleNodeIds>
-<v>Biosensor-1</v>
-<v>Biosensor-1\P-Stat</v>
-<v>Biosensor-1\P-Stat\TopDesign</v>
-<v>Biosensor-1\P-Stat\TopDesign\TopDesign.cysch</v>
-<v>Biosensor-1\P-Stat\TopDesign\TopDesign_01.cymacro</v>
-</VisibleNodeIds>
+<VisibleNodeIds />
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 <CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
 <ExpandedNodeIds>
@@ -197,54 +142,7 @@
 <v>Biosensor-1\P-Stat\P-Stat.rpt</v>
 <v>Biosensor-1\P-Stat\P-Stat_timing.html</v>
 </ExpandedNodeIds>
-<VisibleNodeIds>
-<v>Biosensor-1</v>
-<v>Biosensor-1\P-Stat</v>
-<v>Biosensor-1\P-Stat\CortexM3</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\adc.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_DelSig.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_DelSig_Ext_CP_Clk.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_DelSig_INT.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_DelSig_IRQ.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_DelSig_PM.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\ADC_DelSig_theACLK.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\AMux_electrode.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\AMux_TIA_input.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\calibrate.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\Clock_PWM.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\Cm3Start.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\Counter_Electrode.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\cy_em_eeprom.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\CyBootAsmGnu.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\CyDmac.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\cyfitter_cfg.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\CyFlash.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\CyLib.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\cyPm.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\CySpc.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\cyutils.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\dac.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\EEPROM.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\helper_functions.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\IDAC_calibrate.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\IDAC_calibrate_PM.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_adc.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_adc_reset.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\LCD.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\LCD_LCDPort.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\LCD_PM.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\main.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\Opamp_Aux.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\Opamp_Aux_PM.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\P_M.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\P_S.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_M.lst</v>
-<v>Biosensor-1\P-Stat\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_M_PM.lst</v>
-</VisibleNodeIds>
+<VisibleNodeIds />
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 </TreeStates>
 <TreeKeysV2>
@@ -280,34 +178,7 @@
 <v>Biosensor-1\P-Stat\VDAC8_v1_90</v>
 <v>Biosensor-1\P-Stat\VDAC8_v1_90\VDAC8_v1_90.pdf</v>
 </ExpandedNodeIds>
-<VisibleNodeIds>
-<v>Biosensor-1</v>
-<v>Biosensor-1\P-Stat</v>
-<v>Biosensor-1\P-Stat\PSoC 5LP Architecture TRM</v>
-<v>Biosensor-1\P-Stat\CY8C58LP Family Datasheet</v>
-<v>Biosensor-1\P-Stat\System Reference Guides</v>
-<v>Biosensor-1\P-Stat\System Reference Guides\cy_boot_v6_10</v>
-<v>Biosensor-1\P-Stat\ADC_DelSig_v3_30.pdf</v>
-<v>Biosensor-1\P-Stat\AMux_v1_80</v>
-<v>Biosensor-1\P-Stat\AMux_v1_80\AMux_v1_80.pdf</v>
-<v>Biosensor-1\P-Stat\CharLCD_v2_20.pdf</v>
-<v>Biosensor-1\P-Stat\cy_clock_v2_20.pdf</v>
-<v>Biosensor-1\P-Stat\cy_constant_v1_0</v>
-<v>Biosensor-1\P-Stat\cy_constant_v1_0\cy_constant_v1_0.pdf</v>
-<v>Biosensor-1\P-Stat\cy_isr_v1_71</v>
-<v>Biosensor-1\P-Stat\cy_isr_v1_71\cy_isr_v1_71.pdf</v>
-<v>Biosensor-1\P-Stat\cy_pins_v2_20</v>
-<v>Biosensor-1\P-Stat\cy_pins_v2_20\cy_pins_v2_20.pdf</v>
-<v>Biosensor-1\P-Stat\EEPROM_v3_0.pdf</v>
-<v>Biosensor-1\P-Stat\IDAC8_v2_0.pdf</v>
-<v>Biosensor-1\P-Stat\OpAmp_v1_90.pdf</v>
-<v>Biosensor-1\P-Stat\PWM_v3_30</v>
-<v>Biosensor-1\P-Stat\PWM_v3_30\PWM_v3_30.pdf</v>
-<v>Biosensor-1\P-Stat\TIA_v2_0.pdf</v>
-<v>Biosensor-1\P-Stat\USBFS_v3_20.pdf</v>
-<v>Biosensor-1\P-Stat\VDAC8_v1_90</v>
-<v>Biosensor-1\P-Stat\VDAC8_v1_90\VDAC8_v1_90.pdf</v>
-</VisibleNodeIds>
+<VisibleNodeIds />
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 </TreeStatesV2>
 </CyGuid_1b906a0f-a7b6-4e4d-a428-82f98b53cb35>
@@ -320,14 +191,26 @@
 </userData>
 </CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997>
 <Unloaded />
-<OpenDocs />
+<OpenDocs>
+<name v="..\P-Stat.cydsn\main.c" />
+<name v="..\P-Stat.cydsn\dac.h" />
+<name v="..\P-Stat.cydsn\adc.h" />
+<name v="..\P-Stat.cydsn\adc.c" />
+<name v="..\P-Stat.cydsn\dac.c" />
+<name v="..\P-Stat.cydsn\TopDesign\TopDesign.cysch" />
+<name v="..\P-Stat.cydsn\globals.h" />
+<name v="..\P-Stat.cydsn\Generated_Source\PSoC5\ADC_DelSig.c" />
+<name v="..\P-Stat.cydsn\Generated_Source\PSoC5\ADC_DelSig.h" />
+<name v="..\P-Stat.cydsn\main.h" />
+<name v="..\P-Stat.cydsn\user_selections.c" />
+</OpenDocs>
 <OpenDocsLayout><![CDATA[<?xml version="1.0"?><!--
 
   Actipro Docking/MDI for WinForms
   Copyright (c) 2001-2016 Actipro Software LLC.  All rights reserved.
   http://www.actiprosoftware.com
 
---><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer /><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1338, 681" SelectedTabbedMdiWindow="02499341-767d-4ed1-8e04-c01ab70e44ca"><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\P-Stat.cydsn\main.c" Guid="c88fa675-335d-4582-a2e1-0f0e608f7615" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\P-Stat.cydsn\dac.h" Guid="6b0efbea-8e44-4926-91ed-7dbbdba85ee4" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\P-Stat.cydsn\adc.h" Guid="ae2b77b5-4aff-4ce1-96ae-293c577a5790" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\P-Stat.cydsn\adc.c" Guid="eb228dc5-0427-4cd6-8785-2232e20e04c4" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\P-Stat.cydsn\dac.c" Guid="399baff6-0a62-48e7-86b5-fd363b6022c6" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\P-Stat.cydsn\TopDesign\TopDesign.cysch" Guid="589a9a80-9671-4df0-88a1-ef680987fb51" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\P-Stat.cydsn\globals.h" Guid="5cdab3c5-af63-4a1d-9143-d22b518a05bb" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\P-Stat.cydsn\Generated_Source\PSoC5\ADC_DelSig.c" Guid="b82a0c19-848d-4f32-a50d-ac9b2fcfce71" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\P-Stat.cydsn\Generated_Source\PSoC5\ADC_DelSig.h" Guid="61505367-c5bb-4288-8cb4-2838bbd37385" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\P-Stat.cydsn\main.h" Guid="9df8f6a6-3dfe-480f-8ee3-1c8d4f218428" /><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="532ab3f3-3830-48f6-b205-4a79a0d09e53" /><DocumentWindow Key="C:\Users\User\Dropbox\67 PSOC\PSoC-Potentiostat\P-Stat.cydsn\user_selections.c" Guid="02499341-767d-4ed1-8e04-c01ab70e44ca" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
 <config v="" />
 <AutoUpdate v="true" />
 </CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>

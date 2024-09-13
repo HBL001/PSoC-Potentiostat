@@ -17,6 +17,9 @@
 
 uint16_t adc_Convert2Dec(const uint8_t array[], const uint8_t len);
 
+uint8_t adc_VDAC_offset(uint8_t data_buffer[]);
+void adc_VDAC_Setvalue(uint8_t value);
+
 extern uint8_t ADC_buffer_index;
 extern uint8_t ADC_config;
 

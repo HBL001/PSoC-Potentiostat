@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
   22:Generated_Source\PSoC5/Opamp_Aux.c **** 
   23:Generated_Source\PSoC5/Opamp_Aux.c **** /*******************************************************************************   
   24:Generated_Source\PSoC5/Opamp_Aux.c **** * Function Name: Opamp_Aux_Init
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 2
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 2
 
 
   25:Generated_Source\PSoC5/Opamp_Aux.c **** ********************************************************************************
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
   52:Generated_Source\PSoC5/Opamp_Aux.c **** * Parameters:
   53:Generated_Source\PSoC5/Opamp_Aux.c **** *  void
   54:Generated_Source\PSoC5/Opamp_Aux.c **** *
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 3
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 3
 
 
   55:Generated_Source\PSoC5/Opamp_Aux.c **** * Return:
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  100 0038 80BC     		pop	{r7}
  101              		.cfi_restore 7
  102              		.cfi_def_cfa_offset 0
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 4
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 4
 
 
  103 003a 7047     		bx	lr
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  132 0004 064B     		ldr	r3, .L7
  133 0006 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
  134 0008 002B     		cmp	r3, #0
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 5
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 5
 
 
  135 000a 04D1     		bne	.L6
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  164              		.cfi_startproc
  165              		@ args = 0, pretend = 0, frame = 0
  166              		@ frame_needed = 1, uses_anonymous_args = 0
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 6
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 6
 
 
  167              		@ link register save eliminated.
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  209 0042 80BC     		pop	{r7}
  210              		.cfi_restore 7
  211              		.cfi_def_cfa_offset 0
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 7
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 7
 
 
  212 0044 7047     		bx	lr
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  245 000a 0C4A     		ldr	r2, .L15
  246 000c 0B4B     		ldr	r3, .L15
  247 000e 1B78     		ldrb	r3, [r3]
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 8
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 8
 
 
  248 0010 DBB2     		uxtb	r3, r3
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  297 0021 00000000 		.4byte	.Ldebug_line0
  298 0025 02       		.uleb128 0x2
  299 0026 01       		.byte	0x1
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 9
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 9
 
 
  300 0027 06       		.byte	0x6
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  354 0088 6A000000 		.4byte	.LASF11
  355 008c 04       		.uleb128 0x4
  356 008d AA010000 		.4byte	.LASF13
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 10
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 10
 
 
  357 0091 02       		.byte	0x2
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  411 0104 6B000000 		.4byte	0x6b
  412 0108 02       		.uleb128 0x2
  413 0109 91       		.byte	0x91
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 11
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 11
 
 
  414 010a 77       		.sleb128 -9
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  468 0029 04       		.uleb128 0x4
  469 002a 16       		.uleb128 0x16
  470 002b 00       		.byte	0
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 12
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 12
 
 
  471 002c 03       		.uleb128 0x3
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  525 0063 01       		.uleb128 0x1
  526 0064 12       		.uleb128 0x12
  527 0065 06       		.uleb128 0x6
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 13
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 13
 
 
  528 0066 40       		.uleb128 0x40
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  582 009e 0B       		.uleb128 0xb
  583 009f 49       		.uleb128 0x49
  584 00a0 13       		.uleb128 0x13
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 14
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 14
 
 
  585 00a1 3F       		.uleb128 0x3f
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  632 000e 756E7369 		.ascii	"unsigned int\000"
  632      676E6564 
  632      20696E74 
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 15
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 15
 
 
  632      00
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  652      00
  653              	.LASF2:
  654 011f 73686F72 		.ascii	"short int\000"
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 16
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 16
 
 
  654      7420696E 
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 1
  677 01ec 706F7765 		.ascii	"power\000"
  677      7200
  678              	.LASF14:
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccNi23MZ.s 			page 17
+ARM GAS  C:\Users\User\AppData\Local\Temp\cc2BTXy4.s 			page 17
 
 
  679 01f2 73697A65 		.ascii	"sizetype\000"

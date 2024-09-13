@@ -104,7 +104,7 @@ void TIA_Enable(void)                 ;
 *       Initial Paramater Values
 ***************************************/
 
-#define TIA_INIT_POWER                 (2u)
+#define TIA_INIT_POWER                 (1u)
 #define TIA_INIT_RES_FEEDBACK          (0u)
 #define TIA_INIT_CAP_FEEDBACK          (3u)
 

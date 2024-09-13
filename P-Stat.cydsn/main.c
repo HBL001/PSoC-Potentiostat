@@ -15,10 +15,7 @@
 * The following are the inputs commands the device will take, all inputs are inputted as ASCII strings.
 * 'I' - Identifies the device, will respond through the USB
 * "L|X" - Set electrode configuration to 2 or 3 electrodes. X=0 is 2 electrodes, 1=3 electrodes
-* "M|XXXX|YYYY" - Run an amperometry experiment. You need to start to read the data the device will start streaming when given this command. XXXX is an uint16 number to set the DAC value to so the electrodes are at the approriate voltage. YYYY is an uint16 of how many data points to collect in each ADC buffer before exporting the data
 * 'B' - Calibrate the ADC and TIA signal chain.
-* "T|XXXXX" - set the period value of the PWM used as a timer that starts the isrs to change the DAC and read the ADC. XXXXX is a uint16 that is put into the PWM that set the timing with a sample rate of 240 kHz / XXXXX
-* "C|XXXXX" - set the compare value of the PWM used as a timer that sets when the DAC changes compared to when the ADC measures.
 * 'X' - Reset the device. Disable all isrs and put the hardware to sleep.
 * "D|XXX" - Set the voltage control 8 bit DAC. XXX is the value to put in the DAC
 * 'H' - Wake up all the hardware, enable All
@@ -42,20 +39,23 @@ uint8_t TX_Data[USBUART_BUFFER_SIZE];
 uint8_t  LCD_str_top[MAX_LCD_BYTES];                       // buffer for LCD screen, make it extra big to avoid overflow
 uint8_t  LCD_str_bot[MAX_LCD_BYTES];  
 
+uint8_t TIA_offset;
 uint8_t TIA_resistor_value_index;
 uint8_t ADC_buffer_index;
 uint8_t ADC_config;
 
 
-int16_t voltage;
-double current;
-uint8_t dac_Volts;
-uint8_t conversionCount;
-uint8_t dataReady;
+int16_t voltage = 0;
+float current = 0;
 
-double  measureADC;
-uint32_t adcValue;
-int32_t  signedValue;
+uint8_t dac_Volts = 0;
+uint8_t conversionCount = 0;
+uint8_t dataReady = 0;
+
+float adcVolts = 0;
+int32_t  measureADC = 0;
+int32_t adcValue = 0;
+int32_t  signedValue = 0 ;
 
 
 // so this is called by PWM1 every 250mS
@@ -69,29 +69,35 @@ CY_ISR(ADC_ISR)
 {
     if (conversionCount < NUM_CONVERSIONS)    
     {
-        if (ADC_DelSig_IsEndConversion(ADC_DelSig_RETURN_STATUS))
-        {
-            adcValue =  ADC_DelSig_GetResult32();
-                                   
-            if (adcValue & 0x80000000) 
-            {
-                signedValue = (int32_t)(adcValue - 0xFFFFFFFF - 1);
-            } 
-            else 
-            {
-                signedValue = (int32_t)adcValue;
-            }
-            
-            measureADC = measureADC + ((double)(signedValue))/4;      
+       if (ADC_DelSig_IsEndConversion( ADC_DelSig_WAIT_FOR_RESULT))
+      {
+        adcValue = ADC_DelSig_GetResult32() & 0xFFFFF ;
+
+        if (adcValue & 0x80000) 
+                 {
+                   int32_t value = (int32_t)(adcValue | 0xFFF00000);
+                   int32_t invertedValue = ~value;
+                
+                signedValue = -(invertedValue + 1);
+     
+                 } 
+                     else 
+                 {
+                     signedValue = (int32_t)adcValue;
+                 }
+           
+            measureADC = signedValue;     
         
             conversionCount++;
-        }
+      }
     }
     else
     {
         if (conversionCount == NUM_CONVERSIONS)
         {           
+    
             dataReady = 1;
+                        
             conversionCount++;
         }
         else
@@ -125,16 +131,20 @@ int main() {
     ADC_buffer_index = 1;
     ADC_config = 1;
     TIA_resistor_value_index = 0;
+    
+    /* enable the system ready to begin measurements */
+    helper_HardwareEnable(); 
+    
+    TIA_offset = DAC_OFFSET;
+    adc_VDAC_Setvalue(TIA_offset);
+        
     TIA_SetResFB(TIA_resistor_value_index);
         
     dac_Volts = VIRTUAL_GROUND;
     dac_Setvalue(dac_Volts); 
     
-    voltage = 0;
-    
-    /* enable the system ready to begin measurements */
-    helper_HardwareEnable();  
-    
+    voltage = 0;  
+  
     isr_adc_reset_StartEx(ADC_ISR_RESET);
     isr_adc_StartEx(ADC_ISR);
     
@@ -154,8 +164,7 @@ int main() {
                 USBUART_CDC_Init();
             }
         }
-        
-        
+         
         
         /* Only service USB CDC when device is connected. */
         if (0u != USBUART_GetConfiguration())
@@ -233,6 +242,11 @@ int main() {
                         voltage = (int16_t)(dac_Volts-DAC_OFFSET)*DAC_RESOLUTION;           
                         break;
                 
+                    case SET_VDAC_OFFSET: ;                 // 'J' set the VDAC value 
+                        TIA_offset = adc_VDAC_offset(RX_Data);                 
+                        adc_VDAC_Setvalue(TIA_offset);
+                        break;
+                       
                     case STOP_HARDWARE: ;                   // 'M' stop data acquisition
                         helper_HardwareSleep();                 // Sleep the hardware
                         break;
@@ -254,17 +268,17 @@ int main() {
                     
                     /* update line 1 */
                     LCD_Position(0u, 0u);
-                    snprintf((char *)LCD_str_top,MAX_LCD_BYTES, "Voltage= %u mV", (int)voltage);
+                    snprintf((char *)LCD_str_top,MAX_LCD_BYTES, "V= %d", (int)voltage);
                     LCD_PrintString((const char*)LCD_str_top);                                       
                  
                     /* update line 2 */
                     LCD_Position(1u, 0u);
-                    snprintf((char *)LCD_str_bot,MAX_LCD_BYTES, "Adc= %u A", (int) measureADC);
+                    snprintf((char *)LCD_str_bot,MAX_LCD_BYTES, "A= %d ", (int) measureADC);
                     LCD_PrintString((const char*)LCD_str_bot);
                                        
                     /* Send out results to the USB Serial */
                     helper_ClrTx();
-                    snprintf((char *)TX_Data, USBUART_BUFFER_SIZE, "Voltage= %u  mV ADC= %u mA",(int)voltage,(int) measureADC  );
+                    snprintf((char *)TX_Data, USBUART_BUFFER_SIZE, "%d,%d",(int)voltage, (int)measureADC);
                     USB_send (TX_Data, USBUART_BUFFER_SIZE ) ;
                     
                     dataReady =0;

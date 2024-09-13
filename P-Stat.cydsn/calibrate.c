@@ -141,7 +141,6 @@ void Calibrate_Hardware_Wakeup(void) {
     AMux_TIA_input_Select(AMux_TIA_calibrat_ch);
     TIA_Wakeup();
     VDAC_TIA_Wakeup();
-  //   ADC_DelSig_Wakeup();
 }
 
 /******************************************************************************
@@ -158,7 +157,6 @@ void Calibrate_Hardware_Sleep(void) {
     AMux_TIA_input_Select(AMux_TIA_measure_ch);
     TIA_Sleep();
     VDAC_TIA_Sleep();
-  //  ADC_DelSig_Sleep();
     IDAC_calibrate_Stop();
 }
 

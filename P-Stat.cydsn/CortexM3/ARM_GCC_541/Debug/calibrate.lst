@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
    5:calibrate.c   **** *  Protocols to calibrate the current measuring circuitry i.e. TIA / delta sigma ADC with an IDAC
    6:calibrate.c   **** *
    7:calibrate.c   **** **********************************************************************************
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 2
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 2
 
 
    8:calibrate.c   ****  * Copyright Kyle Vitautas Lopin, Naresuan University, Phitsanulok Thailand
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
   67              		.loc 1 45 0
   68 000a 0020     		movs	r0, #0
   69 000c FFF7FEFF 		bl	IDAC_calibrate_SetValue
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 3
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 3
 
 
   46:calibrate.c   ****     // start the hardware required
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  112 0064 7B89     		ldrh	r3, [r7, #10]
  113 0066 0221     		movs	r1, #2
  114 0068 1846     		mov	r0, r3
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 4
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 4
 
 
  115 006a FFF7FEFF 		bl	calibrate_step
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  155              		.loc 1 71 0
  156 00be 7B69     		ldr	r3, [r7, #20]
  157 00c0 9BB2     		uxth	r3, r3
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 5
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 5
 
 
  158 00c2 0021     		movs	r1, #0
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
   91:calibrate.c   ****     
   92:calibrate.c   ****     //IN_Data_Buffer[0] = '\0';
   93:calibrate.c   ****     
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 6
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 6
 
 
   94:calibrate.c   ****     //sprintf(IN_Data_Buffer, "ADC VALUE  %d %d %d %d %d", 
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  122:calibrate.c   **** void calibrate_step(uint16_t IDAC_value, uint8_t IDAC_index) {
  219              		.loc 1 122 0
  220              		.cfi_startproc
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 7
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 7
 
 
  221              		@ args = 0, pretend = 0, frame = 16
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  269              	.L6:
  270 004c 00000000 		.word	calibrate_array
  271              		.cfi_endproc
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 8
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 8
 
 
  272              	.LFE65:
@@ -463,9 +463,8 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  143:calibrate.c   ****     VDAC_TIA_Wakeup();
  297              		.loc 1 143 0
  298 000e FFF7FEFF 		bl	VDAC_TIA_Wakeup
- 144:calibrate.c   ****   //   ADC_DelSig_Wakeup();
- 145:calibrate.c   **** }
- 299              		.loc 1 145 0
+ 144:calibrate.c   **** }
+ 299              		.loc 1 144 0
  300 0012 00BF     		nop
  301 0014 80BD     		pop	{r7, pc}
  302              		.cfi_endproc
@@ -478,23 +477,23 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  309              		.thumb_func
  310              		.type	Calibrate_Hardware_Sleep, %function
  311              	Calibrate_Hardware_Sleep:
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 9
-
-
  312              	.LFB67:
- 146:calibrate.c   **** 
- 147:calibrate.c   **** /******************************************************************************
- 148:calibrate.c   **** * Function Name: Calibrate_Hardware_Sleep
- 149:calibrate.c   **** *******************************************************************************
- 150:calibrate.c   **** *
- 151:calibrate.c   **** * Summary:
- 152:calibrate.c   **** *  Put to sleep all the hardware needed for the calibration routine, stop  
- 153:calibrate.c   **** *  the IDAC, and set the AMux to the correct channel
- 154:calibrate.c   **** *
- 155:calibrate.c   **** *******************************************************************************/
- 156:calibrate.c   **** 
- 157:calibrate.c   **** void Calibrate_Hardware_Sleep(void) {
- 313              		.loc 1 157 0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 9
+
+
+ 145:calibrate.c   **** 
+ 146:calibrate.c   **** /******************************************************************************
+ 147:calibrate.c   **** * Function Name: Calibrate_Hardware_Sleep
+ 148:calibrate.c   **** *******************************************************************************
+ 149:calibrate.c   **** *
+ 150:calibrate.c   **** * Summary:
+ 151:calibrate.c   **** *  Put to sleep all the hardware needed for the calibration routine, stop  
+ 152:calibrate.c   **** *  the IDAC, and set the AMux to the correct channel
+ 153:calibrate.c   **** *
+ 154:calibrate.c   **** *******************************************************************************/
+ 155:calibrate.c   **** 
+ 156:calibrate.c   **** void Calibrate_Hardware_Sleep(void) {
+ 313              		.loc 1 156 0
  314              		.cfi_startproc
  315              		@ args = 0, pretend = 0, frame = 0
  316              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -504,22 +503,21 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  320              		.cfi_offset 14, -4
  321 0002 00AF     		add	r7, sp, #0
  322              		.cfi_def_cfa_register 7
- 158:calibrate.c   ****     AMux_TIA_input_Select(AMux_TIA_measure_ch);
- 323              		.loc 1 158 0
+ 157:calibrate.c   ****     AMux_TIA_input_Select(AMux_TIA_measure_ch);
+ 323              		.loc 1 157 0
  324 0004 0120     		movs	r0, #1
  325 0006 FFF7FEFF 		bl	AMux_TIA_input_FastSelect
- 159:calibrate.c   ****     TIA_Sleep();
- 326              		.loc 1 159 0
+ 158:calibrate.c   ****     TIA_Sleep();
+ 326              		.loc 1 158 0
  327 000a FFF7FEFF 		bl	TIA_Sleep
- 160:calibrate.c   ****     VDAC_TIA_Sleep();
- 328              		.loc 1 160 0
+ 159:calibrate.c   ****     VDAC_TIA_Sleep();
+ 328              		.loc 1 159 0
  329 000e FFF7FEFF 		bl	VDAC_TIA_Sleep
- 161:calibrate.c   ****   //  ADC_DelSig_Sleep();
- 162:calibrate.c   ****     IDAC_calibrate_Stop();
- 330              		.loc 1 162 0
+ 160:calibrate.c   ****     IDAC_calibrate_Stop();
+ 330              		.loc 1 160 0
  331 0012 FFF7FEFF 		bl	IDAC_calibrate_Stop
- 163:calibrate.c   **** }
- 332              		.loc 1 163 0
+ 161:calibrate.c   **** }
+ 332              		.loc 1 161 0
  333 0016 00BF     		nop
  334 0018 80BD     		pop	{r7, pc}
  335              		.cfi_endproc
@@ -538,11 +536,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  348              		.section	.debug_info,"",%progbits
  349              	.Ldebug_info0:
  350 0000 95020000 		.4byte	0x295
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 10
-
-
  351 0004 0400     		.2byte	0x4
  352 0006 00000000 		.4byte	.Ldebug_abbrev0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 10
+
+
  353 000a 04       		.byte	0x4
  354 000b 01       		.uleb128 0x1
  355 000c 27020000 		.4byte	.LASF44
@@ -598,11 +596,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  405 0077 C4000000 		.4byte	.LASF9
  406 007b 02       		.uleb128 0x2
  407 007c 08       		.byte	0x8
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 11
-
-
  408 007d 05       		.byte	0x5
  409 007e BA010000 		.4byte	.LASF10
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 11
+
+
  410 0082 02       		.uleb128 0x2
  411 0083 08       		.byte	0x8
  412 0084 07       		.byte	0x7
@@ -658,11 +656,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  462 00eb 08       		.byte	0x8
  463 00ec C8010000 		.4byte	.LASF21
  464 00f0 02       		.uleb128 0x2
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 12
-
-
  465 00f1 04       		.byte	0x4
  466 00f2 07       		.byte	0x7
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 12
+
+
  467 00f3 A6010000 		.4byte	.LASF22
  468 00f7 03       		.uleb128 0x3
  469 00f8 52010000 		.4byte	.LASF23
@@ -718,11 +716,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  519 0166 01       		.byte	0x1
  520 0167 33       		.byte	0x33
  521 0168 AD000000 		.4byte	0xad
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 13
-
-
  522 016c 02       		.uleb128 0x2
  523 016d 91       		.byte	0x91
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 13
+
+
  524 016e 6A       		.sleb128 -22
  525 016f 0D       		.uleb128 0xd
  526 0170 76617200 		.ascii	"var\000"
@@ -778,11 +776,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  576 01cc AF010000 		.4byte	.LASF33
  577 01d0 01       		.byte	0x1
  578 01d1 7A       		.byte	0x7a
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 14
-
-
  579 01d2 AD000000 		.4byte	0xad
  580 01d6 02       		.uleb128 0x2
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 14
+
+
  581 01d7 91       		.byte	0x91
  582 01d8 6E       		.sleb128 -18
  583 01d9 0E       		.uleb128 0xe
@@ -813,7 +811,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  608 0207 0F       		.uleb128 0xf
  609 0208 9D000000 		.4byte	.LASF37
  610 020c 01       		.byte	0x1
- 611 020d 9D       		.byte	0x9d
+ 611 020d 9C       		.byte	0x9c
  612 020e 00000000 		.4byte	.LFB67
  613 0212 1A000000 		.4byte	.LFE67-.LFB67
  614 0216 01       		.uleb128 0x1
@@ -835,14 +833,14 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  630 0239 12       		.uleb128 0x12
  631 023a C0020000 		.4byte	.LASF39
  632 023e 07       		.byte	0x7
- 633 023f 50       		.byte	0x50
+ 633 023f 5B       		.byte	0x5b
  634 0240 29020000 		.4byte	0x229
  635 0244 05       		.uleb128 0x5
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 15
-
-
  636 0245 03       		.byte	0x3
  637 0246 00000000 		.4byte	buffer
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 15
+
+
  638 024a 12       		.uleb128 0x12
  639 024b 0A020000 		.4byte	.LASF40
  640 024f 08       		.byte	0x8
@@ -877,7 +875,7 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  669 028d 13       		.uleb128 0x13
  670 028e 39010000 		.4byte	.LASF43
  671 0292 09       		.byte	0x9
- 672 0293 14       		.byte	0x14
+ 672 0293 17       		.byte	0x17
  673 0294 97000000 		.4byte	0x97
  674 0298 00       		.byte	0
  675              		.section	.debug_abbrev,"",%progbits
@@ -898,11 +896,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  690 000d 11       		.uleb128 0x11
  691 000e 01       		.uleb128 0x1
  692 000f 10       		.uleb128 0x10
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 16
-
-
  693 0010 17       		.uleb128 0x17
  694 0011 00       		.byte	0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 16
+
+
  695 0012 00       		.byte	0
  696 0013 02       		.uleb128 0x2
  697 0014 24       		.uleb128 0x24
@@ -958,11 +956,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  747 0046 03       		.uleb128 0x3
  748 0047 0E       		.uleb128 0xe
  749 0048 0B       		.uleb128 0xb
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 17
-
-
  750 0049 0B       		.uleb128 0xb
  751 004a 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 17
+
+
  752 004b 0B       		.uleb128 0xb
  753 004c 3B       		.uleb128 0x3b
  754 004d 0B       		.uleb128 0xb
@@ -1018,11 +1016,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  804 007f 2E       		.uleb128 0x2e
  805 0080 01       		.byte	0x1
  806 0081 3F       		.uleb128 0x3f
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 18
-
-
  807 0082 19       		.uleb128 0x19
  808 0083 03       		.uleb128 0x3
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 18
+
+
  809 0084 0E       		.uleb128 0xe
  810 0085 3A       		.uleb128 0x3a
  811 0086 0B       		.uleb128 0xb
@@ -1078,11 +1076,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  861 00b9 03       		.uleb128 0x3
  862 00ba 0E       		.uleb128 0xe
  863 00bb 3A       		.uleb128 0x3a
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 19
-
-
  864 00bc 0B       		.uleb128 0xb
  865 00bd 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 19
+
+
  866 00be 0B       		.uleb128 0xb
  867 00bf 49       		.uleb128 0x49
  868 00c0 13       		.uleb128 0x13
@@ -1138,11 +1136,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  918 00f3 00       		.byte	0
  919 00f4 00       		.byte	0
  920 00f5 12       		.uleb128 0x12
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 20
-
-
  921 00f6 34       		.uleb128 0x34
  922 00f7 00       		.byte	0
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 20
+
+
  923 00f8 03       		.uleb128 0x3
  924 00f9 0E       		.uleb128 0xe
  925 00fa 3A       		.uleb128 0x3a
@@ -1198,11 +1196,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  975 0000 00000000 		.4byte	.LFB64
  976 0004 24010000 		.4byte	.LFE64
  977 0008 00000000 		.4byte	.LFB65
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 21
-
-
  978 000c 50000000 		.4byte	.LFE65
  979 0010 00000000 		.4byte	.LFB66
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 21
+
+
  980 0014 16000000 		.4byte	.LFE66
  981 0018 00000000 		.4byte	.LFB67
  982 001c 1A000000 		.4byte	.LFE67
@@ -1258,11 +1256,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  1006              	.LASF19:
  1007 007b 666C6F61 		.ascii	"float\000"
  1007      7400
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 22
-
-
  1008              	.LASF25:
  1009 0081 64617461 		.ascii	"data\000"
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 22
+
+
  1009      00
  1010              	.LASF11:
  1011 0086 6C6F6E67 		.ascii	"long long unsigned int\000"
@@ -1318,11 +1316,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  1029      6E743136 
  1029      5F7400
  1030              	.LASF20:
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 23
-
-
  1031 0132 646F7562 		.ascii	"double\000"
  1031      6C6500
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 23
+
+
  1032              	.LASF43:
  1033 0139 4144435F 		.ascii	"ADC_buffer_index\000"
  1033      62756666 
@@ -1378,11 +1376,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  1057      7400
  1058              	.LASF21:
  1059 01c8 63686172 		.ascii	"char\000"
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 24
-
-
  1059      00
  1060              	.LASF46:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 24
+
+
  1061 01cd 433A5C55 		.ascii	"C:\\Users\\User\\Dropbox\\67 PSOC\\PSoC-Potentiosta"
  1061      73657273 
  1061      5C557365 
@@ -1438,11 +1436,11 @@ ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 1
  1080      72657369 
  1080      73746F72 
  1080      5F76616C 
-ARM GAS  C:\Users\User\AppData\Local\Temp\ccBsPvsR.s 			page 25
-
-
  1080      75655F69 
  1081              	.LASF24:
+ARM GAS  C:\Users\User\AppData\Local\Temp\ccoZW26U.s 			page 25
+
+
  1082 02fc 6C6F6E67 		.ascii	"long double\000"
  1082      20646F75 
  1082      626C6500 
